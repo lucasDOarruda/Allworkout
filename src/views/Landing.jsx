@@ -4,7 +4,7 @@ import { FORMATS } from '../data/workouts'
 import { go, useStore } from '../store'
 import { useState } from 'react'
 import { ActivityCard } from './Home'
-import HealthTools from './HealthTools'
+import HealthTools, { SOURCES } from './HealthTools'
 import Icon from '../components/Icon'
 
 const img = (name) => `${import.meta.env.BASE_URL}img/${name}.jpg`
@@ -254,7 +254,7 @@ export default function Landing({ tools = false }) {
             </li>
             <li>
               <strong>Evidence</strong>
-              <span>18 studies and guidelines, linked from every number</span>
+              <span>{SOURCES.length} studies and guidelines, linked from every number</span>
             </li>
           </ul>
         </div>
@@ -265,6 +265,39 @@ export default function Landing({ tools = false }) {
         <button className="btn btn-white big" onClick={() => go('signin')}>
           Join All Workout
         </button>
+      </section>
+
+      <section className="l-stores-wrap" aria-label="Mobile apps">
+        <div>
+          <strong className="l-stores-title">All Workout on your phone</strong>
+          <span className="muted small">iPhone and Android apps are on the way. Use the web app until then.</span>
+        </div>
+        <div className="l-stores">
+          <span className="l-store" aria-label="Coming soon to the App Store">
+            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+              <path
+                fill="currentColor"
+                d="M16.4 12.6c0-2.3 1.9-3.4 2-3.5-1.1-1.6-2.8-1.8-3.4-1.8-1.4-.1-2.8.9-3.5.9-.7 0-1.9-.9-3.1-.8-1.6 0-3 .9-3.8 2.3-1.6 2.8-.4 7 1.2 9.3.8 1.1 1.7 2.4 2.9 2.3 1.2 0 1.6-.7 3-.7s1.8.7 3 .7c1.3 0 2.1-1.1 2.8-2.3.9-1.3 1.3-2.6 1.3-2.6-.1-.1-2.4-1-2.4-3.8zM14.1 5.8c.6-.8 1.1-1.8 1-2.8-.9 0-2 .6-2.7 1.4-.6.7-1.1 1.7-1 2.7 1 .1 2-.5 2.7-1.3z"
+              />
+            </svg>
+            <span>
+              <small>Coming soon to the</small>
+              <strong>App Store</strong>
+            </span>
+          </span>
+          <span className="l-store" aria-label="Coming soon on Google Play for Android">
+            <svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true">
+              <path fill="currentColor" d="M5 16a7 7 0 0 1 14 0z" />
+              <path d="M8.2 10.4 6.6 7.6M15.8 10.4l1.6-2.8" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+              <circle cx="9.6" cy="13.2" r="0.9" fill="#0d0e0a" />
+              <circle cx="14.4" cy="13.2" r="0.9" fill="#0d0e0a" />
+            </svg>
+            <span>
+              <small>Coming soon on</small>
+              <strong>Android</strong>
+            </span>
+          </span>
+        </div>
       </section>
 
       <footer className="l-footer">

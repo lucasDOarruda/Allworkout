@@ -4502,6 +4502,62 @@ code {
   color: #0d0e0a;
 }
 
+/* App store badges (coming soon) */
+.l-stores-wrap {
+  max-width: 1120px;
+  margin: 48px auto 0;
+  padding: 24px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  border-top: 1px solid var(--border);
+}
+.l-stores-wrap > div:first-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.l-stores-title {
+  font-family: 'Inter Tight', Inter, sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 1.1rem;
+}
+.l-stores {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.l-store {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 170px;
+  padding: 8px 16px 8px 12px;
+  border-radius: 12px;
+  background: #0d0e0a;
+  color: #fff;
+  border: 1px solid #2c2f20;
+}
+.l-store span {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.1;
+}
+.l-store small {
+  font-size: 0.66rem;
+  opacity: 0.75;
+}
+.l-store strong {
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+}
+.l-store:nth-child(2) svg {
+  color: #dcf05a;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;
