@@ -16,6 +16,8 @@ import Clients from './views/Clients'
 import Admin from './views/Admin'
 import SignIn from './views/SignIn'
 import Landing from './views/Landing'
+import { canSee, rememberDestination, routeNeeds } from './lib/access'
+import { Empty } from './components/ui'
 
 const ICON = {
   home: 'M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z',
@@ -37,9 +39,13 @@ export default function App() {
   const [head, a, b, c, d] = route
   const playing = head === 'w' && b === 'p' && d === 'play'
   const landing = head === 'welcome' || head === 'tools'
+  const need = routeNeeds(route)
+  const allowed = canSee(need, me)
 
   let view
-  if (landing) view = <Landing key={head} tools={head === 'tools'} />
+  if (!allowed && need === 'member') view = <SignIn gate onShow={rememberDestination} />
+  else if (!allowed) view = <Locked need={need} signedIn={!!me} />
+  else if (landing) view = <Landing key={head} tools={head === 'tools'} />
   else if (head === 'w' && b === 'p' && d === 'play') view = <Player id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'p') view = <PartDetail id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'log') view = <LogSession id={a} />
@@ -55,7 +61,7 @@ export default function App() {
   else if (head === 'you' || head === 'progress' || head === 'settings') view = <You sub={head === 'settings' ? 'settings' : a} />
   else if (head === 'coach') view = <CoachProfile id={a} />
   else if (head === 'clients') view = <Clients />
-  else if (head === 'admin') view = <Admin />
+  else if (head === 'admin') view = <Admin section={a} />
   else if (head === 'signin') view = <SignIn />
   else view = <Home />
 
@@ -91,7 +97,7 @@ export default function App() {
   return (
     <div className={`app ${playing ? 'is-playing' : ''} ${landing ? 'is-landing' : ''}`}>
       <main>{view}</main>
-      {!playing && !landing && (
+      {!playing && !landing && allowed && head !== 'admin' && head !== 'signin' && (
         <nav className="tabbar" aria-label="Main">
           <Tab k="home" label="Home" />
           <Tab k="explore" label="Explore" />
@@ -218,6 +224,28 @@ function StartSheet({ onClose }) {
         </div>
         <p className="ss-credit">Photos: Unsplash</p>
       </div>
+    </div>
+  )
+}
+
+// Shown instead of a page the current account isn't allowed to see
+function Locked({ need, signedIn }) {
+  const what = need === 'admin' ? 'admins' : need === 'coach' ? 'coaches' : 'members'
+  return (
+    <div className="page narrow">
+      <Empty icon="lock" title={`This page is for ${what} only`}>
+        {signedIn ? 'Your account doesn’t have access to it.' : 'Sign in with an account that has access.'}
+        <div className="row gap-s locked-actions">
+          {!signedIn && (
+            <button className="btn btn-primary" onClick={() => go('signin')}>
+              Log in
+            </button>
+          )}
+          <button className="btn btn-ghost" onClick={() => go('home')}>
+            Back to the app
+          </button>
+        </div>
+      </Empty>
     </div>
   )
 }

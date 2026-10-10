@@ -3,7 +3,8 @@ import { exerciseById } from '../data/exercises'
 import { FORMATS } from '../data/workouts'
 import { go, useStore } from '../store'
 import { fileToDataUrl, initials, workoutEquipment, workoutFormats, workoutMinutes, youtubeEmbed } from '../lib/utils'
-import { MoveImage } from './BodyMap'
+import { MoveImage, MusclesWorked } from './BodyMap'
+import { workoutPhoto } from '../lib/photos'
 import Icon from './Icon'
 
 export function Avatar({ user, size = 36 }) {
@@ -132,7 +133,13 @@ export function MoveSheet({ move, onClose }) {
   const fav = me && ex && me.favorites.includes(ex.id)
   return (
     <Modal title={move.name} onClose={onClose}>
-      <MoveMedia move={{ ...move, video: move.video || ex?.video }} large />
+      {(move.image || youtubeEmbed(move.video)) && <MoveMedia move={{ ...move, video: move.video || ex?.video }} large />}
+      {ex && <MusclesWorked exerciseId={ex.id} />}
+      {(move.video || ex?.video) && !youtubeEmbed(move.video) && (
+        <a className="btn btn-ghost full how-to-btn" href={move.video || ex.video} target="_blank" rel="noreferrer">
+          ▶ Watch a how-to video
+        </a>
+      )}
       <div className="row between sheet-meta">
         {ex ? (
           <p className="muted small">
@@ -166,19 +173,10 @@ export function MoveSheet({ move, onClose }) {
 export function WorkoutCard({ w, compact = false }) {
   const { db } = useStore()
   const author = w.authorId ? db.users[w.authorId] : null
-  const moves = w.parts.flatMap((p) => p.moves)
   return (
     <button className={`wcard ${compact ? 'compact' : ''}`} onClick={() => go(`w/${w.id}`)}>
       <div className="wcard-cover">
-        {w.cover ? (
-          <img src={w.cover} alt="" />
-        ) : (
-          <div className="wcard-thumbs">
-            {moves.slice(0, 3).map((mv, i) => (
-              <MoveImage key={i} move={mv} size="100%" />
-            ))}
-          </div>
-        )}
+        <img src={workoutPhoto(w)} alt="" loading="lazy" />
         <span className={`price-tag ${w.premium ? 'paid' : ''}`}>{w.premium ? `★ ${w.price}` : 'Free'}</span>
       </div>
       <div className="wcard-body">

@@ -28,7 +28,7 @@ export default function Landing({ tools = false }) {
   const { db, me, workouts } = useStore()
   const latest = [...db.sessions].sort((a, b) => new Date(b.date) - new Date(a.date))[0]
   const coaches = Object.values(db.users).filter((u) => u.role === 'coach')
-  const openApp = () => go('home')
+  const openApp = () => go(me ? 'home' : 'signin')
 
   return (
     <div className="landing">
@@ -77,9 +77,6 @@ export default function Landing({ tools = false }) {
             <div className="row gap-s wrap">
               <button className="btn btn-primary big" onClick={() => go('signin')}>
                 Join for free →
-              </button>
-              <button className="btn btn-outline-white big" onClick={openApp}>
-                Try it without an account
               </button>
             </div>
           </div>
@@ -314,7 +311,6 @@ export default function Landing({ tools = false }) {
           <button className="l-foot-btn" onClick={openTools}>
             Health tools
           </button>
-          <a href="#/admin">Admin</a>
         </div>
       </footer>
       {toolsOpen && <HealthTools onClose={closeTools} />}

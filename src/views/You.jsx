@@ -28,11 +28,6 @@ export default function You({ sub }) {
             Sign in or sign up
           </button>
         </section>
-        <div className="row gap-s quick-links">
-          <button className="card nav-card" onClick={() => go('admin')}>
-            Admin dashboard <span className="chev-right">›</span>
-          </button>
-        </div>
         <SettingsBody />
       </div>
     )

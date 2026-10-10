@@ -3,6 +3,7 @@ import { MoveImage } from '../components/BodyMap'
 import { Avatar, Empty } from '../components/ui'
 import { OFFICIAL_PROGRAMS, programDays } from '../data/programs'
 import { go, useStore } from '../store'
+import { programPhoto } from '../lib/photos'
 import { workoutMinutes } from '../lib/utils'
 
 // Plan tab: your program + what your coach assigned
@@ -25,6 +26,7 @@ export default function Plan() {
           </Empty>
           {OFFICIAL_PROGRAMS.map((p) => (
             <button key={p.id} className="program-card" onClick={() => go(`program/${p.id}`)}>
+              <span className="program-photo" style={{ backgroundImage: `url(${programPhoto(p)})` }} aria-hidden="true" />
               <span className="program-eyebrow">
                 {p.weeks.length} weeks · {programDays(p).length} sessions · {p.level}
               </span>
@@ -101,7 +103,7 @@ function ProgramView({ program, standalone = false }) {
 
   return (
     <>
-      <section className="program-hero">
+      <section className="program-hero" style={{ backgroundImage: `linear-gradient(100deg, rgb(220 240 90 / 97%) 45%, rgb(205 232 60 / 55%)), url(${programPhoto(program)})` }}>
         {standalone && (
           <button className="icon-btn hero-back" onClick={() => history.back()} aria-label="Back">
             ‹

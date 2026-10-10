@@ -90,8 +90,11 @@ export function StoreProvider({ children }) {
   const actions = useMemo(
     () => ({
       signIn: (userId) => mutate((d) => void (d.currentUserId = userId)),
-      signOut: () => mutate((d) => void (d.currentUserId = null)),
-      createAccount: ({ name, role, photo = null }) => {
+      signOut: () => {
+        mutate((d) => void (d.currentUserId = null))
+        import('./lib/firebase').then((m) => m.googleSignOut()).catch(() => {})
+      },
+      createAccount: ({ name, role, photo = null, email = '', googleUid = null }) => {
         const id = uid('u')
         mutate((d) => {
           d.users[id] = {
@@ -99,6 +102,8 @@ export function StoreProvider({ children }) {
             name: name.trim(),
             role,
             photo,
+            email,
+            googleUid,
             bio: '',
             payLink: '',
             color: AVATAR_COLORS[Object.keys(d.users).length % AVATAR_COLORS.length],

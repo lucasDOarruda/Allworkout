@@ -4,6 +4,7 @@ import { Chips, MoveSheet, Segmented } from '../components/ui'
 import { BACK_MUSCLES, EQUIPMENT, EXERCISES, FRONT_MUSCLES } from '../data/exercises'
 import { OFFICIAL_PROGRAMS, programDays } from '../data/programs'
 import { go, useStore } from '../store'
+import { programPhoto } from '../lib/photos'
 import { Coaches, Workouts } from './Library'
 
 const TABS = [
@@ -100,6 +101,7 @@ function Programs() {
         const mine = en?.programId === p.id
         return (
           <button key={p.id} className="program-card" onClick={() => go(`program/${p.id}`)}>
+              <span className="program-photo" style={{ backgroundImage: `url(${programPhoto(p)})` }} aria-hidden="true" />
             <span className="program-eyebrow">
               {p.weeks.length} weeks · {days.length} sessions · {p.level}
             </span>

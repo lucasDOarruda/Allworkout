@@ -83,6 +83,32 @@ function Region({ muscle, className }) {
   }
 }
 
+// Contour lines for the left half of the body (the right half is mirrored)
+const FRONT_LINES = [
+  'M112 162 Q124 148 146 152', // deltoid cap
+  'M148 176 Q172 166 198 178 L198 212 Q172 222 150 206', // pec
+  'M184 226 Q181 280 186 336', // abs edge
+  'M186 252 H200 M185 280 H200 M186 308 H200', // six-pack rows
+  'M148 248 Q154 278 166 304', // oblique
+  'M114 206 Q120 238 107 270', // biceps
+  'M101 302 Q104 340 94 386', // forearm
+  'M154 488 Q148 540 166 598', // outer quad
+  'M190 486 Q197 540 182 598', // inner quad
+  'M160 604 Q176 618 192 604', // kneecap
+  'M168 640 Q164 690 176 732', // shin
+]
+const BACK_LINES = [
+  'M168 142 L200 120 M200 206 L168 142', // trapezius
+  'M150 186 Q172 206 160 240', // shoulder blade
+  'M142 200 Q160 262 196 300', // lat
+  'M112 162 Q124 148 146 152', // rear deltoid
+  'M110 210 Q118 240 110 268', // triceps
+  'M182 300 Q200 316 200 316', // lower back
+  'M146 440 Q176 458 200 444', // glute crease
+  'M174 488 V598', // hamstring split
+  'M162 630 Q178 598 192 636 Q190 690 178 714 Q166 690 162 630', // calf
+]
+
 function Figure({ view }) {
   const limb = (x1, y1, x2, y2, w) => (
     <>
@@ -106,22 +132,21 @@ function Figure({ view }) {
       <path d="M186 106 L214 106 L219 138 L181 138 Z" className="fig-body" />
       <path d="M142 140 Q200 126 258 140 L286 166 Q292 236 262 290 L252 366 L148 366 L138 290 Q108 236 114 166 Z" className="fig-body" />
       <ellipse cx={200} cy={76} rx={30} ry={37} className="fig-body" />
-      {view === 'back' ? (
-        <g className="fig-detail">
-          <path d="M200 140 V360" />
-          <path d="M150 200 Q175 230 200 214 Q225 230 250 200" />
-          <path d="M176 330 Q200 344 224 330" />
-          <path d="M172 50 Q200 30 228 50" className="fig-hair" />
-        </g>
-      ) : (
-        <g className="fig-detail">
-          <path d="M152 216 Q176 230 198 214 M202 214 Q224 230 248 216" />
-          <path d="M200 222 V338 M184 254 H216 M184 284 H216 M186 312 H214" />
-          <circle cx={200} cy={350} r={2} />
-        </g>
-      )}
       {/* shorts */}
       <path d="M146 358 L254 358 L266 474 L210 480 L200 436 L190 480 L134 474 Z" className="fig-shorts" />
+      {/* muscle contours, drawn on the left and mirrored */}
+      <g className="fig-detail">
+        {view === 'back' ? <path d="M200 120 V362" /> : <path d="M200 222 V338" />}
+        {[false, true].map((flip) => (
+          <g key={String(flip)} transform={flip ? 'translate(400 0) scale(-1 1)' : undefined}>
+            {(view === 'back' ? BACK_LINES : FRONT_LINES).map((d) => (
+              <path key={d} d={d} />
+            ))}
+          </g>
+        ))}
+        {view === 'back' && <path d="M172 50 Q200 30 228 50" className="fig-hair" />}
+        {view === 'front' && <circle cx={200} cy={350} r={2} />}
+      </g>
     </g>
   )
 }
@@ -201,4 +226,41 @@ export function MuscleThumb({ muscle, exerciseId, size = 64, className = '' }) {
 export function MoveImage({ move, size = 64, className = '' }) {
   if (move?.image) return <img src={move.image} alt="" className={`thumb ${className}`} style={{ width: size, height: size }} />
   return <MuscleThumb exerciseId={move?.exerciseId} size={size} className={className} />
+}
+
+// Front and back figures side by side, primary muscle solid and secondary ones lighter
+export function MusclesWorked({ exerciseId }) {
+  const ex = exerciseById[exerciseId]
+  if (!ex) return null
+  const [primary, ...secondary] = ex.muscles
+  const onView = (view, muscle) => muscle !== 'Cardio' && viewOf(muscle) === view
+  return (
+    <section className="mw" aria-label="Muscles worked">
+      <h3 className="mw-title">Muscles worked</h3>
+      <div className="mw-chips">
+        <span className="mw-label">Primary</span>
+        <span className="mw-chip primary">{primary}</span>
+        {secondary.length > 0 && <span className="mw-label">Secondary</span>}
+        {secondary.map((m) => (
+          <span key={m} className="mw-chip">
+            {m}
+          </span>
+        ))}
+      </div>
+      <div className="mw-figs">
+        {['front', 'back'].map((view) => (
+          <figure key={view} className="mw-fig">
+            <svg viewBox="50 20 300 760" aria-hidden="true">
+              <Figure view={view} />
+              {ex.muscles.map((m, i) =>
+                onView(view, m) ? <Region key={m} muscle={m} className={`region ${i === 0 ? 'primary' : 'secondary'}`} /> : null,
+              )}
+              {view === 'front' && ex.muscles.includes('Cardio') && <Heart x={200} y={250} s={2} />}
+            </svg>
+            <figcaption>{view === 'front' ? 'Front' : 'Back'}</figcaption>
+          </figure>
+        ))}
+      </div>
+    </section>
+  )
 }

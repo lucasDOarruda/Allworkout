@@ -2,11 +2,9 @@ import { useState } from 'react'
 import { Avatar, Empty, FormatPill, SignInPrompt } from '../components/ui'
 import { MoveImage } from '../components/BodyMap'
 import { FORMATS } from '../data/workouts'
+import { workoutPhoto } from '../lib/photos'
 import { canAccess, go, useStore } from '../store'
 import { partMinutes, partSummary, timeAgo, workoutEquipment, workoutMinutes } from '../lib/utils'
-
-// Stock photo for the header when the creator hasn't added a cover
-const CATEGORY_PHOTO = { Gym: 'gym', Kettlebell: 'dumbbells', Bodyweight: 'home', Community: 'class' }
 
 const partHeadline = (p) => (p.format === 'timed' ? `${partMinutes(p)} min warmup` : `${FORMATS[p.format]} · ${partSummary(p)}`)
 
@@ -58,7 +56,7 @@ export default function WorkoutDetail({ id }) {
   return (
     <div className="page narrow has-sticky w-page">
       <section className="w-hero">
-        <img className="w-hero-img" src={w.cover || `${import.meta.env.BASE_URL}img/${CATEGORY_PHOTO[w.category] || 'class'}.jpg`} alt="" />
+        <img className="w-hero-img" src={workoutPhoto(w)} alt="" />
         <div className="w-hero-shade" />
         <button className="hero-btn left" onClick={() => (history.length > 1 ? history.back() : go('explore'))} aria-label="Back">
           ‹

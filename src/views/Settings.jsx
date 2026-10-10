@@ -213,7 +213,7 @@ function AppSettings() {
             className="btn btn-ghost"
             onClick={() => {
               actions.signOut()
-              go('home')
+              go('welcome')
             }}
           >
             Sign out
@@ -232,7 +232,7 @@ function AppSettings() {
             if (!confirm('Reset everything on this device back to the demo data?')) return
             actions.resetDemo()
             notify('Reset to demo data')
-            go('home')
+            go('welcome')
           }}
         >
           Reset
