@@ -4,6 +4,8 @@ A community training app: a Strava-style feed with kudos and training partners, 
 
 Built with React 19 and Vite. Purple and white, with a dark mode.
 
+**Live:** https://lucasdoarruda.github.io/Allworkout/
+
 ## Run it
 
 ```bash
@@ -11,6 +13,8 @@ npm install
 npm run dev      # http://localhost:5173
 npm run build    # production build in dist/
 ```
+
+Every push to `master` builds and publishes the site to GitHub Pages (`.github/workflows/deploy.yml`). In the repo's Settings → Pages, Source must be **GitHub Actions**.
 
 The app currently stores everything in the browser (localStorage) and opens with demo data. The API lives in a separate repo (`Allworkoutbackend`).
 
