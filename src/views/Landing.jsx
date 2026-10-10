@@ -61,33 +61,72 @@ export default function Landing({ tools = false }) {
         </div>
       </nav>
 
-      <header className="l-hero">
-        <div className="l-hero-copy">
-          <p className="l-eyebrow">The social network for people who lift</p>
-          <h1>
-            Train together.
-            <br />
-            <span>Track every rep.</span>
-          </h1>
-          <p className="l-lede">
-            All Workout is where athletes follow coaches, share sessions with training partners, and run every EMOM, AMRAP and
-            Tabata with a timer that talks you through it.
-          </p>
-          <div className="row gap-s wrap">
-            <button className="btn btn-primary big" onClick={() => go('signin')}>
-              Join for free
-            </button>
-            <button className="btn btn-ghost big" onClick={openApp}>
-              Try it without an account
-            </button>
+      <header className="l-hero-wrap">
+        <div className="l-hero">
+          <div className="l-hero-copy">
+            <p className="l-eyebrow">The social network for people who lift</p>
+            <h1>
+              Train together.
+              <br />
+              <span>Track every rep.</span>
+            </h1>
+            <p className="l-lede">
+              Follow coaches, share sessions with training partners, and run every EMOM, AMRAP and Tabata with a timer that talks you
+              through it.
+            </p>
+            <div className="row gap-s wrap">
+              <button className="btn btn-primary big" onClick={() => go('signin')}>
+                Join for free →
+              </button>
+              <button className="btn btn-outline-white big" onClick={openApp}>
+                Try it without an account
+              </button>
+            </div>
+          </div>
+          <div className="l-mosaic" aria-hidden="true">
+            <img className="m1" src={img('gym')} alt="" />
+            <img className="m2" src={img('class')} alt="" />
+            <img className="m3" src={img('deadlift')} alt="" />
+            <img className="m4" src={img('home')} alt="" />
+            <div className="l-live-chip">
+              <span className="dot live" /> Live EMOM · Round 3 / Min 18
+            </div>
           </div>
         </div>
-        <div className="l-visual">
-          <img className="l-visual-photo" src={img('deadlift')} alt="Athlete lifting a barbell in the gym" />
-          <img className="l-visual-small" src={img('class')} alt="Group training class" />
-          <div className="l-live-chip">
-            <span className="dot live" /> Live EMOM · Round 3 / Min 18
-          </div>
+      </header>
+
+      <section className="l-band">
+        <div>
+          <strong>{EXERCISES.length}</strong>
+          <span>exercises with form cues</span>
+        </div>
+        <div>
+          <strong>{Object.keys(FORMATS).length - 1}</strong>
+          <span>workout formats</span>
+        </div>
+        <div>
+          <strong>{workouts.length}</strong>
+          <span>ready-to-run workouts</span>
+        </div>
+        <div>
+          <strong>{OFFICIAL_PROGRAMS.length}</strong>
+          <span>multi-week programs</span>
+        </div>
+      </section>
+
+      <section className="l-app">
+        <div className="l-app-copy">
+          <p className="l-eyebrow">The app</p>
+          <h2>Your week, your crew, your coach. In one feed.</h2>
+          <ul className="l-list">
+            <li>Every session lands in your feed with time, volume and effort.</li>
+            <li>Partners give kudos and comment. Tag them and it counts for both of you.</li>
+            <li>Your coach sees what you did and assigns what’s next.</li>
+          </ul>
+          <button className="btn btn-lime big" onClick={openApp}>
+            Open the app →
+          </button>
+        </div>
         <div className="l-phone" aria-label="App preview">
           <div className="l-phone-screen">
             <div className="l-phone-top">
@@ -113,26 +152,6 @@ export default function Landing({ tools = false }) {
             </div>
             {latest && <ActivityCard s={latest} />}
           </div>
-        </div>
-        </div>
-      </header>
-
-      <section className="l-band">
-        <div>
-          <strong>{EXERCISES.length}</strong>
-          <span>exercises with form cues</span>
-        </div>
-        <div>
-          <strong>{Object.keys(FORMATS).length - 1}</strong>
-          <span>workout formats</span>
-        </div>
-        <div>
-          <strong>{workouts.length}</strong>
-          <span>ready-to-run workouts</span>
-        </div>
-        <div>
-          <strong>{OFFICIAL_PROGRAMS.length}</strong>
-          <span>multi-week programs</span>
         </div>
       </section>
 
@@ -241,7 +260,7 @@ export default function Landing({ tools = false }) {
         </div>
       </section>
 
-      <section className="l-cta" style={{ backgroundImage: `linear-gradient(135deg, rgb(109 60 224 / 88%), rgb(67 32 155 / 92%)), url(${img('barbell')})` }}>
+      <section className="l-cta" style={{ backgroundImage: `linear-gradient(100deg, rgb(220 240 90 / 97%) 40%, rgb(205 232 60 / 70%)), url(${img('barbell')})` }}>
         <h2>Your next session starts here.</h2>
         <button className="btn btn-white big" onClick={() => go('signin')}>
           Join All Workout

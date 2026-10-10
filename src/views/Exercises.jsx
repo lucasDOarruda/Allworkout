@@ -220,8 +220,8 @@ export function QuickTimer({ onClose, initial = null }) {
           <svg viewBox="0 0 280 280" aria-hidden="true">
             <defs>
               <linearGradient id="qtGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#b89dff" />
-                <stop offset="100%" stopColor="#6d3ce0" />
+                <stop offset="0%" stopColor="#eef9a0" />
+                <stop offset="100%" stopColor="#c6e33a" />
               </linearGradient>
             </defs>
             <circle cx="140" cy="140" r={R} className="qt-track" />

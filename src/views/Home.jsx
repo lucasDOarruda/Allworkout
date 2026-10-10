@@ -107,7 +107,7 @@ export default function Home() {
 
 function WelcomeCard() {
   return (
-    <section className="week-card photo" style={{ backgroundImage: `linear-gradient(120deg, rgb(67 32 155 / 92%), rgb(109 60 224 / 65%)), url(${import.meta.env.BASE_URL}img/class.jpg)` }}>
+    <section className="week-card photo" style={{ backgroundImage: `linear-gradient(110deg, rgb(220 240 90 / 96%) 45%, rgb(205 232 60 / 55%)), url(${import.meta.env.BASE_URL}img/class.jpg)` }}>
       <p className="week-eyebrow">Welcome to All Workout</p>
       <p className="week-title">Train with friends, follow a coach, track every rep.</p>
       <div className="row gap-s">

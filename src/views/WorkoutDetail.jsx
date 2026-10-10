@@ -5,6 +5,9 @@ import { FORMATS } from '../data/workouts'
 import { canAccess, go, useStore } from '../store'
 import { partMinutes, partSummary, timeAgo, workoutEquipment, workoutMinutes } from '../lib/utils'
 
+// Stock photo for the header when the creator hasn't added a cover
+const CATEGORY_PHOTO = { Gym: 'gym', Kettlebell: 'dumbbells', Bodyweight: 'home', Community: 'class' }
+
 const partHeadline = (p) => (p.format === 'timed' ? `${partMinutes(p)} min warmup` : `${FORMATS[p.format]} · ${partSummary(p)}`)
 
 export const moveLine = (p, mv) => (p.format === 'sets' ? `${mv.sets} × ${mv.reps} ${mv.name}` : `${mv.reps} ${mv.name}`)
@@ -55,7 +58,7 @@ export default function WorkoutDetail({ id }) {
   return (
     <div className="page narrow has-sticky w-page">
       <section className="w-hero">
-        {w.cover ? <img className="w-hero-img" src={w.cover} alt="" /> : <MoveImage move={w.parts.flatMap((p) => p.moves)[0]} size="100%" className="w-hero-img" />}
+        <img className="w-hero-img" src={w.cover || `${import.meta.env.BASE_URL}img/${CATEGORY_PHOTO[w.category] || 'class'}.jpg`} alt="" />
         <div className="w-hero-shade" />
         <button className="hero-btn left" onClick={() => (history.length > 1 ? history.back() : go('explore'))} aria-label="Back">
           ‹
