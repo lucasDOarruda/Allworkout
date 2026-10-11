@@ -72,6 +72,11 @@ export default function Home() {
           <button className="icon-btn" onClick={() => go('explore')} aria-label="Search">
             <Svg d={ICON_PATHS.search} />
           </button>
+          {me?.googleUid && (
+            <button className="icon-btn" onClick={() => go('friends')} aria-label="Friends">
+              <Icon name="users" size={20} />
+            </button>
+          )}
           <button className="status" onClick={() => go(me ? 'you' : 'signin')} aria-label={me ? 'Your profile' : 'Sign in'}>
             <span className={`dot ${me ? 'live' : ''}`} />
             {me ? <Avatar user={me} size={26} /> : 'Sign in'}

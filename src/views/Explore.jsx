@@ -19,7 +19,10 @@ export default function Explore({ sub }) {
   return (
     <div className="page">
       <header className="app-head">
-        <h1>Explore</h1>
+        <h1 className="grow">Explore</h1>
+        <button className="btn btn-primary small" onClick={() => go('create')}>
+          + Build my own
+        </button>
       </header>
       <Segmented options={TABS} value={tab} onChange={(v) => go(v === 'workouts' ? 'explore' : `explore/${v}`)} />
       {tab === 'workouts' && <Workouts initialPrice={sub === 'premium' ? 'premium' : null} />}
