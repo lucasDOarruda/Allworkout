@@ -5846,3 +5846,45 @@ code {
 .nav-card .adm-count {
   margin-left: 8px;
 }
+
+/* ---------- Exercise picker ---------- */
+.contact-pop.xp {
+  width: min(640px, 100%);
+}
+.xp-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+.xp-row,
+.xp-current {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-s);
+  background: var(--surface);
+  color: inherit;
+  cursor: pointer;
+}
+.xp-row:hover,
+.xp-current:hover {
+  border-color: var(--accent);
+}
+.xp-plus {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-size: 1.3rem;
+}

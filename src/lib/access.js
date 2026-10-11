@@ -9,11 +9,11 @@ export const isAdminUid = (uid) => !!uid && ADMIN_UIDS.includes(uid)
 const PUBLIC = ['welcome', 'tools', 'signin', 'terms', 'privacy']
 
 // What each route needs: 'admin', 'coach' (approved trainer or admin) or 'member' (any signed-in user)
-export function routeNeeds([head, , sub]) {
+export function routeNeeds([head]) {
   if (PUBLIC.includes(head)) return null
   if (head === 'admin') return 'admin'
-  if (head === 'clients' || head === 'create') return 'coach'
-  if (head === 'w' && sub === 'edit') return 'coach'
+  // Anyone can build their own (private) workouts; the editor checks you own what you edit
+  if (head === 'clients') return 'coach'
   return 'member'
 }
 

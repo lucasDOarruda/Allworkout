@@ -37,14 +37,14 @@ export function Chips({ options, value, onChange, all = 'All' }) {
   return (
     <div className="chips" role="group">
       {all && (
-        <button className={`chip ${!value ? 'on' : ''}`} onClick={() => onChange(null)} aria-pressed={!value}>
+        <button type="button" className={`chip ${!value ? 'on' : ''}`} onClick={() => onChange(null)} aria-pressed={!value}>
           {all}
         </button>
       )}
       {options.map((o) => {
         const [v, label] = Array.isArray(o) ? o : [o, o]
         return (
-          <button key={v} className={`chip ${value === v ? 'on' : ''}`} onClick={() => onChange(value === v ? null : v)} aria-pressed={value === v}>
+          <button type="button" key={v} className={`chip ${value === v ? 'on' : ''}`} onClick={() => onChange(value === v ? null : v)} aria-pressed={value === v}>
             {label}
           </button>
         )

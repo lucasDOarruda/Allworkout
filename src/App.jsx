@@ -240,7 +240,9 @@ function StartSheet({ onClose }) {
   const tiles = [
     { photo: 'barbell', icon: 'dumbbell', title: 'Browse workouts', sub: 'Pick one and tap Start', path: 'explore' },
     { photo: 'class', icon: 'calendar', title: 'Follow a program', sub: 'A plan for every week', path: 'explore/programs' },
-    { photo: 'home', icon: 'pencil', title: 'Log a past workout', sub: 'Open a workout and tap Log', path: 'explore' },
+    isCoachUser
+      ? { photo: 'home', icon: 'pencil', title: 'Log a past workout', sub: 'Open a workout and tap Log', path: 'explore' }
+      : { photo: 'dumbbells', icon: 'plus', title: 'Build my own', sub: 'Pick exercises, sets and reps', path: 'create' },
     isCoachUser
       ? { photo: 'dumbbells', icon: 'plus', title: 'Create a workout', sub: 'Publish free or paid', path: 'create' }
       : { photo: 'coach', icon: 'users', title: 'Find a coach', sub: 'Get a plan made for you', path: 'explore/coaches' },

@@ -135,8 +135,9 @@ export function StoreProvider({ children }) {
   const role = me?.role || 'guest'
 
   const workouts = useMemo(
-    () => [...OFFICIAL_WORKOUTS, ...db.workouts].map((w) => ({ ...w, likes: db.likes[w.id] || [] })),
-    [db.workouts, db.likes],
+    () =>
+      [...OFFICIAL_WORKOUTS, ...db.workouts.filter((w) => !w.private || w.authorId === db.currentUserId)].map((w) => ({ ...w, likes: db.likes[w.id] || [] })),
+    [db.workouts, db.likes, db.currentUserId],
   )
 
   const actions = useMemo(
@@ -230,13 +231,15 @@ export function StoreProvider({ children }) {
         const id = w.id || uid('cw')
         mutate((d) => {
           const i = d.workouts.findIndex((x) => x.id === id)
-          if (i >= 0) d.workouts[i] = { ...d.workouts[i], ...w, id }
+          // Private workouts (members' own, or a trainer's "just for me") sit under "Mine"
+          const category = w.private ? 'Mine' : 'Community'
+          if (i >= 0) d.workouts[i] = { ...d.workouts[i], ...w, id, ...(d.workouts[i].sharedBy ? {} : { category }) }
           else
             d.workouts.push({
               ...w,
               id,
               official: false,
-              category: 'Community',
+              category,
               authorId: d.currentUserId,
               unlocked: [],
               requests: [],

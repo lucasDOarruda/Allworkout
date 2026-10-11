@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { ImagePicker, PageHead, SignInPrompt } from '../components/ui'
-import { EXERCISES, MUSCLES, exerciseById } from '../data/exercises'
+import ExercisePicker from '../components/ExercisePicker'
+import { MuscleThumb } from '../components/BodyMap'
+import { exerciseById } from '../data/exercises'
 import { FOCUSES, FORMATS, LEVELS } from '../data/workouts'
 import { go, isCoach, useStore } from '../store'
 import { partMinutes, uid } from '../lib/utils'
@@ -36,26 +38,19 @@ export default function Editor({ id }) {
           premium: false,
           price: '',
           payLink: me?.payLink || '',
+          // Members' workouts are just for them; trainers choose
+          private: !isCoach(me),
         },
   )
   const [errors, setErrors] = useState([])
+  const [picking, setPicking] = useState(null) // { pi, mi } while the exercise picker is open
+  const coach = isCoach(me)
 
   if (!me) {
     return (
       <div className="page narrow">
         <PageHead title="Create" back />
-        <SignInPrompt text="Sign in as a coach to publish workouts." />
-      </div>
-    )
-  }
-  if (!isCoach(me)) {
-    return (
-      <div className="page narrow">
-        <PageHead title="Create" back />
-        <div className="card">
-          <p className="strong">Only coaches can publish workouts.</p>
-          <p className="muted small">Switch your account to Coach in Settings, or ask an admin.</p>
-        </div>
+        <SignInPrompt text="Sign in to create workouts." />
       </div>
     )
   }
@@ -88,6 +83,9 @@ export default function Editor({ id }) {
     setMove(pi, mi, { exerciseId: ex.id, name: ex.name, video: ex.video })
   }
 
+  // Only trainers can sell, and never a private workout
+  const paid = coach && !f.private && f.premium
+
   const validate = () => {
     const errs = []
     if (!f.name.trim()) errs.push('Add a name.')
@@ -95,7 +93,7 @@ export default function Editor({ id }) {
     if (moves.length === 0) errs.push('Add at least one move.')
     const badVideo = f.parts.flatMap((p) => p.moves).find((m) => m.video.trim() && !/^https?:\/\//i.test(m.video.trim()))
     if (badVideo) errs.push(`The video link for “${badVideo.name || 'a move'}” must start with https://`)
-    if (f.premium) {
+    if (paid) {
       if (!f.price.trim()) errs.push('Add a price for your premium workout.')
       if (!/^https?:\/\//.test(f.payLink.trim())) errs.push('Add a payment link starting with https://')
       if (moves.length < 3) errs.push('Premium workouts need at least 3 moves (buyers preview the first 2).')
@@ -138,13 +136,14 @@ export default function Editor({ id }) {
             })),
         }))
         .filter((p) => p.moves.length > 0),
-      premium: f.premium,
-      price: f.premium ? f.price.trim() : '',
-      payLink: f.premium ? f.payLink.trim() : '',
+      premium: paid,
+      price: paid ? f.price.trim() : '',
+      payLink: paid ? f.payLink.trim() : '',
+      private: !coach || !!f.private,
     }
     try {
       const newId = actions.saveWorkout(w)
-      notify(existing ? 'Workout updated' : 'Published! It’s now in the library.')
+      notify(existing ? 'Workout updated' : w.private ? 'Saved! Find it under Explore → Mine.' : 'Published! It’s now in the library.')
       go(`w/${newId}`)
     } catch {
       notify('Couldn’t save. Try smaller images.', 'error')
@@ -153,7 +152,8 @@ export default function Editor({ id }) {
 
   return (
     <form className="page narrow editor" onSubmit={publish}>
-      <PageHead title={existing ? 'Edit workout' : 'Create'} back />
+      <PageHead title={existing ? 'Edit workout' : coach ? 'Create' : 'Create my workout'} back />
+      {!coach && <p className="muted small">Build your own workout. It’s private: only you can see it, unless you share it with friends.</p>}
 
       {errors.length > 0 && (
         <div className="card error-card" role="alert">
@@ -263,21 +263,16 @@ export default function Editor({ id }) {
               <div className="move-editor-grid">
                 <ImagePicker value={m.image} onChange={(v) => setMove(pi, mi, { image: v })} label="Image" />
                 <div className="stack grow">
-                  <select value={m.exerciseId === null ? '__custom' : m.exerciseId} onChange={(e) => pickExercise(pi, mi, e.target.value)} aria-label="Exercise">
-                    <option value="" disabled>
-                      Pick a move…
-                    </option>
-                    {MUSCLES.map((mu) => (
-                      <optgroup key={mu} label={mu}>
-                        {EXERCISES.filter((x) => x.muscle === mu).map((x) => (
-                          <option key={x.id} value={x.id}>
-                            {x.name} ({x.equipment})
-                          </option>
-                        ))}
-                      </optgroup>
-                    ))}
-                    <option value="__custom">Custom move…</option>
-                  </select>
+                  <button type="button" className="xp-current" onClick={() => setPicking({ pi, mi })}>
+                    {m.exerciseId ? <MuscleThumb exerciseId={m.exerciseId} size={44} /> : <span className="xp-plus">＋</span>}
+                    <span className="grow">
+                      <span className="strong block">{m.exerciseId ? exerciseById[m.exerciseId]?.name : m.exerciseId === null ? 'My own exercise' : 'Choose an exercise'}</span>
+                      <span className="tiny">
+                        {m.exerciseId ? `${exerciseById[m.exerciseId]?.equipment} · ${exerciseById[m.exerciseId]?.muscles.join(', ')}` : 'Kettlebell, barbell, dumbbell, machine or bodyweight'}
+                      </span>
+                    </span>
+                    <span className="chev-right">›</span>
+                  </button>
                   {m.exerciseId !== '' && (
                     <input value={m.name} onChange={(e) => setMove(pi, mi, { name: e.target.value })} placeholder="Name shown, e.g. Front Rack Squat (L)" maxLength={50} aria-label="Move name" />
                   )}
@@ -312,6 +307,27 @@ export default function Editor({ id }) {
         + Add part
       </button>
 
+      {coach && (
+        <section className="card stack">
+          <span className="label">Who can see it</span>
+          <label className="check">
+            <input type="radio" name="visibility" checked={!f.private} onChange={() => set('private', false)} />
+            <span>
+              <span className="strong">Publish to the library</span>
+              <span className="muted small block">Members can find it, follow it and buy it if it’s paid.</span>
+            </span>
+          </label>
+          <label className="check">
+            <input type="radio" name="visibility" checked={!!f.private} onChange={() => set('private', true)} />
+            <span>
+              <span className="strong">Just for me</span>
+              <span className="muted small block">Private. You can still share it with friends.</span>
+            </span>
+          </label>
+        </section>
+      )}
+
+      {coach && !f.private && (
       <section className="card stack premium-box">
         <label className="check">
           <input type="checkbox" checked={f.premium} onChange={(e) => set('premium', e.target.checked)} />
@@ -333,10 +349,25 @@ export default function Editor({ id }) {
           </div>
         )}
       </section>
+      )}
 
       <div className="sticky-cta">
-        <button className="btn btn-primary big full">{existing ? 'Save changes' : 'Publish workout'}</button>
+        <button className="btn btn-primary big full">{existing ? 'Save changes' : f.private || !coach ? 'Save workout' : 'Publish workout'}</button>
       </div>
+
+      {picking && (
+        <ExercisePicker
+          onClose={() => setPicking(null)}
+          onPick={(ex) => {
+            pickExercise(picking.pi, picking.mi, ex.id)
+            setPicking(null)
+          }}
+          onCustom={() => {
+            pickExercise(picking.pi, picking.mi, '__custom')
+            setPicking(null)
+          }}
+        />
+      )}
     </form>
   )
 }
