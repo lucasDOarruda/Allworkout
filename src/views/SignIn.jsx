@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Avatar, ImagePicker, RoleBadge } from '../components/ui'
 import { PublicNav } from '../components/PublicChrome'
 
-// Device-only and demo accounts exist for local development only.
+// Device-only accounts exist for local development only.
 // On the live site the only way in is a real (Google) account.
 const DEV_ACCOUNTS = import.meta.env.DEV
 import { go, useStore } from '../store'
@@ -54,7 +54,7 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
   // Admins and Google-linked accounts sign in with Google only, so they aren't offered here
   const profiles = Object.values(db.users)
     .filter((u) => (u.role !== 'admin' && !u.googleUid) || u.id === me?.id)
-    .sort((a, b) => !!a.demo - !!b.demo || order[a.role] - order[b.role] || a.name.localeCompare(b.name))
+    .sort((a, b) => order[a.role] - order[b.role] || a.name.localeCompare(b.name))
 
   const finish = (msg, dest) => {
     const pending = takePending()
@@ -75,7 +75,8 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
 
   // Match a Google account to a member on this device, or create one
   const applyGoogleProfile = (g) => {
-    const users = Object.values(db.users)
+    // Live site: only Google members count, so sample and device-only profiles are dropped
+    const users = Object.values(db.users).filter((u) => !import.meta.env.PROD || u.googleUid)
     const existing = users.find((u) => u.googleUid === g.uid) || users.find((u) => u.email && u.email.toLowerCase() === g.email.toLowerCase())
     const admin = isAdminUid(g.uid)
     if (adminMode && !admin && existing?.role !== 'admin') {
@@ -83,6 +84,10 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
       setError(`${g.email} isn’t an admin account. Sign in with your admin Google account.`)
       return
     }
+    // Save the profile, contact details and sign-in to the cloud so admins can see who joined
+    const cloudRole = admin ? 'admin' : existing ? existing.role : role
+    import('../lib/cloud').then((c) => c.recordSignIn(g, cloudRole))
+    if (import.meta.env.PROD) actions.removeSampleAccounts()
     if (existing) {
       actions.signIn(existing.id)
       actions.updateProfile({ googleUid: g.uid, email: g.email, ...(existing.photo ? {} : { photo: g.photo }), ...(admin ? { role: 'admin' } : {}) })
@@ -166,6 +171,9 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
           </p>
         )}
         {!adminMode && <p className="tiny center">Already a member? Just continue with Google. This choice only applies to new accounts.</p>}
+        <p className="tiny center privacy-note">
+          We keep your name, email, photo and sign-in activity to run your account. Only you and the All Workout admin can see your email.
+        </p>
       </section>
 
       {DEV_ACCOUNTS && !adminMode && (
@@ -195,7 +203,7 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
             <span className="grow">
               <span className="strong">{u.name}</span> <RoleBadge role={u.role} />
               <span className="muted small block">
-                {u.demo ? 'Demo account' : u.email || 'Your account'}
+                {u.email || 'Account on this device'}
                 {me?.id === u.id ? ' · signed in' : ''}
               </span>
             </span>

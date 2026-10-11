@@ -6,10 +6,15 @@ import { FeeBar } from '../components/Fees'
 import { go, useStore } from '../store'
 import { FEES, coachPct, money, runningPct, salesTotals, splitSale } from '../lib/fees'
 import { computeStats, fmtDate, fmtDuration, fmtKg, timeAgo, weekKey, weekStart } from '../lib/utils'
+import { Crm, Traffic, memberStatus, useCloudAdmin } from './AdminCloud'
 
+// Members (CRM) and Traffic come from the cloud. "Device members" only lists accounts stored
+// in this browser, so it's shown in local development only.
 const SECTIONS = [
-  ['overview', 'Overview', 'chart'],
-  ['members', 'Members', 'users'],
+  ['overview', 'Overview', 'target'],
+  ['crm', 'Members', 'users'],
+  ['traffic', 'Traffic', 'chart'],
+  ...(import.meta.env.DEV ? [['members', 'Device members', 'note']] : []),
   ['coaching', 'Coaching', 'clipboard'],
   ['content', 'Content', 'layers'],
   ['revenue', 'Revenue', 'spark'],
@@ -35,6 +40,7 @@ function weeks12() {
 export default function Admin({ section }) {
   const { db, me, theme, setTheme, actions } = useStore()
   const tab = SECTIONS.some(([k]) => k === section) ? section : 'overview'
+  const cloud = useCloudAdmin()
   const pendingCount = db.coaching.filter((c) => c.status === 'pending').length
 
   return (
@@ -90,8 +96,13 @@ export default function Admin({ section }) {
           </span>
         </header>
 
-        {tab === 'overview' && <Overview />}
+        {tab === 'overview' && <Overview cloud={cloud} />}
+        {tab === 'crm' && <Crm cloud={cloud} />}
+        {tab === 'traffic' && <Traffic cloud={cloud} />}
         {tab === 'members' && <Members />}
+        {['coaching', 'content', 'revenue', 'activity'].includes(tab) && (
+          <p className="notice">Workouts, sessions and coaching are still stored per browser, so this shows the data in this browser.</p>
+        )}
         {tab === 'coaching' && <Coaching />}
         {tab === 'content' && <Content />}
         {tab === 'revenue' && <Revenue />}
@@ -125,7 +136,53 @@ function Panel({ title, action, children, className = '' }) {
 
 // ---------- Overview ----------
 
-function Overview() {
+function CloudSummary({ cloud }) {
+  if (cloud.loading) return <p className="muted small">Loading members and traffic…</p>
+  if (cloud.error)
+    return (
+      <p className="notice">
+        Members and traffic need the cloud database: {cloud.error} See the Members tab for setup steps.
+      </p>
+    )
+  const now = Date.now()
+  const members = cloud.members || []
+  const today = (cloud.traffic || []).find((t) => t.day === new Date().toLocaleDateString('en-CA')) || {}
+  const newest = [...members].sort((a, b) => (b.createdAt?.getTime() || 0) - (a.createdAt?.getTime() || 0)).slice(0, 5)
+  return (
+    <>
+      <div className="adm-kpis">
+        <Kpi label="Members" value={members.length} sub={`+${members.filter((m) => (m.createdAt?.getTime() || 0) > now - 7 * 86400000).length} in 7 days`} />
+        <Kpi label="Online now" value={members.filter((m) => memberStatus(m)[0] === 'online').length} tone="lime" />
+        <Kpi label="Active (7 days)" value={members.filter((m) => (m.lastSeenAt?.getTime() || 0) > now - 7 * 86400000).length} />
+        <Kpi label="Views today" value={today.views || 0} sub={`${today.visitors || 0} visitors`} />
+        <Kpi label="Sign-ins today" value={today.signins || 0} />
+      </div>
+      <Panel title="Newest members" action={<a href="#/admin/crm">All members</a>}>
+        {newest.length === 0 ? (
+          <p className="muted small">Nobody has signed in yet.</p>
+        ) : (
+          <ul className="adm-list">
+            {newest.map((m) => (
+              <li key={m.uid}>
+                <Avatar user={{ name: m.name, photo: m.photo, color: '#3a4d00' }} size={30} />
+                <span className="grow">
+                  <span className="strong">{m.name}</span> <RoleBadge role={m.role} />
+                  <span className="tiny block">
+                    {m.email} · joined {m.createdAt ? timeAgo(m.createdAt.toISOString()) : '–'}
+                  </span>
+                </span>
+                <span className={`crm-status ${memberStatus(m)[0]}`}>{memberStatus(m)[1]}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </Panel>
+      <h2 className="section-title">Training activity (stored in this browser)</h2>
+    </>
+  )
+}
+
+function Overview({ cloud }) {
   const { db, workouts } = useStore()
   const data = useMemo(() => {
     const users = Object.values(db.users)
@@ -181,6 +238,7 @@ function Overview() {
   const delta = data.sessionsWeek - data.sessionsLast
   return (
     <>
+      <CloudSummary cloud={cloud} />
       <div className="adm-kpis">
         <Kpi label="Members" value={data.users} sub={`+${data.newUsers} in the last 7 days`} />
         <Kpi label="Active this week" value={data.active} sub={`${data.users ? Math.round((data.active / data.users) * 100) : 0}% of members`} />
@@ -330,7 +388,7 @@ function Members() {
                     <Avatar user={u} size={32} />
                     <span>
                       <span className="strong block">{u.name}</span>
-                      <span className="tiny">{u.email || (u.demo ? 'Demo account' : 'Local account')}</span>
+                      <span className="tiny">{u.email || 'Account on this device'}</span>
                     </span>
                   </span>
                 </td>

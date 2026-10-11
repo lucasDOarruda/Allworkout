@@ -10,6 +10,7 @@ if (/\/admin$/.test(path) && !location.hash) history.replaceState(null, '', `${p
 
 // Firebase loads after the app has started so it doesn't slow the first screen
 import('./lib/firebase').then(({ trackScreen }) => {
+  import('./lib/cloud').then((c) => c.trackVisit())
   trackScreen(location.hash)
   window.addEventListener('hashchange', () => trackScreen(location.hash))
 })

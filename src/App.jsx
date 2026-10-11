@@ -39,6 +39,17 @@ export default function App() {
   const { me, db, actions } = useStore()
   const [sheet, setSheet] = useState(false)
 
+  // Signed-in members send a heartbeat so admins can see who's online
+  useEffect(() => {
+    if (!me?.googleUid) return
+    let stop = () => {}
+    import('./lib/cloud').then((c) => {
+      c.startPresence(me)
+      stop = c.stopPresence
+    })
+    return () => stop()
+  }, [me?.googleUid]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // On the live site only real (Google) accounts may use the app
   useEffect(() => {
     if (import.meta.env.PROD && me && !me.googleUid) actions.signOut()

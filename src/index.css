@@ -5365,6 +5365,69 @@ code {
   }
 }
 
+/* CRM */
+.crm-status {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 800;
+  background: var(--surface-2);
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.crm-status.online {
+  background: #22c55e;
+  color: #0d0e0a;
+}
+.crm-status.new {
+  background: var(--lime);
+  color: #0d0e0a;
+}
+.crm-status.active {
+  background: color-mix(in srgb, var(--lime) 30%, var(--surface));
+  color: var(--text);
+}
+.crm-status.quiet {
+  background: color-mix(in srgb, #f59e0b 25%, var(--surface));
+  color: var(--text);
+}
+.crm-status.inactive {
+  background: color-mix(in srgb, var(--danger) 18%, var(--surface));
+  color: var(--text);
+}
+.crm-facts {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 0;
+}
+.crm-facts div {
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--surface-2);
+}
+.crm-facts dt {
+  font-size: 0.72rem;
+  color: var(--text-3);
+  font-weight: 600;
+}
+.crm-facts dd {
+  margin: 0;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+.cloud-setup ol {
+  padding-left: 20px;
+  color: var(--text-2);
+}
+.cloud-setup ol li {
+  margin-bottom: 6px;
+}
+.privacy-note {
+  opacity: 0.8;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;

@@ -229,13 +229,13 @@ function AppSettings() {
         <button
           className="btn btn-danger"
           onClick={() => {
-            if (!confirm('Reset everything on this device back to the demo data?')) return
-            actions.resetDemo()
-            notify('Reset to demo data')
+            if (!confirm('Clear everything stored on this device? Your Google account stays; you’ll need to sign in again.')) return
+            actions.clearLocalData()
+            notify('Local data cleared')
             go('welcome')
           }}
         >
-          Reset
+          Clear local data
         </button>
       </div>
       <p className="tiny">Everything is stored locally in this browser. Export a backup to move it to another device.</p>

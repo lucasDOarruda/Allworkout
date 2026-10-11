@@ -7,12 +7,64 @@ import { AVATAR_COLORS, uid } from './lib/utils'
 const KEY = 'all-workout:db:v3'
 const THEME_KEY = 'all-workout:theme:v4' // v4: dark is the default for everyone
 
+const isDemo = (id) => typeof id === 'string' && id.startsWith('demo-')
+
+// Older versions shipped demo members (ids starting "demo-") with demo sessions, comments,
+// coaching links and workouts. Remove all of it, keeping anything real members created.
+export function removeDemoData(d) {
+  return removeUsers(d, (id, u) => isDemo(id) || u?.demo)
+}
+
+// On the live site every member signs in with Google, so any profile without a Google
+// account is sample data or a leftover from an older version. Removed at the first sign-in.
+export function removeSampleAccounts(d) {
+  return removeUsers(d, (id, u) => isDemo(id) || u?.demo || !u?.googleUid)
+}
+
+// Remove the users matching drop(id, user) and every record tied to them
+function removeUsers(d, drop) {
+  const demoIds = new Set(Object.keys(d.users || {}).filter((id) => drop(id, d.users[id])))
+  if (!demoIds.size && !d.sessions?.some((s) => isDemo(s.userId))) return d
+  const gone = (id) => demoIds.has(id) || isDemo(id)
+  const users = Object.fromEntries(
+    Object.entries(d.users || {})
+      .filter(([id]) => !gone(id))
+      .map(([id, u]) => [id, { ...u, partners: (u.partners || []).filter((p) => !gone(p)) }]),
+  )
+  const workouts = (d.workouts || [])
+    .filter((w) => !gone(w.authorId))
+    .map((w) => ({ ...w, unlocked: (w.unlocked || []).filter((x) => !gone(x)), requests: (w.requests || []).filter((x) => !gone(x)) }))
+  const workoutIds = new Set(workouts.map((w) => w.id))
+  const keepWorkout = (id) => workoutIds.has(id) || String(id).startsWith('off-')
+  const sessions = (d.sessions || []).filter((s) => !gone(s.userId)).map((s) => ({ ...s, partnerIds: (s.partnerIds || []).filter((p) => !gone(p)) }))
+  const sessionIds = new Set(sessions.map((s) => s.id))
+  const cleanList = (obj, keep) =>
+    Object.fromEntries(
+      Object.entries(obj || {})
+        .filter(([k]) => keep(k))
+        .map(([k, ids]) => [k, (ids || []).filter((x) => !gone(x))]),
+    )
+  return {
+    ...d,
+    currentUserId: gone(d.currentUserId) ? null : d.currentUserId,
+    users,
+    workouts,
+    sessions,
+    comments: (d.comments || []).filter((c) => !gone(c.userId) && (c.workoutId ? keepWorkout(c.workoutId) : sessionIds.has(c.sessionId))),
+    likes: cleanList(d.likes, keepWorkout),
+    kudos: cleanList(d.kudos, (k) => sessionIds.has(k)),
+    enrollments: Object.fromEntries(Object.entries(d.enrollments || {}).filter(([k]) => !gone(k))),
+    coaching: (d.coaching || []).filter((c) => !gone(c.coachId) && !gone(c.clientId)),
+    assignments: (d.assignments || []).filter((a) => !gone(a.coachId) && !gone(a.clientId) && keepWorkout(a.workoutId)),
+  }
+}
+
 function load() {
   try {
     const raw = localStorage.getItem(KEY)
-    if (raw) return JSON.parse(raw)
+    if (raw) return removeDemoData(JSON.parse(raw))
   } catch {
-    /* corrupt or unavailable storage, fall back to seed */
+    /* corrupt or unavailable storage, fall back to an empty start */
   }
   return buildSeed()
 }
@@ -269,7 +321,8 @@ export function StoreProvider({ children }) {
         }),
       deleteSession: (id) => mutate((d) => void (d.sessions = d.sessions.filter((s) => s.id !== id))),
       replaceDb: (next) => setDb(next),
-      resetDemo: () => setDb(buildSeed()),
+      clearLocalData: () => setDb(buildSeed()),
+      removeSampleAccounts: () => setDb((d) => removeSampleAccounts(d)),
     }),
     [mutate],
   )
