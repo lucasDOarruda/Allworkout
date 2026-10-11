@@ -19,7 +19,7 @@ const SECTIONS = [
   ['messages', 'Messages', 'chat'],
   ['traffic', 'Traffic', 'chart'],
   ...(import.meta.env.DEV ? [['members', 'Device members', 'note']] : []),
-  ['coaching', 'Coaching', 'clipboard'],
+  ['coaching', 'Training links', 'clipboard'],
   ['content', 'Content', 'layers'],
   ['revenue', 'Revenue', 'spark'],
   ['activity', 'Activity', 'flame'],
@@ -113,7 +113,7 @@ export default function Admin({ section }) {
         {tab === 'messages' && <Messages data={messages} />}
         {tab === 'members' && <Members />}
         {['coaching', 'content', 'revenue', 'activity'].includes(tab) && (
-          <p className="notice">Workouts, sessions and coaching are still stored per browser, so this shows the data in this browser.</p>
+          <p className="notice">Workouts, sessions and trainer links are still stored per browser, so this shows the data in this browser.</p>
         )}
         {tab === 'coaching' && <Coaching />}
         {tab === 'content' && <Content />}
@@ -221,7 +221,7 @@ function Overview({ cloud }) {
       .sort((a, b) => b.value - a.value)
       .slice(0, 5)
 
-    const ROLE_LABEL = { client: 'Clients', coach: 'Coaches', admin: 'Admins' }
+    const ROLE_LABEL = { client: 'Members', coach: 'Trainers', admin: 'Admins' }
     const roles = ['client', 'coach', 'admin'].map((r) => ({ key: r, label: ROLE_LABEL[r], value: users.filter((u) => u.role === r).length }))
     const coached = new Set(db.coaching.filter((c) => c.status === 'active').map((c) => c.clientId))
     const seeking = users.filter((u) => u.role === 'client' && u.seeking && !coached.has(u.id))
@@ -255,9 +255,9 @@ function Overview({ cloud }) {
         <Kpi label="Members" value={data.users} sub={`+${data.newUsers} in the last 7 days`} />
         <Kpi label="Active this week" value={data.active} sub={`${data.users ? Math.round((data.active / data.users) * 100) : 0}% of members`} />
         <Kpi label="Sessions this week" value={data.sessionsWeek} sub={`${delta >= 0 ? '+' : '−'}${Math.abs(delta)} vs last week`} tone={delta >= 0 ? 'up' : 'down'} />
-        <Kpi label="Coaches" value={data.coaches} sub={`${data.coached} clients coached`} />
-        <Kpi label="Seeking a coach" value={data.seeking.length} tone={data.seeking.length ? 'lime' : ''} sub="Clients without one" />
-        <Kpi label="Community workouts" value={data.community} sub="Published by coaches" />
+        <Kpi label="Trainers" value={data.coaches} sub={`${data.coached} members training with one`} />
+        <Kpi label="Seeking a trainer" value={data.seeking.length} tone={data.seeking.length ? 'lime' : ''} sub="Members without one" />
+        <Kpi label="Community workouts" value={data.community} sub="Published by trainers" />
       </div>
 
       <div className="adm-grid2">
@@ -274,7 +274,7 @@ function Overview({ cloud }) {
           <ul className="adm-todo">
             <li>
               <span className="adm-todo-n">{data.pending.length}</span>
-              <span className="grow">Coach requests waiting for a reply</span>
+              <span className="grow">Trainer requests waiting for a reply</span>
               <a href="#/admin/coaching">View</a>
             </li>
             <li>
@@ -284,7 +284,7 @@ function Overview({ cloud }) {
             </li>
             <li>
               <span className="adm-todo-n">{data.seeking.length}</span>
-              <span className="grow">Clients looking for a coach</span>
+              <span className="grow">Members looking for a trainer</span>
               <a href="#/admin/coaching">View</a>
             </li>
           </ul>
@@ -359,10 +359,10 @@ function Members() {
       </div>
       <Chips
         options={[
-          ['client', 'Clients'],
-          ['coach', 'Coaches'],
+          ['client', 'Members'],
+          ['coach', 'Trainers'],
           ['admin', 'Admins'],
-          ['seeking', 'Seeking a coach'],
+          ['seeking', 'Seeking a trainer'],
         ]}
         value={role}
         onChange={setRole}
@@ -389,7 +389,7 @@ function Members() {
                   )}
                 </th>
               ))}
-              <th className="adm-hide-sm">Coach</th>
+              <th className="adm-hide-sm">Trainer</th>
             </tr>
           </thead>
           <tbody>
@@ -428,7 +428,7 @@ function Members() {
             notify(`${db.users[open].name} is now ${r === 'admin' ? 'an' : 'a'} ${r}`)
           }}
           onDelete={() => {
-            if (!confirm(`Remove ${db.users[open].name}? Their coaching links go too.`)) return
+            if (!confirm(`Remove ${db.users[open].name}? Their trainer links go too.`)) return
             const name = db.users[open].name
             actions.deleteUser(open)
             setOpen(null)
@@ -470,8 +470,8 @@ function MemberDrawer({ user, isMe, onClose, onRole, onDelete }) {
         <label className="field">
           <span>Role</span>
           <select value={user.role} disabled={isMe} onChange={(e) => onRole(e.target.value)}>
-            <option value="client">Client</option>
-            <option value="coach">Coach</option>
+            <option value="client">Member</option>
+            <option value="coach">Trainer</option>
             <option value="admin">Admin</option>
           </select>
           {isMe && <span className="tiny">You can’t change your own role.</span>}
@@ -484,7 +484,7 @@ function MemberDrawer({ user, isMe, onClose, onRole, onDelete }) {
         </div>
         {user.role === 'client' ? (
           <p className="small">
-            <span className="strong">Coach:</span> {link ? `${db.users[link.coachId]?.name || '?'} (${link.status})` : user.seeking ? 'Looking for a coach' : 'None'}
+            <span className="strong">Trainer:</span> {link ? `${db.users[link.coachId]?.name || '?'} (${link.status})` : user.seeking ? 'Looking for a trainer' : 'None'}
             {user.goals && (
               <>
                 <br />
@@ -494,7 +494,7 @@ function MemberDrawer({ user, isMe, onClose, onRole, onDelete }) {
           </p>
         ) : (
           <p className="small">
-            <span className="strong">{clients}</span> client{clients === 1 ? '' : 's'} · <span className="strong">{published.length}</span> workout
+            <span className="strong">{clients}</span> member{clients === 1 ? '' : 's'} trained · <span className="strong">{published.length}</span> workout
             {published.length === 1 ? '' : 's'} published
           </p>
         )}
@@ -539,7 +539,7 @@ function Coaching() {
       <div className="adm-kpis">
         <Kpi label="Active links" value={active.length} />
         <Kpi label="Pending requests" value={pending.length} tone={pending.length ? 'lime' : ''} />
-        <Kpi label="Clients coached" value={coached.size} />
+        <Kpi label="Members with a trainer" value={coached.size} />
         <Kpi label="Assignments" value={db.assignments.length} />
       </div>
       <div className="adm-grid2">
@@ -562,7 +562,7 @@ function Coaching() {
                     className="btn btn-primary small"
                     onClick={() => {
                       actions.respondCoaching(c.id, true)
-                      notify('Coaching link approved')
+                      notify('Trainer link approved')
                     }}
                   >
                     Approve
@@ -572,7 +572,7 @@ function Coaching() {
             </ul>
           )}
         </Panel>
-        <Panel title="Clients looking for a coach">
+        <Panel title="Members looking for a trainer">
           {seeking.length === 0 ? (
             <p className="muted small">Nobody right now.</p>
           ) : (
@@ -590,7 +590,7 @@ function Coaching() {
           )}
         </Panel>
       </div>
-      <Panel title="Coaches">
+      <Panel title="Trainers">
         <BarList
           rows={coaches.map((c) => ({
             key: c.id,
@@ -598,8 +598,8 @@ function Coaching() {
             sub: `${db.assignments.filter((a) => a.coachId === c.id).length} assignments · ${c.specialties || 'No specialties'}`,
             value: active.filter((l) => l.coachId === c.id).length,
           }))}
-          format={(v) => `${v} client${v === 1 ? '' : 's'}`}
-          empty="No coaches yet."
+          format={(v) => `${v} member${v === 1 ? '' : 's'}`}
+          empty="No trainers yet."
         />
       </Panel>
     </>
@@ -733,7 +733,7 @@ function Revenue() {
         <Kpi label={`Platform fee (${FEES.platformPct}%)`} value={money(t.fee)} />
         <Kpi label={`Running & payments (${runningPct}%)`} value={money(t.running)} />
         <Kpi label={`Community health fund (${FEES.communityPct}%)`} value={money(t.community)} tone="lime" />
-        <Kpi label={`Paid to coaches (${coachPct}%)`} value={money(t.coach)} />
+        <Kpi label={`Paid to trainers (${coachPct}%)`} value={money(t.coach)} />
       </div>
       <div className="adm-grid2">
         <Panel title="Sales">
@@ -747,7 +747,7 @@ function Revenue() {
                   <span className="grow">
                     <span className="strong">{buyer?.name || 'Removed'}</span> bought {w.name}
                     <span className="tiny block">
-                      Coach {money(split.coach, split.symbol)} · fee {money(split.fee, split.symbol)} · community {money(split.community, split.symbol)}
+                      Trainer {money(split.coach, split.symbol)} · fee {money(split.fee, split.symbol)} · community {money(split.community, split.symbol)}
                     </span>
                   </span>
                   <strong>{money(split.amount, split.symbol)}</strong>
@@ -766,7 +766,7 @@ function Revenue() {
                   <Avatar user={buyer} size={30} />
                   <span className="grow">
                     <span className="strong">{buyer?.name || 'Removed'}</span> says they paid for {w.name}
-                    <span className="tiny block">Coach: {db.users[w.authorId]?.name || 'Unknown'}</span>
+                    <span className="tiny block">Trainer: {db.users[w.authorId]?.name || 'Unknown'}</span>
                   </span>
                   {buyer && (
                     <button

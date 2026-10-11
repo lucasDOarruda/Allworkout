@@ -64,7 +64,7 @@ const TERMS = [
   [
     'Personal trainers',
     <>
-      <p>Only licensed personal trainers approved by us can publish workouts, sell them or take on clients. To apply, a trainer must:</p>
+      <p>Only licensed personal trainers approved by us can publish workouts, sell them or train members. To apply, a trainer must:</p>
       <ul>
         <li>hold at least a Certificate IV in Fitness, or a higher qualification such as an exercise science degree or accreditation as an exercise physiologist;</li>
         <li>have a valid Australian Business Number (ABN);</li>
@@ -77,8 +77,8 @@ const TERMS = [
         discretion. Our checks rely on the documents provided, so we can’t guarantee a trainer’s qualifications, advice or services.
       </p>
       <p>
-        Approved trainers are independent businesses, not our employees or agents. Each trainer is responsible for their workouts and advice, for screening clients before
-        training them, for working within their scope of practice and referring clients to health professionals when needed, for keeping their qualification, first aid and
+        Approved trainers are independent businesses, not our employees or agents. Each trainer is responsible for their workouts and advice, for screening members before
+        training them, for working within their scope of practice and referring members to health professionals when needed, for keeping their qualification, first aid and
         insurance current (and telling us if any of them lapse), and for their own tax and GST obligations. We may suspend or remove trainer access if requirements aren’t met
         or these terms are breached.
       </p>

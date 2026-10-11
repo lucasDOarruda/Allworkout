@@ -7,7 +7,7 @@ import { fmtDate, timeAgo, weekKey, weekStart } from '../lib/utils'
 export default function Clients() {
   const { db, me, workouts, actions, notify } = useStore()
   if (!me) return <div className="page narrow"><SignInPrompt /></div>
-  if (!isCoach(me)) return <div className="page narrow"><Empty icon="users" title="Only coaches have clients" /></div>
+  if (!isCoach(me)) return <div className="page narrow"><Empty icon="users" title="Only trainers have members" /></div>
 
   const links = db.coaching.filter((c) => c.coachId === me.id)
   const pending = links.filter((c) => c.status === 'pending')
@@ -17,7 +17,7 @@ export default function Clients() {
 
   return (
     <div className="page narrow">
-      <PageHead title="Clients">
+      <PageHead title="My members">
         <button className="btn btn-primary small" onClick={() => go('create')}>
           + Workout
         </button>
@@ -44,7 +44,7 @@ export default function Clients() {
                     className="btn btn-primary small"
                     onClick={() => {
                       actions.respondCoaching(l.id, true)
-                      notify(`${u.name} is now your client`)
+                      notify(`${u.name} is now training with you`)
                     }}
                   >
                     Accept
@@ -68,10 +68,10 @@ export default function Clients() {
         </section>
       )}
 
-      <h2 className="section-title display">My clients ({active.length})</h2>
+      <h2 className="section-title display">My members ({active.length})</h2>
       {active.length === 0 ? (
-        <Empty icon="users" title="No clients yet">
-          Clients can find you in Library → Coaches.
+        <Empty icon="users" title="No members yet">
+          Members can find you in Explore → Trainers.
         </Empty>
       ) : (
         active.map((l) => <ClientCard key={l.id} link={l} />)
@@ -79,8 +79,8 @@ export default function Clients() {
 
       {seeking.length > 0 && (
         <section className="card">
-          <span className="label">Looking for a coach</span>
-          <p className="muted small">These members said they’re open to coaching. They can request you from your profile.</p>
+          <span className="label">Looking for a trainer</span>
+          <p className="muted small">These members said they’re looking for a trainer. They can request you from your profile.</p>
           <ul className="people">
             {seeking.map((u) => (
               <li key={u.id}>
@@ -173,7 +173,7 @@ function ClientCard({ link }) {
                 </option>
               ))}
             </select>
-            <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note for your client (optional)" maxLength={120} />
+            <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note for your member (optional)" maxLength={120} />
             <button className="btn btn-primary" disabled={!workoutId}>
               Assign
             </button>

@@ -24,7 +24,7 @@ export default function You({ sub }) {
         </header>
         <section className="week-card">
           <p className="week-eyebrow">Solo mode</p>
-          <p className="week-title">Sign in to track progress, add partners and follow a coach.</p>
+          <p className="week-title">Sign in to track progress, add partners and follow a trainer.</p>
           <button className="btn btn-white" onClick={() => go('signin')}>
             Sign in or sign up
           </button>
@@ -80,14 +80,14 @@ export default function You({ sub }) {
         ) : (
           <div>
             <span className="ps-n">{me.role === 'coach' ? clients : published}</span>
-            <span className="ps-l">{me.role === 'coach' ? 'Clients' : 'Workouts'}</span>
+            <span className="ps-l">{me.role === 'coach' ? 'Members' : 'Workouts'}</span>
           </div>
         )}
       </div>
 
       {me.role === 'coach' && (
         <button className="card nav-card" onClick={() => go('clients')}>
-          <span>Coach hub · clients & sales</span>
+          <span>Trainer hub · members & sales</span>
           <span className="chev-right">›</span>
         </button>
       )}
@@ -101,7 +101,7 @@ export default function You({ sub }) {
                 ? 'Trainer application · needs changes'
                 : me.trainerStatus === 'apply'
                   ? 'Finish your trainer application'
-                  : 'Are you a personal trainer? Apply to coach'}
+                  : 'Are you a personal trainer? Apply to train members'}
           </span>
           <span className="chev-right">›</span>
         </button>

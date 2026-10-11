@@ -68,7 +68,7 @@ export default function App() {
         if (status !== (me.trainerStatus || null)) patch.trainerStatus = status
         if (!Object.keys(patch).length) return
         actions.updateProfile(patch)
-        if (patch.role === 'coach') notify('You’re approved as a trainer. Coach tools are on.')
+        if (patch.role === 'coach') notify('You’re approved as a trainer. Trainer tools are on.')
         else if (patch.role === 'client' && me.role === 'coach') notify('Trainer tools are off until an admin approves your application.')
       })
     return () => {
@@ -175,7 +175,7 @@ export default function App() {
     <a href={`#/${k}`} className={active === k ? 'on' : ''} aria-current={active === k ? 'page' : undefined}>
       <span className="tab-icon">
         <TabIcon d={ICON[k]} />
-        {k === 'you' && pending > 0 && <span className="tab-dot" aria-label={`${pending} client requests`} />}
+        {k === 'you' && pending > 0 && <span className="tab-dot" aria-label={`${pending} member requests`} />}
       </span>
       {label}
     </a>
@@ -234,7 +234,7 @@ function StartSheet({ onClose }) {
   const upNext = [
     inProgress && { photo: 'barbell', eyebrow: 'Continue', title: byId[inProgress[0]].name, sub: `${inProgress[1].done.length} of ${byId[inProgress[0]].parts.length} parts done`, path: `w/${inProgress[0]}` },
     nextDay && byId[nextDay.workoutId] && { photo: 'class', eyebrow: `Today’s plan · week ${nextDay.week + 1}, day ${nextDay.day + 1}`, title: byId[nextDay.workoutId].name, sub: prog.name, path: `w/${nextDay.workoutId}` },
-    assigned && byId[assigned.workoutId] && { photo: 'coach', eyebrow: 'From your coach', title: byId[assigned.workoutId].name, sub: assigned.note, path: `w/${assigned.workoutId}` },
+    assigned && byId[assigned.workoutId] && { photo: 'coach', eyebrow: 'From your trainer', title: byId[assigned.workoutId].name, sub: assigned.note, path: `w/${assigned.workoutId}` },
   ].filter(Boolean)
 
   const tiles = [
@@ -245,7 +245,7 @@ function StartSheet({ onClose }) {
       : { photo: 'dumbbells', icon: 'plus', title: 'Build my own', sub: 'Pick exercises, sets and reps', path: 'create' },
     isCoachUser
       ? { photo: 'dumbbells', icon: 'plus', title: 'Create a workout', sub: 'Publish free or paid', path: 'create' }
-      : { photo: 'coach', icon: 'users', title: 'Find a coach', sub: 'Get a plan made for you', path: 'explore/coaches' },
+      : { photo: 'coach', icon: 'users', title: 'Find a trainer', sub: 'Get a plan made for you', path: 'explore/coaches' },
   ]
 
   return (

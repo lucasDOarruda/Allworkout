@@ -255,4 +255,6 @@ export function ImagePicker({ value, onChange, label = 'Photo', round = false })
   )
 }
 
-export const RoleBadge = ({ role }) => <span className={`role-badge role-${role}`}>{role}</span>
+// Roles are stored as client / coach; people see member / trainer
+const ROLE_NAMES = { client: 'member', coach: 'trainer', admin: 'admin' }
+export const RoleBadge = ({ role }) => <span className={`role-badge role-${role}`}>{ROLE_NAMES[role] || role}</span>

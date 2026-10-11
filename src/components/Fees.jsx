@@ -4,7 +4,7 @@ import { FEES, coachPct, money, runningPct, splitSale } from '../lib/fees'
 export function FeeBar({ price }) {
   const s = price ? splitSale(price) : null
   const rows = [
-    ['coach', 'Coach', coachPct, s && money(s.coach, s.symbol)],
+    ['coach', 'Trainer', coachPct, s && money(s.coach, s.symbol)],
     ['running', 'Running the app & payments', runningPct, s && money(s.running, s.symbol)],
     ['community', 'Community health awareness', FEES.communityPct, s && money(s.community, s.symbol)],
   ]

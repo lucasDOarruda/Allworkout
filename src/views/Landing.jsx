@@ -28,7 +28,7 @@ export default function Landing() {
               <br />
               <span>Track every rep.</span>
             </h1>
-            <p className="l-lede">Follow coaches, train with friends and let the timer talk you through every round.</p>
+            <p className="l-lede">Follow trainers, train with friends and let the timer talk you through every round.</p>
             <div className="row gap-s wrap">
               <button className="btn btn-primary big" onClick={start}>
                 {me ? 'Open the app →' : 'Join for free →'}
@@ -78,7 +78,7 @@ export default function Landing() {
           <div>
             <p className="l-eyebrow">Contact</p>
             <h2>Questions? Talk to us.</h2>
-            <p className="l-lede">Partnerships, support, or you’re a personal trainer who wants to coach on All Workout.</p>
+            <p className="l-lede">Partnerships, support, or you’re a personal trainer who wants to train members on All Workout.</p>
           </div>
           <button className="btn btn-outline-white big" onClick={openContact}>
             Contact us

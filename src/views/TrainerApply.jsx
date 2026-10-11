@@ -44,7 +44,7 @@ export default function TrainerApply() {
   const close = () => go(me?.role === 'coach' ? 'you' : 'home')
 
   let body
-  if (me?.role === 'admin') body = <StatusCard icon="check" title="You’re an admin" text="Admins already have every coach tool." onClose={close} />
+  if (me?.role === 'admin') body = <StatusCard icon="check" title="You’re an admin" text="Admins already have every trainer tool." onClose={close} />
   else if (access === undefined) body = <p className="muted center">Loading your application…</p>
   else if (!me?.googleUid)
     body = <StatusCard icon="lock" title="Sign in with Google first" text="Trainer applications are linked to your Google account." onClose={close} />
@@ -66,13 +66,13 @@ export default function TrainerApply() {
       <StatusCard
         icon="timer"
         title="Application received"
-        text="An admin is checking your qualification, ABN, first aid and insurance. Coach tools switch on as soon as you’re approved. Until then you can train as a member."
+        text="An admin is checking your qualification, ABN, first aid and insurance. Trainer tools switch on as soon as you’re approved. Until then you can train as a member."
         onClose={close}
       />
     )
   else if (status === 'approved')
     body = (
-      <StatusCard icon="check" title="You’re an approved trainer" text="You can publish free and paid workouts and take on clients." onClose={close}>
+      <StatusCard icon="check" title="You’re an approved trainer" text="You can publish free and paid workouts and train members." onClose={close}>
         <button className="btn btn-primary big" onClick={() => go('create')}>
           Create a workout
         </button>
@@ -189,7 +189,7 @@ function ApplyForm({ me, previous, onSent }) {
   return (
     <form className="apply-form" onSubmit={submit} noValidate>
       <p className="apply-intro">
-        Only licensed personal trainers can publish workouts, sell them and coach clients on All Workout. Tell us about your qualification, business and cover. An admin checks every
+        Only licensed personal trainers can publish workouts, sell them and train members on All Workout. Tell us about your qualification, business and cover. An admin checks every
         application before approving it. Only you and the admin can see these details.
       </p>
       {previous?.status === 'rejected' && previous.reviewNote && <p className="notice">Admin note: {previous.reviewNote}</p>}
@@ -295,7 +295,7 @@ function ApplyForm({ me, previous, onSent }) {
       </fieldset>
 
       <fieldset>
-        <legend>Your coaching</legend>
+        <legend>Your training</legend>
         <div className="apply-grid">
           <Field label="Specialties (optional)" wide>
             <input value={a.specialties} onChange={set('specialties')} placeholder="e.g. strength, kettlebells, pre and post natal" maxLength={120} />

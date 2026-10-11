@@ -43,7 +43,7 @@ export function Trainers({ apps: data }) {
   return (
     <>
       <p className="notice">
-        Only approved trainers can publish workouts, sell them and take on clients. Check each certificate, ABN, first aid and insurance before approving.
+        Only approved trainers can publish workouts, sell them and train members. Check each certificate, ABN, first aid and insurance before approving.
       </p>
       <div className="adm-toolbar">
         <Chips

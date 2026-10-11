@@ -129,7 +129,7 @@ export function Crm({ cloud }) {
           ['active', `Active (${counts.active})`],
           ['quiet', `Quiet (${counts.quiet})`],
           ['inactive', `Inactive (${counts.inactive})`],
-          ['coach', 'Coaches'],
+          ['coach', 'Trainers'],
           ...GOALS.filter(([g]) => (cloud.members || []).some((m) => m.goal === g)).map(([g, l]) => [g, l]),
         ]}
         value={status}
@@ -319,8 +319,8 @@ function CrmDrawer({ member: m, onClose, onSaved }) {
         <label className="field">
           <span>Role</span>
           <select value={m.role} onChange={(e) => changeRole(e.target.value)}>
-            <option value="client">Client</option>
-            <option value="coach">Coach</option>
+            <option value="client">Member</option>
+            <option value="coach">Trainer</option>
             <option value="admin">Admin</option>
           </select>
         </label>
@@ -333,7 +333,7 @@ function CrmDrawer({ member: m, onClose, onSaved }) {
           </label>
           <label className="field grow2">
             <span>Tags (comma separated)</span>
-            <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="vip, coach-lead" maxLength={200} />
+            <input value={tags} onChange={(e) => setTags(e.target.value)} placeholder="vip, trainer-lead" maxLength={200} />
           </label>
         </div>
         <button
@@ -365,7 +365,7 @@ function CrmDrawer({ member: m, onClose, onSaved }) {
             setNote('')
           }}
         >
-          <textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Called about coaching, follow up next week…" maxLength={1000} />
+          <textarea rows={2} value={note} onChange={(e) => setNote(e.target.value)} placeholder="Called about training, follow up next week…" maxLength={1000} />
           <button className="btn btn-primary small" disabled={!note.trim()}>
             Add note
           </button>

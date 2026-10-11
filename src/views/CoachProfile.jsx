@@ -5,7 +5,7 @@ import { safeUrl } from '../lib/utils'
 export default function CoachProfile({ id }) {
   const { db, me, workouts, actions, notify } = useStore()
   const coach = db.users[id]
-  if (!coach || (coach.role !== 'coach' && coach.role !== 'admin')) return <Empty icon="info" title="Coach not found" />
+  if (!coach || (coach.role !== 'coach' && coach.role !== 'admin')) return <Empty icon="info" title="Trainer not found" />
 
   const theirs = workouts.filter((w) => w.authorId === coach.id && !w.private)
   const free = theirs.filter((w) => !w.premium)
@@ -16,14 +16,14 @@ export default function CoachProfile({ id }) {
 
   const request = () => {
     if (!me) return go('signin')
-    if (myLink && !isMine && !confirm(`You already have a coach. Switch to ${coach.name}?`)) return
+    if (myLink && !isMine && !confirm(`You already have a trainer. Switch to ${coach.name}?`)) return
     actions.requestCoach(coach.id)
     notify(`Request sent to ${coach.name}`)
   }
 
   return (
     <div className="page narrow">
-      <PageHead title="Coach" back />
+      <PageHead title="Trainer" back />
       <section className="coach-hero">
         <Avatar user={coach} size={112} />
         <h2 className="display coach-hero-name">{coach.name}</h2>
@@ -31,7 +31,7 @@ export default function CoachProfile({ id }) {
         {coach.bio && <p className="muted">{coach.bio}</p>}
         <div className="stat-trio card">
           <div>
-            <span className="label">Clients</span>
+            <span className="label">Members</span>
             <span className="display stat-n">{clients}</span>
           </div>
           <div>
@@ -47,26 +47,26 @@ export default function CoachProfile({ id }) {
           <div className="stack full-w">
             {isMine ? (
               <>
-                <p className="center strong">{myLink.status === 'active' ? '✓ You train with this coach' : '⏳ Request sent, waiting for approval'}</p>
+                <p className="center strong">{myLink.status === 'active' ? '✓ You train with this trainer' : '⏳ Request sent, waiting for approval'}</p>
                 <button
                   className="btn btn-ghost"
                   onClick={() => {
-                    if (!confirm('Stop training with this coach?')) return
+                    if (!confirm('Stop training with this trainer?')) return
                     actions.leaveCoach()
                   }}
                 >
-                  {myLink.status === 'active' ? 'Leave coach' : 'Cancel request'}
+                  {myLink.status === 'active' ? 'Leave trainer' : 'Cancel request'}
                 </button>
               </>
             ) : (
               <>
                 {coach.coachPrice && safeUrl(coach.payLink) && (
                   <a className="btn btn-secondary" href={safeUrl(coach.payLink)} target="_blank" rel="noreferrer">
-                    Pay for coaching · {coach.coachPrice}
+                    Pay for training · {coach.coachPrice}
                   </a>
                 )}
                 <button className="btn btn-primary big" onClick={request}>
-                  Become a client
+                  Train with me
                 </button>
               </>
             )}

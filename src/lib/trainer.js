@@ -54,7 +54,7 @@ export const notExpired = (date) => !!date && date >= new Date().toLocaleDateStr
 export const DECLARATIONS = [
   ['accurate', 'The details and documents I’ve provided are true and my own.'],
   ['current', 'I’ll keep my qualification, first aid and CPR, and insurance current, and tell All Workout if any of them lapse.'],
-  ['scope', 'I’ll screen clients before training them (for example with the Adult Pre-Exercise Screening System), work within my scope of practice and refer people to health professionals when needed.'],
+  ['scope', 'I’ll screen members before training them (for example with the Adult Pre-Exercise Screening System), work within my scope of practice and refer people to health professionals when needed.'],
   ['terms', 'I agree to the Terms of Service, including the section for trainers, and the Privacy Policy.'],
 ]
 

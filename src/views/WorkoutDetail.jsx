@@ -123,7 +123,7 @@ export default function WorkoutDetail({ id }) {
             <Avatar user={author} size={30} />
             <span>
               <span className="strong block">{author.name}</span>
-              <span className="tiny">{w.private ? 'Your private workout · only you can see it' : author.role === 'coach' ? 'Coach' : 'Member'}</span>
+              <span className="tiny">{w.private ? 'Your private workout · only you can see it' : author.role === 'coach' ? 'Trainer' : 'Member'}</span>
             </span>
           </button>
         ) : (

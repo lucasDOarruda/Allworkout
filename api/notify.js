@@ -39,7 +39,7 @@ export async function POST(req) {
             `<ul style="line-height:1.7;padding-left:20px;margin:0 0 12px">
               <li>Pick a workout in Explore and tap Start. The timer talks you through every round.</li>
               <li>Follow a program for a plan every week.</li>
-              <li>Find a licensed, insured personal trainer when you want a coach.</li>
+              <li>Find a licensed, insured personal trainer when you want one.</li>
               <li>Use the free health tools to know your numbers.</li>
             </ul>` +
             p('If you’re a personal trainer, send your application from the You tab and we’ll review it.') +
@@ -59,7 +59,7 @@ export async function POST(req) {
           ['Email', user.email],
           ['Goal', GOALS[profile.goal] || ''],
           ['Location', place(req)],
-          ['Role', profile.role || 'client'],
+          ['Role', { client: 'Member', coach: 'Trainer', admin: 'Admin' }[profile.role] || 'Member'],
         ]),
         { href: `${SITE}/admin`, label: 'Open the admin dashboard' },
       ),
@@ -120,7 +120,7 @@ export async function POST(req) {
       html: layout(
         approved ? `You’re approved, ${String(app.fullName || '').split(' ')[0]}!` : `Hi ${String(app.fullName || '').split(' ')[0]},`,
         approved
-          ? p('Your personal trainer application has been approved. Sign in to All Workout to publish free and paid workouts and take on clients.') +
+          ? p('Your personal trainer application has been approved. Sign in to All Workout to publish free and paid workouts and train members.') +
               p('Please keep your qualification, first aid and CPR, and insurance current, and let us know if anything changes.')
           : p('We couldn’t approve your personal trainer application yet.') +
               (app.reviewNote ? p(`<strong>Note from our team:</strong> ${esc(app.reviewNote)}`) : '') +

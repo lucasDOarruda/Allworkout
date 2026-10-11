@@ -88,7 +88,7 @@ export default function Home() {
         options={[
           ['everyone', 'Following'],
           ['partners', 'Partners'],
-          ['coaching', 'Coaching'],
+          ['coaching', 'Training'],
         ]}
         value={tab}
         onChange={(v) => (v !== 'everyone' && !me ? go('signin') : setTab(v))}
@@ -114,7 +114,7 @@ function WelcomeCard() {
   return (
     <section className="week-card photo" style={{ backgroundImage: `linear-gradient(110deg, rgb(220 240 90 / 96%) 45%, rgb(205 232 60 / 55%)), url(${import.meta.env.BASE_URL}img/class.jpg)` }}>
       <p className="week-eyebrow">Welcome to All Workout</p>
-      <p className="week-title">Train with friends, follow a coach, track every rep.</p>
+      <p className="week-title">Train with friends, follow a trainer, track every rep.</p>
       <div className="row gap-s">
         <button className="btn btn-white" onClick={() => go('signin')}>
           Join now
@@ -175,7 +175,7 @@ function CoachNudge() {
           <Icon name="users" />
         </span>
         <span className="grow">
-          <span className="strong block">Find a coach</span>
+          <span className="strong block">Find a trainer</span>
           <span className="muted small">Get workouts picked for you.</span>
         </span>
         <span className="chev-right">›</span>
@@ -190,8 +190,8 @@ function CoachNudge() {
     <button className="card nudge" onClick={() => go(first ? `w/${first.id}` : `coach/${coach.id}`)}>
       <Avatar user={coach} size={40} />
       <span className="grow">
-        <span className="strong block">{link.status === 'pending' ? `Waiting for ${coach.name}` : first ? `${coach.name.split(' ')[0]} assigned: ${first.name}` : `Coached by ${coach.name}`}</span>
-        <span className="muted small">{link.status === 'pending' ? 'Your coach will accept you soon.' : first ? todo[0].note || `${workoutMinutes(first)} min` : 'All assigned workouts done'}</span>
+        <span className="strong block">{link.status === 'pending' ? `Waiting for ${coach.name}` : first ? `${coach.name.split(' ')[0]} assigned: ${first.name}` : `Training with ${coach.name}`}</span>
+        <span className="muted small">{link.status === 'pending' ? 'Your trainer will accept you soon.' : first ? todo[0].note || `${workoutMinutes(first)} min` : 'All assigned workouts done'}</span>
       </span>
       <span className="chev-right">›</span>
     </button>
@@ -210,10 +210,10 @@ function CoachSummary() {
       </span>
       <span className="grow">
         <span className="strong block">
-          {active} client{active === 1 ? '' : 's'}
+          {active} member{active === 1 ? '' : 's'}
           {pending ? ` · ${pending} new request${pending === 1 ? '' : 's'}` : ''}
         </span>
-        <span className="muted small">Assign workouts and check in on your clients.</span>
+        <span className="muted small">Assign workouts and check in on your members.</span>
       </span>
       {pending > 0 && <span className="count-pill">{pending}</span>}
       <span className="chev-right">›</span>

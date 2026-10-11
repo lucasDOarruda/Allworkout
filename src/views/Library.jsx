@@ -15,7 +15,7 @@ export default function Library({ sub }) {
       <Segmented
         options={[
           ['workouts', 'Workouts'],
-          ['coaches', 'Coaches'],
+          ['coaches', 'Trainers'],
         ]}
         value={tab}
         onChange={(v) => go(v === 'coaches' ? 'library/coaches' : 'library')}
@@ -77,7 +77,7 @@ export function Workouts({ initialPrice }) {
 export function Coaches() {
   const { db, workouts } = useStore()
   const coaches = Object.values(db.users).filter((u) => u.role === 'coach')
-  if (!coaches.length) return <Empty icon="users" title="No coaches yet" />
+  if (!coaches.length) return <Empty icon="users" title="No trainers yet" />
   return (
     <div className="grid">
       {coaches.map((c) => {
@@ -91,10 +91,10 @@ export function Coaches() {
             <span className="row gap-s small coach-meta">
               <span>{theirs.filter((w) => !w.premium).length} free</span>·<span>{theirs.filter((w) => w.premium).length} premium</span>·
               <span>
-                {clients} client{clients === 1 ? '' : 's'}
+                {clients} member{clients === 1 ? '' : 's'}
               </span>
             </span>
-            {c.coachPrice && <span className="price-tag paid static">Coaching {c.coachPrice}</span>}
+            {c.coachPrice && <span className="price-tag paid static">Training {c.coachPrice}</span>}
           </button>
         )
       })}

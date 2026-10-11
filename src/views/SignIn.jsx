@@ -35,8 +35,8 @@ function takePending() {
 }
 
 const ROLES = [
-  ['client', 'I want to work out', 'Follow workouts, track your progress and find a coach.'],
-  ['coach', 'I’m a personal trainer', 'Licensed PTs only. Apply with your qualification, ABN and insurance. We approve you before you can publish, sell or coach.'],
+  ['client', 'I want to work out', 'Follow workouts, track your progress and find a trainer.'],
+  ['coach', 'I’m a personal trainer', 'Licensed PTs only. Apply with your qualification, ABN and insurance. We approve you before you can publish, sell or train members.'],
 ]
 
 // adminMode: the /admin sign-in. Only admin Google accounts get in; nobody else gets an account made.
@@ -123,10 +123,10 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
     actions.createAccount({ name: g.name, role: 'client', photo: g.photo, email: g.email, googleUid: g.uid })
     if (role === 'coach') {
       actions.updateProfile({ trainerStatus: 'apply' })
-      return finish('Welcome! Send your trainer application to get coach tools.', 'apply')
+      return finish('Welcome! Send your trainer application to get trainer tools.', 'apply')
     }
     if (goal) actions.updateProfile({ goal })
-    finish('Welcome! Pick a workout or find a coach.', 'home')
+    finish('Welcome! Pick a workout or find a trainer.', 'home')
   }
 
   const google = async () => {
@@ -156,7 +156,7 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
     e.preventDefault()
     if (!name.trim()) return
     actions.createAccount({ name, role, photo })
-    finish(role === 'coach' ? 'Welcome, coach! Create your first workout.' : 'Welcome! Pick a workout or find a coach.', role === 'coach' ? 'you/settings' : 'home')
+    finish(role === 'coach' ? 'Welcome, trainer! Create your first workout.' : 'Welcome! Pick a workout or find a trainer.', role === 'coach' ? 'you/settings' : 'home')
   }
 
   return (

@@ -292,7 +292,7 @@ export default function Editor({ id }) {
                   <input type="url" value={m.video} onChange={(e) => setMove(pi, mi, { video: e.target.value })} placeholder="https://youtube.com/watch?v=…" />
                 </label>
                 <label className="field grow2">
-                  <span>Coaching note</span>
+                  <span>Trainer note</span>
                   <input value={m.note} onChange={(e) => setMove(pi, mi, { note: e.target.value })} placeholder="e.g. Slow on the way down" maxLength={120} />
                 </label>
               </div>

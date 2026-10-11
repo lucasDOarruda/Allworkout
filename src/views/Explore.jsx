@@ -11,7 +11,7 @@ const TABS = [
   ['workouts', 'Workouts'],
   ['exercises', 'Exercises'],
   ['programs', 'Programs'],
-  ['coaches', 'Coaches'],
+  ['coaches', 'Trainers'],
 ]
 
 export default function Explore({ sub }) {

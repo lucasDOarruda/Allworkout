@@ -86,8 +86,8 @@ function ProfileForm() {
           <label className="check">
             <input type="checkbox" checked={f.seeking} onChange={(e) => set('seeking', e.target.checked)} />
             <span>
-              <span className="strong">I’m looking for a coach</span>
-              <span className="muted small block">Coaches and admins can see you’re open to coaching.</span>
+              <span className="strong">I’m looking for a trainer</span>
+              <span className="muted small block">Trainers and admins can see you’re open to training.</span>
             </span>
           </label>
         </>
@@ -99,14 +99,14 @@ function ProfileForm() {
             <input value={f.specialties} onChange={(e) => set('specialties', e.target.value)} placeholder="Kettlebell, strength, mobility" maxLength={80} />
           </label>
           <label className="field">
-            <span>Coaching price (optional)</span>
+            <span>Training price (optional)</span>
             <input value={f.coachPrice} onChange={(e) => set('coachPrice', e.target.value)} placeholder="$49/month" maxLength={20} />
           </label>
         </>
       )}
       {isCoach(me) && (
         <label className="field">
-          <span>Payment link (for paid workouts and coaching)</span>
+          <span>Payment link (for paid workouts and training)</span>
           <input type="url" value={f.payLink} onChange={(e) => set('payLink', e.target.value)} placeholder="https://buy.stripe.com/… or https://ko-fi.com/…" />
           {badLink && <span className="error small">Links need to start with https://</span>}
         </label>
