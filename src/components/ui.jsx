@@ -4,6 +4,7 @@ import { FORMATS } from '../data/workouts'
 import { go, useStore } from '../store'
 import { fileToDataUrl, initials, safeUrl, workoutEquipment, workoutFormats, workoutMinutes, youtubeEmbed } from '../lib/utils'
 import { MoveImage, MusclesWorked } from './BodyMap'
+import { ExerciseMediaEditor, MediaView, useExerciseMedia } from './ExerciseMedia'
 import { workoutPhoto } from '../lib/photos'
 import Icon from './Icon'
 
@@ -105,9 +106,17 @@ export function FormatPill({ format }) {
   return <span className={`fmt-pill fmt-${format}`}>{FORMATS[format]}</span>
 }
 
-// Video area: embeds real YouTube links, otherwise shows the image with a link out
+// Media area. In order: the workout's own photo for this move, the photo/GIF/video an admin or
+// trainer added for the exercise, an embedded YouTube link, then the muscle diagram.
 export function MoveMedia({ move, large = false }) {
+  const [media] = useExerciseMedia(move.image ? null : move.exerciseId)
   const embed = youtubeEmbed(move.video)
+  if (!move.image && media)
+    return (
+      <div className="media">
+        <MediaView media={media} alt={move.name} className="media-img" />
+      </div>
+    )
   if (embed && large)
     return (
       <div className="media">
@@ -133,8 +142,9 @@ export function MoveSheet({ move, onClose }) {
   const fav = me && ex && me.favorites.includes(ex.id)
   return (
     <Modal title={move.name} onClose={onClose}>
-      {(move.image || youtubeEmbed(move.video)) && <MoveMedia move={{ ...move, video: move.video || ex?.video }} large />}
+      {(move.image || ex || youtubeEmbed(move.video)) && <MoveMedia move={{ ...move, video: move.video || ex?.video }} large />}
       {ex && <MusclesWorked exerciseId={ex.id} />}
+      {ex && <ExerciseMediaEditor exerciseId={ex.id} name={ex.name} />}
       {safeUrl(move.video || ex?.video) && !youtubeEmbed(move.video) && (
         <a className="btn btn-ghost full how-to-btn" href={safeUrl(move.video || ex?.video)} target="_blank" rel="noreferrer">
           ▶ Watch a how-to video

@@ -9,6 +9,7 @@ import { computeStats, fmtDate, fmtDuration, fmtKg, timeAgo, weekKey, weekStart 
 import { Crm, Traffic, memberStatus, useCloudAdmin } from './AdminCloud'
 import { Trainers, useTrainerApps } from './AdminTrainers'
 import { Messages, useMessages } from './AdminMessages'
+import { ExerciseMediaAdmin } from './AdminMedia'
 
 // Members (CRM) and Traffic come from the cloud. "Device members" only lists accounts stored
 // in this browser, so it's shown in local development only.
@@ -17,6 +18,7 @@ const SECTIONS = [
   ['crm', 'Members', 'users'],
   ['trainers', 'Trainer approvals', 'medal'],
   ['messages', 'Messages', 'chat'],
+  ['media', 'Exercise media', 'play'],
   ['traffic', 'Traffic', 'chart'],
   ...(import.meta.env.DEV ? [['members', 'Device members', 'note']] : []),
   ['coaching', 'Training links', 'clipboard'],
@@ -111,6 +113,7 @@ export default function Admin({ section }) {
         {tab === 'traffic' && <Traffic cloud={cloud} />}
         {tab === 'trainers' && <Trainers apps={trainerApps} />}
         {tab === 'messages' && <Messages data={messages} />}
+        {tab === 'media' && <ExerciseMediaAdmin />}
         {tab === 'members' && <Members />}
         {['coaching', 'content', 'revenue', 'activity'].includes(tab) && (
           <p className="notice">Workouts, sessions and trainer links are still stored per browser, so this shows the data in this browser.</p>

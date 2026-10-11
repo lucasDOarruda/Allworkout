@@ -5888,3 +5888,16 @@ code {
   background: var(--surface-2);
   font-size: 1.3rem;
 }
+
+/* Exercise media (uploaded by admins and trainers) */
+.media .xm {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: 0;
+  background: #000;
+}
+.xm-editor input[type='url'] {
+  min-width: 0;
+}
