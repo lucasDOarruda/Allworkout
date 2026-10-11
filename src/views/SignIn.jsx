@@ -45,9 +45,9 @@ export default function SignIn({ gate = false, onShow }) {
       })
       .catch(() => {})
   }, [])
-  // Admin accounts sign in with Google only, so they aren't offered here
+  // Admins and Google-linked accounts sign in with Google only, so they aren't offered here
   const profiles = Object.values(db.users)
-    .filter((u) => u.role !== 'admin' || u.id === me?.id)
+    .filter((u) => (u.role !== 'admin' && !u.googleUid) || u.id === me?.id)
     .sort((a, b) => !!a.demo - !!b.demo || order[a.role] - order[b.role] || a.name.localeCompare(b.name))
 
   const finish = (msg, dest) => {

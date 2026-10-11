@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { exerciseById } from '../data/exercises'
 import { FORMATS } from '../data/workouts'
 import { go, useStore } from '../store'
-import { fileToDataUrl, initials, workoutEquipment, workoutFormats, workoutMinutes, youtubeEmbed } from '../lib/utils'
+import { fileToDataUrl, initials, safeUrl, workoutEquipment, workoutFormats, workoutMinutes, youtubeEmbed } from '../lib/utils'
 import { MoveImage, MusclesWorked } from './BodyMap'
 import { workoutPhoto } from '../lib/photos'
 import Icon from './Icon'
@@ -117,8 +117,8 @@ export function MoveMedia({ move, large = false }) {
   return (
     <div className="media">
       <MoveImage move={move} size="100%" className="media-img" />
-      {move.video && (
-        <a className="media-link" href={move.video} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
+      {safeUrl(move.video) && (
+        <a className="media-link" href={safeUrl(move.video)} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
           ▶ How-to video
         </a>
       )}
@@ -135,8 +135,8 @@ export function MoveSheet({ move, onClose }) {
     <Modal title={move.name} onClose={onClose}>
       {(move.image || youtubeEmbed(move.video)) && <MoveMedia move={{ ...move, video: move.video || ex?.video }} large />}
       {ex && <MusclesWorked exerciseId={ex.id} />}
-      {(move.video || ex?.video) && !youtubeEmbed(move.video) && (
-        <a className="btn btn-ghost full how-to-btn" href={move.video || ex.video} target="_blank" rel="noreferrer">
+      {safeUrl(move.video || ex?.video) && !youtubeEmbed(move.video) && (
+        <a className="btn btn-ghost full how-to-btn" href={safeUrl(move.video || ex?.video)} target="_blank" rel="noreferrer">
           ▶ Watch a how-to video
         </a>
       )}

@@ -5167,6 +5167,40 @@ code {
   margin-bottom: 10px;
 }
 
+/* Hero: free community calculators button */
+.l-tools-cta {
+  border-color: #0d0e0a;
+  border-width: 2px;
+  color: #0d0e0a;
+  background: rgb(255 255 255 / 35%);
+}
+.l-tools-cta:hover {
+  background: rgb(255 255 255 / 60%);
+}
+
+/* Landing top bar in dark mode: black, with a lime call to action */
+:root[data-theme='dark'] .l-nav {
+  background: color-mix(in srgb, #0c0d09 90%, transparent);
+  border-bottom: 1px solid #2d3122;
+}
+:root[data-theme='dark'] .l-nav .l-brand,
+:root[data-theme='dark'] .l-links button,
+:root[data-theme='dark'] .l-links .l-tools-link {
+  color: #f4f6ea;
+}
+:root[data-theme='dark'] .l-mark {
+  background: #dcf05a;
+  color: #0d0e0a;
+}
+:root[data-theme='dark'] .l-nav .btn-primary {
+  background: #dcf05a;
+  color: #0d0e0a;
+}
+:root[data-theme='dark'] .l-nav .btn-ghost {
+  background: #1c1e14;
+  color: #f4f6ea;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;

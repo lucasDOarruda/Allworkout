@@ -93,6 +93,8 @@ export default function Editor({ id }) {
     if (!f.name.trim()) errs.push('Add a name.')
     const moves = f.parts.flatMap((p) => p.moves.filter((m) => m.name.trim()))
     if (moves.length === 0) errs.push('Add at least one move.')
+    const badVideo = f.parts.flatMap((p) => p.moves).find((m) => m.video.trim() && !/^https?:\/\//i.test(m.video.trim()))
+    if (badVideo) errs.push(`The video link for “${badVideo.name || 'a move'}” must start with https://`)
     if (f.premium) {
       if (!f.price.trim()) errs.push('Add a price for your premium workout.')
       if (!/^https?:\/\//.test(f.payLink.trim())) errs.push('Add a payment link starting with https://')

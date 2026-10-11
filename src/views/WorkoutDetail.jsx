@@ -4,7 +4,7 @@ import { MoveImage } from '../components/BodyMap'
 import { FORMATS } from '../data/workouts'
 import { workoutPhoto } from '../lib/photos'
 import { canAccess, go, useStore } from '../store'
-import { partMinutes, partSummary, timeAgo, workoutEquipment, workoutMinutes } from '../lib/utils'
+import { partMinutes, partSummary, safeUrl, timeAgo, workoutEquipment, workoutMinutes } from '../lib/utils'
 
 const partHeadline = (p) => (p.format === 'timed' ? `${partMinutes(p)} min warmup` : `${FORMATS[p.format]} · ${partSummary(p)}`)
 
@@ -152,8 +152,8 @@ export default function WorkoutDetail({ id }) {
         <div className="card lock-card">
           <p className="card-h">Unlock the full workout</p>
           <p className="muted small">Pay {author?.name || 'the creator'}, then they’ll unlock it for you here.</p>
-          {w.payLink ? (
-            <a className="btn btn-primary full" href={w.payLink} target="_blank" rel="noreferrer">
+          {safeUrl(w.payLink) ? (
+            <a className="btn btn-primary full" href={safeUrl(w.payLink)} target="_blank" rel="noreferrer">
               Get access · {w.price}
             </a>
           ) : (

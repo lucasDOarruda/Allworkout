@@ -78,6 +78,9 @@ export default function Landing({ tools = false }) {
               <button className="btn btn-primary big" onClick={() => go('signin')}>
                 Join for free →
               </button>
+              <button className="btn btn-outline-white big l-tools-cta" onClick={openTools}>
+                <Icon name="heart" size={18} /> Free health calculators
+              </button>
             </div>
           </div>
           <div className="l-mosaic" aria-hidden="true">

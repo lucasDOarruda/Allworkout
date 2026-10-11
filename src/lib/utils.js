@@ -365,3 +365,14 @@ export function weekSummary(sessions) {
     days,
   }
 }
+
+// Only allow http(s) links from data (workout videos, payment links, imported backups).
+// Anything else, like javascript: URLs, is dropped so it can't run code.
+export function safeUrl(url) {
+  try {
+    const u = new URL(String(url || ''))
+    return u.protocol === 'https:' || u.protocol === 'http:' ? u.href : undefined
+  } catch {
+    return undefined
+  }
+}

@@ -1,5 +1,6 @@
 import { Avatar, Empty, PageHead, WorkoutCard } from '../components/ui'
 import { go, useStore } from '../store'
+import { safeUrl } from '../lib/utils'
 
 export default function CoachProfile({ id }) {
   const { db, me, workouts, actions, notify } = useStore()
@@ -59,8 +60,8 @@ export default function CoachProfile({ id }) {
               </>
             ) : (
               <>
-                {coach.coachPrice && coach.payLink && (
-                  <a className="btn btn-secondary" href={coach.payLink} target="_blank" rel="noreferrer">
+                {coach.coachPrice && safeUrl(coach.payLink) && (
+                  <a className="btn btn-secondary" href={safeUrl(coach.payLink)} target="_blank" rel="noreferrer">
                     Pay for coaching · {coach.coachPrice}
                   </a>
                 )}

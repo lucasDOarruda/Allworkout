@@ -5,7 +5,7 @@ import { OFFICIAL_PROGRAMS, programDays } from './data/programs'
 import { AVATAR_COLORS, uid } from './lib/utils'
 
 const KEY = 'all-workout:db:v3'
-const THEME_KEY = 'all-workout:theme:v3'
+const THEME_KEY = 'all-workout:theme:v4' // v4: dark is the default for everyone
 
 function load() {
   try {
@@ -33,9 +33,9 @@ export function StoreProvider({ children }) {
   const [toast, setToast] = useState(null)
   const [theme, setThemeState] = useState(() => {
     try {
-      return localStorage.getItem(THEME_KEY) || 'light'
+      return localStorage.getItem(THEME_KEY) || 'dark'
     } catch {
-      return 'light'
+      return 'dark'
     }
   })
 
