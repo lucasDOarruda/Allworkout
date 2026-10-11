@@ -4,6 +4,7 @@ import { Chips, MoveSheet, Segmented } from '../components/ui'
 import { BACK_MUSCLES, EQUIPMENT, EXERCISES, FRONT_MUSCLES } from '../data/exercises'
 import { OFFICIAL_PROGRAMS, programDays } from '../data/programs'
 import { go, useStore } from '../store'
+import Icon from '../components/Icon'
 import { programPhoto } from '../lib/photos'
 import { Coaches, Workouts } from './Library'
 
@@ -47,6 +48,16 @@ function ExerciseTab() {
 
   return (
     <>
+      <button className="card nav-card fc-banner" onClick={() => go('formcheck')}>
+        <span className="row gap-s">
+          <Icon name="camera" size={20} />
+          <span>
+            <span className="strong block">Check my form with the camera</span>
+            <span className="muted small">Squats, deadlifts, lunges, swings and wall balls. Feedback on every rep.</span>
+          </span>
+        </span>
+        <span className="chev-right">›</span>
+      </button>
       <section className="card map-card">
         <div className="map-card-figure">
           <BodyMap view={view} onPick={pick} compact />

@@ -7,6 +7,7 @@ import { canAccess, go, useStore } from '../store'
 import { beep, buildTimeline, fmtClock, fmtKg, isMuted, partMinutes, primaryFormat, repsLabel, setMuted, unlockAudio } from '../lib/utils'
 import SessionForm, { targetReps } from './SessionForm'
 import { DEFAULT_HOWTO } from './PartDetail'
+import { FormCheckButton, formCheckOn, formSummary, takeFormResult } from '../components/FormCheck'
 
 const COUNTDOWN = 10_000
 
@@ -271,6 +272,7 @@ function PlayerInner({ w, p, idx }) {
         <div onClick={() => setSheet(mv)} role="button" tabIndex={0} className="media-btn">
           <MoveMedia move={mv} />
         </div>
+        {formCheckOn() && <FormCheckButton exerciseId={mv.exerciseId} workoutId={w.id} label="Check this set with the camera" />}
         {s.resting ? (
           <div className="row gap-s action-row">
             <button className="btn btn-ghost big" onClick={() => dispatch({ type: 'addRest', ms: 15_000 })}>
@@ -370,6 +372,7 @@ function PlayerInner({ w, p, idx }) {
       <div onClick={() => setSheet(mv)} role="button" tabIndex={0} className="media-btn">
         <MoveMedia move={mv} />
       </div>
+      {formCheckOn() && <FormCheckButton exerciseId={mv.exerciseId} workoutId={w.id} label="Check this move with the camera" />}
       <NextList rows={upcomingRows(p, s.timeline, s.segIdx)} onSkip={() => dispatch({ type: 'skip' })} onOpen={setSheet} />
       <BottomBar
         paused={s.paused}
@@ -567,6 +570,10 @@ export function FinishWorkout({ id }) {
   const { workouts, progressFor } = useStore()
   const w = workouts.find((x) => x.id === id)
   const pr = progressFor(id)
+  // Form check totals belong to this run: clear them once the session is saved
+  useEffect(() => {
+    if (pr?.saved) takeFormResult(id, false)
+  }, [pr?.saved, id])
   if (!w) return <Empty icon="info" title="Workout not found" />
   if (!pr)
     return (
@@ -588,12 +595,13 @@ export function FinishWorkout({ id }) {
           {pr.rounds ? ` · ${pr.rounds} rounds` : ''}
         </p>
       </div>
+      {formSummary(takeFormResult(w.id)) && <p className="notice">{formSummary(takeFormResult(w.id))}</p>}
       {pr.saved ? (
         <button className="btn btn-primary big full" onClick={() => go('you/activities')}>
           Saved. See progress
         </button>
       ) : (
-        <SessionForm workout={w} mode="live" initial={{ duration: pr.duration, sets: pr.sets, rounds: pr.rounds }} />
+        <SessionForm workout={w} mode="live" initial={{ duration: pr.duration, sets: pr.sets, rounds: pr.rounds, note: formSummary(takeFormResult(w.id)) }} />
       )}
     </div>
   )

@@ -20,7 +20,7 @@ export default function SessionForm({ workout, initial, mode }) {
   const { db, me, actions, notify } = useStore()
   const [rpe, setRpe] = useState(7)
   const [partnerIds, setPartnerIds] = useState([])
-  const [note, setNote] = useState('')
+  const [note, setNote] = useState(initial?.note || '')
   const [when, setWhen] = useState(toLocalInput(new Date()))
   const [minutes, setMinutes] = useState(Math.max(1, Math.round((initial.duration || 0) / 60)))
   const [sets, setSets] = useState(initial.sets || [])

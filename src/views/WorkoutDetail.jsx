@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import ShareWorkout from '../components/ShareWorkout'
 import Leaderboard from '../components/Leaderboard'
+import { FormCheckToggle } from '../components/FormCheck'
 import { Avatar, Empty, FormatPill, SignInPrompt } from '../components/ui'
 import { MoveImage } from '../components/BodyMap'
 import { FORMATS } from '../data/workouts'
@@ -280,6 +281,7 @@ export default function WorkoutDetail({ id }) {
 
       {access && (
         <div className="sticky-cta">
+          <FormCheckToggle w={w} />
           <div className="cta-pair">
             <button className="btn btn-ghost big" onClick={() => (me ? go(`w/${w.id}/log`) : go('signin'))}>
               Log

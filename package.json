@@ -7,9 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:formcoach": "node --test tests/formcoach.test.js"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "1.0.1",
     "firebase": "^13.0.0",
     "jose": "^6.2.12",
     "react": "^19.1.0",

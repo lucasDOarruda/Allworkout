@@ -20,6 +20,7 @@ import HealthTools from './views/HealthTools'
 import Legal from './views/Legal'
 import TrainerApply from './views/TrainerApply'
 import Friends from './views/Friends'
+import FormCheckPage from './views/FormCheckPage'
 import { PublicFooter, PublicNav } from './components/PublicChrome'
 import { canSee, rememberDestination, routeNeeds } from './lib/access'
 import { Empty } from './components/ui'
@@ -111,7 +112,7 @@ export default function App() {
     if (import.meta.env.PROD && me && !me.googleUid) actions.signOut()
   }, [me, actions])
   const [head, a, b, c, d] = route
-  const playing = head === 'w' && b === 'p' && d === 'play'
+  const playing = (head === 'w' && b === 'p' && d === 'play') || head === 'formcheck'
   const landing = head === 'welcome' || head === 'tools' || head === 'terms' || head === 'privacy'
   const need = routeNeeds(route)
   const allowed = canSee(need, me)
@@ -132,6 +133,7 @@ export default function App() {
   else if (landing) view = <Landing />
   else if (head === 'apply') view = <TrainerApply />
   else if (head === 'friends') view = <Friends />
+  else if (head === 'formcheck') view = <FormCheckPage exerciseId={a} />
   else if (head === 'w' && b === 'p' && d === 'play') view = <Player id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'p') view = <PartDetail id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'log') view = <LogSession id={a} />
@@ -299,6 +301,17 @@ function StartSheet({ onClose }) {
             ))}
           </div>
         )}
+
+        <button className="ss-wide ss-formcheck" onClick={() => open('formcheck')} style={{ backgroundImage: `url(${img('deadlift')})` }}>
+          <span className="ss-eyebrow">
+            <Icon name="camera" size={16} /> Form check
+          </span>
+          <strong>Check my form with the camera</strong>
+          <span className="ss-sub">Squat, deadlift, lunge, swing or wall ball. No workout needed.</span>
+          <span className="ss-go">
+            <Icon name="play" size={16} />
+          </span>
+        </button>
 
         <div className="ss-grid">
           {tiles.map((t) => (

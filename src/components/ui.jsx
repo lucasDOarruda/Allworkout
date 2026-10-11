@@ -5,6 +5,7 @@ import { go, useStore } from '../store'
 import { fileToDataUrl, initials, safeUrl, workoutEquipment, workoutFormats, workoutMinutes, youtubeEmbed } from '../lib/utils'
 import { MoveImage, MusclesWorked } from './BodyMap'
 import { ExerciseMediaEditor, MediaView, useExerciseMedia } from './ExerciseMedia'
+import { FormCheckButton } from './FormCheck'
 import { workoutPhoto } from '../lib/photos'
 import Icon from './Icon'
 
@@ -144,6 +145,7 @@ export function MoveSheet({ move, onClose }) {
     <Modal title={move.name} onClose={onClose}>
       {(move.image || ex || youtubeEmbed(move.video)) && <MoveMedia move={{ ...move, video: move.video || ex?.video }} large />}
       {ex && <MusclesWorked exerciseId={ex.id} />}
+      {ex && <FormCheckButton exerciseId={ex.id} />}
       {ex && <ExerciseMediaEditor exerciseId={ex.id} name={ex.name} />}
       {safeUrl(move.video || ex?.video) && !youtubeEmbed(move.video) && (
         <a className="btn btn-ghost full how-to-btn" href={safeUrl(move.video || ex?.video)} target="_blank" rel="noreferrer">

@@ -48,6 +48,10 @@ const TERMS = [
         </li>
         <li>Choose workouts that suit your fitness, warm up, use correct technique and safe equipment, and stop straight away if you feel pain, dizziness or shortness of breath.</li>
         <li>Exercise involves a risk of injury. You take part at your own risk and are responsible for deciding what is safe for you.</li>
+        <li>
+          The camera form check gives general feedback on positions such as depth and lean. It can’t see your spine, feel pain or guarantee you won’t be injured. Stop if
+          anything hurts, and use a qualified trainer for heavy lifts.
+        </li>
         <li>In an emergency, call 000.</li>
       </ul>
     </>,
@@ -223,6 +227,14 @@ const PRIVACY = [
         in the health tools, and we delete the saved results.
       </p>
     </>,
+  ],
+  [
+    'Camera form check',
+    <p>
+      If you use the camera form check, your camera feed is processed on your device by a pose model that estimates where your joints are. The video is never recorded,
+      uploaded or stored, and we never receive it. Only the rep results (good reps, no-reps and the type of fault) are kept, in this browser and in the workout notes you
+      choose to save. You can stop the camera at any time, and your browser asks for permission before it turns on.
+    </p>,
   ],
   [
     'How we collect it',

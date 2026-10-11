@@ -51,6 +51,26 @@ Set these in Vercel → Project → Settings → Environment Variables (never wi
 
 Locally, `npm run dev` doesn't run these functions: the contact form and emails only work on the live site.
 
+## Camera form check
+
+`src/formcoach/` checks squat, deadlift, lunge, swing and wall ball form live in the browser. A pose model (MediaPipe Pose Landmarker lite, `@mediapipe/tasks-vision` pinned to 1.0.1) finds 33 body points per frame; plain JavaScript rules turn the skeleton green or red. No video leaves the device.
+
+| File | Job |
+|---|---|
+| `poseMath.js` | Landmark map, skeleton lines, angle and lean helpers |
+| `metrics.js` | 33 points → knee/hip angle, torso lean, depth, wrist offset, heel lift, knee width, rear-knee gap |
+| `exercises.js` | One object per exercise: camera view, rep signal, thresholds, live and after-rep checks with voice cues |
+| `repEngine.js` | Smoothing, rep phases (ready → down → rising → judged), faults and verdict |
+| `FormCoach.jsx` | Camera, model, overlay, voice cues, counter, setup screen, debug numbers |
+
+- Add an exercise: add one object to `exercises.js` (list the app exercise ids it covers in `apps`).
+- Thresholds are starting points from the developer guide; tune them on real clips.
+- Tests: `npm run test:formcoach` (synthetic rep sequences, no camera needed).
+- The model is in `public/models/`; the WebAssembly files are copied from `node_modules` by the `mediapipe-wasm` plugin in `vite.config.js`, so they always match the installed package version.
+- The CSP allows `'wasm-unsafe-eval'`, and `vercel.json` allows `camera=(self)`.
+
+Members reach it from the Start sheet (“Check my form”), Explore → Exercises, any exercise’s detail sheet, or the opt-in “Camera form check” switch on a workout.
+
 ## Trainers
 
 Everyone joins as a member. Personal trainers send an application (qualification, ABN, date of birth, first aid, insurance, certificate photo) from `#/apply`, and an admin approves it under Admin → Trainer approvals. Only approved trainers get coach tools (publish, sell, clients). Firestore rules stop anyone making themselves a coach.
