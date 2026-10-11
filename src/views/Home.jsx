@@ -55,7 +55,7 @@ export default function Home() {
   const items = useMemo(() => {
     const list = [
       ...db.sessions.map((s) => ({ type: 'session', id: s.id, date: s.date, people: [s.userId, ...(s.partnerIds || [])], s })),
-      ...db.workouts.map((w) => ({ type: 'workout', id: w.id, date: w.createdAt, people: [w.authorId], w })),
+      ...db.workouts.filter((w) => !w.private).map((w) => ({ type: 'workout', id: w.id, date: w.createdAt, people: [w.authorId], w })),
     ]
     return list
       .filter((e) => e.people.some((p) => db.users[p]))

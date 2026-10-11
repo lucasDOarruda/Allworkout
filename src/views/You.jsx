@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react'
 import { Avatar, Empty, RoleBadge, Segmented } from '../components/ui'
 import { go, useStore } from '../store'
 import { sessionsFor } from '../lib/utils'
@@ -90,6 +91,7 @@ export default function You({ sub }) {
           <span className="chev-right">›</span>
         </button>
       )}
+      {me.googleUid && <FriendsCard />}
       {me.role === 'client' && me.googleUid && (
         <button className="card nav-card" onClick={() => go('apply')}>
           <span>
@@ -124,5 +126,30 @@ export default function You({ sub }) {
         ))}
       {tab === 'settings' && <SettingsBody />}
     </div>
+  )
+}
+
+// Friends entry point, with a count of requests and workouts waiting
+function FriendsCard() {
+  const { me } = useStore()
+  const [waiting, setWaiting] = useState(0)
+  useEffect(() => {
+    let live = true
+    import('../lib/social')
+      .then((s) => s.loadSocial(me.googleUid))
+      .then((r) => live && setWaiting(r.incoming.length + r.shares.filter((x) => !x.savedAt).length))
+      .catch(() => {})
+    return () => {
+      live = false
+    }
+  }, [me.googleUid])
+  return (
+    <button className="card nav-card" onClick={() => go('friends')}>
+      <span>
+        Friends · find people and share workouts
+        {waiting > 0 && <span className="adm-count">{waiting}</span>}
+      </span>
+      <span className="chev-right">›</span>
+    </button>
   )
 }

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
+import ShareWorkout from '../components/ShareWorkout'
 import { Avatar, Empty, FormatPill, SignInPrompt } from '../components/ui'
 import { MoveImage } from '../components/BodyMap'
 import { FORMATS } from '../data/workouts'
@@ -10,9 +11,26 @@ const partHeadline = (p) => (p.format === 'timed' ? `${partMinutes(p)} min warmu
 
 export const moveLine = (p, mv) => (p.format === 'sets' ? `${mv.sets} × ${mv.reps} ${mv.name}` : `${mv.reps} ${mv.name}`)
 
+// Likes and comments from the cloud, so members see each other's (Google accounts only)
+function useWorkoutSocial(workoutId, uid) {
+  const [state, setState] = useState(null)
+  const load = useCallback(() => {
+    if (!uid) return
+    import('../lib/social')
+      .then((s) => s.loadWorkoutSocial(workoutId, uid))
+      .then(setState)
+      .catch(() => setState({ error: true, count: 0, liked: false, comments: [] }))
+  }, [workoutId, uid])
+  useEffect(() => {
+    load()
+  }, [load])
+  return [state, setState, load]
+}
+
 export default function WorkoutDetail({ id }) {
   const { db, me, workouts, actions, notify, progressFor } = useStore()
   const w = workouts.find((x) => x.id === id)
+  const [cloud, setCloud, reloadCloud] = useWorkoutSocial(id, me?.googleUid)
 
   if (!w) {
     return (
@@ -27,10 +45,25 @@ export default function WorkoutDetail({ id }) {
     )
   }
 
-  const author = w.authorId ? db.users[w.authorId] : null
+  const author = w.authorId && !w.sharedBy ? db.users[w.authorId] : null
   const isOwner = me && w.authorId === me.id
   const access = canAccess(w, me)
-  const liked = me && w.likes.includes(me.id)
+  const localLiked = !!me && w.likes.includes(me.id)
+  const liked = cloud && !cloud.error ? cloud.liked : localLiked
+  const likeCount = cloud && !cloud.error ? cloud.count : w.likes.length
+  const toggleLike = () => {
+    if (!me) return notify('Sign in to like workouts.')
+    if (localLiked === liked) actions.toggleLike(w.id) // keep this browser's liked list in step
+    if (!cloud || cloud.error) return
+    const on = !liked
+    setCloud((c) => ({ ...c, liked: on, count: c.count + (on ? 1 : -1) }))
+    import('../lib/social')
+      .then((s) => s.setWorkoutLike(w.id, me.googleUid, on))
+      .catch(() => {
+        notify('Couldn’t save your like.', 'error')
+        reloadCloud()
+      })
+  }
   const comments = db.comments.filter((c) => c.workoutId === w.id).sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
   const doneBy = new Set(db.sessions.filter((s) => s.workoutId === w.id).flatMap((s) => [s.userId, ...(s.partnerIds || [])]))
   const pr = progressFor(w.id)
@@ -63,7 +96,7 @@ export default function WorkoutDetail({ id }) {
         </button>
         <button
           className={`hero-btn right ${liked ? 'on' : ''}`}
-          onClick={() => (me ? actions.toggleLike(w.id) : notify('Sign in to like workouts.'))}
+          onClick={toggleLike}
           aria-pressed={!!liked}
           aria-label="Like"
         >
@@ -83,7 +116,9 @@ export default function WorkoutDetail({ id }) {
           {w.premium ? <span className="tag paid">★ {w.price}</span> : <span className="tag">Free</span>}
         </div>
         <h1 className="w-title">{w.name}</h1>
-        {author ? (
+        {w.sharedBy ? (
+          <p className="muted small">Shared with you by {w.sharedBy.name} · only you can see this copy</p>
+        ) : author ? (
           <button className="row gap-s link-plain author-row" onClick={() => go(`coach/${author.id}`)}>
             <Avatar user={author} size={30} />
             <span>
@@ -108,7 +143,7 @@ export default function WorkoutDetail({ id }) {
             <span className="act-l">did it</span>
           </div>
           <div>
-            <span className="act-v">{w.likes.length}</span>
+            <span className="act-v">{likeCount}</span>
             <span className="act-l">likes</span>
           </div>
         </div>
@@ -179,9 +214,15 @@ export default function WorkoutDetail({ id }) {
         </div>
       )}
 
+      {me?.googleUid && <ShareWorkout w={w} canShare={!w.premium || isOwner} />}
+
       {isOwner && w.premium && <BuyersPanel w={w} />}
 
       <h2 className="section-title">Comments</h2>
+      {me?.googleUid ? (
+        <CloudComments w={w} me={me} cloud={cloud} reload={reloadCloud} />
+      ) : (
+        <>
       {comments.length === 0 && <p className="muted small">No comments yet.</p>}
       <ul className="comments">
         {comments.map((c) => {
@@ -206,6 +247,8 @@ export default function WorkoutDetail({ id }) {
         })}
       </ul>
       {me ? <CommentForm workoutId={w.id} /> : <SignInPrompt text="Sign in to comment." />}
+        </>
+      )}
 
       {(isOwner || (me?.role === 'admin' && !w.official)) && (
         <section className="card owner-tools">
@@ -247,19 +290,76 @@ export default function WorkoutDetail({ id }) {
   )
 }
 
-function CommentForm({ workoutId }) {
-  const { actions } = useStore()
+// Comments everyone can see (stored in Firestore)
+function CloudComments({ w, me, cloud, reload }) {
+  const { notify } = useStore()
+  if (!cloud) return <p className="muted small">Loading comments…</p>
+  const remove = async (c) => {
+    try {
+      const s = await import('../lib/social')
+      await s.deleteWorkoutComment(w.id, c.id)
+      reload()
+    } catch {
+      notify('Couldn’t delete the comment.', 'error')
+    }
+  }
+  const post = async (text) => {
+    const s = await import('../lib/social')
+    await s.addWorkoutComment(w.id, me, text)
+    reload()
+  }
+  return (
+    <>
+      {cloud.error && <p className="muted small">Comments couldn’t load. Check your connection.</p>}
+      {!cloud.error && cloud.comments.length === 0 && <p className="muted small">No comments yet. Be the first.</p>}
+      <ul className="comments">
+        {cloud.comments.map((c) => (
+          <li key={c.id}>
+            <Avatar user={{ name: c.name, photo: c.photo, color: '#3a4d00' }} size={28} />
+            <div className="grow">
+              <p>
+                <span className="strong">{c.name}</span> <span className="tiny">{c.createdAt ? timeAgo(c.createdAt.toISOString()) : 'just now'}</span>
+              </p>
+              <p>{c.text}</p>
+            </div>
+            {(c.uid === me.googleUid || me.role === 'admin') && (
+              <button className="icon-btn small" onClick={() => remove(c)} aria-label="Delete comment">
+                ✕
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      <CommentForm workoutId={w.id} onPost={post} />
+    </>
+  )
+}
+
+function CommentForm({ workoutId, onPost }) {
+  const { actions, notify } = useStore()
   const [text, setText] = useState('')
-  const submit = (e) => {
+  const [busy, setBusy] = useState(false)
+  const submit = async (e) => {
     e.preventDefault()
     if (!text.trim()) return
-    actions.addComment(workoutId, text.trim())
-    setText('')
+    if (!onPost) {
+      actions.addComment(workoutId, text.trim())
+      return setText('')
+    }
+    setBusy(true)
+    try {
+      await onPost(text.trim())
+      setText('')
+    } catch {
+      notify('Couldn’t post your comment. Try again.', 'error')
+    } finally {
+      setBusy(false)
+    }
   }
   return (
     <form className="row gap-s comment-form" onSubmit={submit}>
       <input className="grow" value={text} onChange={(e) => setText(e.target.value)} placeholder="Add a comment" maxLength={500} />
-      <button className="btn btn-primary" disabled={!text.trim()}>
+      <button className="btn btn-primary" disabled={!text.trim() || busy}>
         Post
       </button>
     </form>

@@ -245,6 +245,33 @@ export function StoreProvider({ children }) {
         })
         return id
       },
+      // A workout a friend shared: a private copy only this member sees (category "Shared")
+      saveSharedWorkout: (w, from) => {
+        const id = uid('sh')
+        mutate((d) => {
+          d.workouts.push({
+            name: String(w.name || 'Shared workout').slice(0, 80),
+            description: String(w.description || ''),
+            level: w.level || 'All levels',
+            focus: w.focus || '',
+            parts: Array.isArray(w.parts) ? w.parts : [],
+            cover: typeof w.cover === 'string' && w.cover.startsWith('data:image/') ? w.cover : null,
+            id,
+            official: false,
+            premium: false,
+            price: '',
+            private: true,
+            category: 'Shared',
+            sharedBy: { uid: from.uid, name: String(from.name || 'A friend').slice(0, 60) },
+            shareId: from.shareId || null,
+            authorId: d.currentUserId,
+            unlocked: [],
+            requests: [],
+            createdAt: new Date().toISOString(),
+          })
+        })
+        return id
+      },
       deleteWorkout: (id) =>
         mutate((d) => {
           d.workouts = d.workouts.filter((w) => w.id !== id)

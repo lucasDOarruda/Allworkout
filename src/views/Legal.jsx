@@ -201,6 +201,11 @@ const PRIVACY = [
         opened and which goal is picked in them (counts only, not what you enter), and analytics from Google Analytics for Firebase (pages viewed, device, browser and
         approximate location).
       </p>
+      <p>
+        <strong>Friends and community:</strong> your name and Google profile photo in the member directory (so people can find you by name, unless you turn that off),
+        your friends and friend requests, workouts you share with friends, the finished workouts you choose to share with friends (workout name, length and date), and the
+        likes and comments you post on workouts.
+      </p>
       <p>We don’t knowingly collect personal information from anyone under 18.</p>
     </>,
   ],
@@ -233,12 +238,14 @@ const PRIVACY = [
         <li>to create and run your account and show your profile to other members;</li>
         <li>to check that trainers are qualified, insured and hold a valid ABN before approving them (we may look up ABNs on the public ABN Lookup);</li>
         <li>to support members, for example by contacting you about your account or application;</li>
+        <li>to let you find friends, share workouts with them and see what they share with you;</li>
         <li>to understand what members want (such as weight loss or building muscle) and where they are, so we can plan workouts, programs and trainers;</li>
         <li>to keep the platform safe and secure, and to understand and improve how it’s used; and</li>
         <li>to meet our legal obligations.</li>
       </ul>
       <p>
-        A trainer’s public profile shows their name, photo, bio and specialties. Their date of birth, phone, ABN, certificate and insurance details are only seen by the trainer
+        Other signed-in members can see your name and photo, your comments and likes on workouts, and (only if you turn it on) the workouts you finish. Friends see what
+        you share with them. You can turn off “find me by name” and workout sharing at any time under Friends or Settings. A trainer’s public profile shows their name, photo, bio and specialties. Their date of birth, phone, ABN, certificate and insurance details are only seen by the trainer
         and our admin. We won’t use your information for any other purpose without your consent.
       </p>
     </>,

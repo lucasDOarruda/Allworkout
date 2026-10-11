@@ -19,6 +19,7 @@ import Landing from './views/Landing'
 import HealthTools from './views/HealthTools'
 import Legal from './views/Legal'
 import TrainerApply from './views/TrainerApply'
+import Friends from './views/Friends'
 import { PublicFooter, PublicNav } from './components/PublicChrome'
 import { canSee, rememberDestination, routeNeeds } from './lib/access'
 import { Empty } from './components/ui'
@@ -38,7 +39,7 @@ const TabIcon = ({ d }) => (
 
 export default function App() {
   const route = useRoute()
-  const { me, db, actions, notify } = useStore()
+  const { me, db, actions, notify, workouts } = useStore()
   const [sheet, setSheet] = useState(false)
 
   // Signed-in members send a heartbeat so admins can see who's online
@@ -75,6 +76,36 @@ export default function App() {
     }
   }, [me?.googleUid]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Friends directory entry (name, photo, privacy choices), refreshed when they change
+  useEffect(() => {
+    if (!me?.googleUid) return
+    import('./lib/social').then((s) => s.publishMember(me)).catch(() => {})
+  }, [me?.googleUid, me?.name, me?.photo]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Members who chose to share finished workouts with friends: publish each new one once
+  const mySessions = me ? db.sessions.filter((s) => s.userId === me.id) : []
+  const lastSession = mySessions.reduce((a, s) => (!a || s.date > a.date ? s : a), null)
+  useEffect(() => {
+    if (!me?.googleUid || !lastSession) return
+    const KEY = `aw:shared-activity:${me.googleUid}`
+    let seen
+    try {
+      seen = JSON.parse(localStorage.getItem(KEY) || 'null')
+    } catch {
+      seen = null
+    }
+    // First run on this device: don't publish older workouts retroactively
+    if (!seen) seen = mySessions.map((s) => s.id)
+    const fresh = mySessions.filter((s) => !seen.includes(s.id))
+    try {
+      localStorage.setItem(KEY, JSON.stringify([...seen, ...fresh.map((s) => s.id)].slice(-300)))
+    } catch {
+      /* private mode */
+    }
+    if (!me.shareActivity || !fresh.length) return
+    import('./lib/social').then((s) => fresh.forEach((x) => s.publishActivity(me, x, workouts.find((w) => w.id === x.workoutId)).catch(() => {})))
+  }, [lastSession?.id]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // On the live site only real (Google) accounts may use the app
   useEffect(() => {
     if (import.meta.env.PROD && me && !me.googleUid) actions.signOut()
@@ -100,6 +131,7 @@ export default function App() {
   else if (head === 'terms' || head === 'privacy') view = <Legal page={head} />
   else if (landing) view = <Landing />
   else if (head === 'apply') view = <TrainerApply />
+  else if (head === 'friends') view = <Friends />
   else if (head === 'w' && b === 'p' && d === 'play') view = <Player id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'p') view = <PartDetail id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'log') view = <LogSession id={a} />
@@ -132,6 +164,7 @@ export default function App() {
     you: 'you',
     clients: 'you',
     admin: 'you',
+    friends: 'you',
     signin: 'you',
     create: 'you',
   }

@@ -5,7 +5,7 @@ import { FORMATS } from '../data/workouts'
 import { go, useStore } from '../store'
 import { workoutEquipment } from '../lib/utils'
 
-const SOURCES = ['Gym', 'Kettlebell', 'Bodyweight', 'Community']
+const SOURCES = ['Gym', 'Kettlebell', 'Bodyweight', 'Community', 'Shared']
 
 export default function Library({ sub }) {
   const tab = sub === 'coaches' ? 'coaches' : 'workouts'
@@ -81,7 +81,7 @@ export function Coaches() {
   return (
     <div className="grid">
       {coaches.map((c) => {
-        const theirs = workouts.filter((w) => w.authorId === c.id)
+        const theirs = workouts.filter((w) => w.authorId === c.id && !w.private)
         const clients = db.coaching.filter((l) => l.coachId === c.id && l.status === 'active').length
         return (
           <button key={c.id} className="card coach-card" onClick={() => go(`coach/${c.id}`)}>

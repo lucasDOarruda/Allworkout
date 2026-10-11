@@ -2,6 +2,7 @@ import { useRef, useState } from 'react'
 import { Avatar, ImagePicker, RoleBadge, Segmented, WorkoutCard } from '../components/ui'
 import { go, isCoach, useStore } from '../store'
 import { GOALS } from '../lib/goals'
+import { SharingSettings } from './Friends'
 
 // Settings content (lives inside the You page)
 export function SettingsBody() {
@@ -12,6 +13,7 @@ export function SettingsBody() {
         <>
           <ProfileForm key={me.id} />
           {me.googleUid && <HealthConsent />}
+          {me.googleUid && <SharingSettings />}
           <Partners />
           {isCoach(me) && <MyWorkouts />}
         </>
@@ -184,7 +186,7 @@ function Partners() {
 
 function MyWorkouts() {
   const { me, workouts } = useStore()
-  const mine = workouts.filter((w) => w.authorId === me.id)
+  const mine = workouts.filter((w) => w.authorId === me.id && !w.private)
   return (
     <section>
       <div className="row between">

@@ -7,7 +7,7 @@ export default function CoachProfile({ id }) {
   const coach = db.users[id]
   if (!coach || (coach.role !== 'coach' && coach.role !== 'admin')) return <Empty icon="info" title="Coach not found" />
 
-  const theirs = workouts.filter((w) => w.authorId === coach.id)
+  const theirs = workouts.filter((w) => w.authorId === coach.id && !w.private)
   const free = theirs.filter((w) => !w.premium)
   const paid = theirs.filter((w) => w.premium)
   const clients = db.coaching.filter((c) => c.coachId === coach.id && c.status === 'active').length
