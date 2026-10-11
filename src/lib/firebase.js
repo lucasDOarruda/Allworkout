@@ -41,14 +41,30 @@ export function trackScreen(hash) {
 const AUTH_ERRORS = {
   'auth/operation-not-allowed': 'Google sign-in isn’t switched on yet. Enable it in Firebase → Authentication → Sign-in method.',
   'auth/unauthorized-domain': 'This website isn’t on Firebase’s list of authorised domains yet.',
-  'auth/popup-blocked': 'Your browser blocked the sign-in window. Allow pop-ups for this site and try again.',
+  'auth/popup-blocked': 'The Google window didn’t open. Tap “Continue with Google” again.',
   'auth/network-request-failed': 'No connection. Check your internet and try again.',
 }
 
-// Load the auth code ahead of time: browsers only allow the Google pop-up if it
-// opens straight from a tap, with no download in between.
+// Get sign-in fully ready ahead of time. Browsers (especially Safari on iPhone) only allow
+// the Google window if it opens straight from a tap, so nothing slow may happen in between:
+// load the code, start Firebase Auth, and let it load its helper frame (getRedirectResult
+// does that) before anyone taps.
 let authMod = null
-export const preloadAuth = () => import('firebase/auth').then((m) => (authMod = m))
+let warmUp = null
+export function preloadAuth() {
+  warmUp =
+    warmUp ||
+    import('firebase/auth').then(async (m) => {
+      const auth = m.getAuth(app)
+      await auth.authStateReady?.()
+      // Start Firebase's sign-in helper frame now (it's cached), so the tap only has to open
+      // the window. Internal API, so it's optional: if a future SDK renames it, nothing breaks.
+      await auth._popupRedirectResolver?._initialize?.(auth)?.catch?.(() => null)
+      authMod = m
+      return m
+    })
+  return warmUp
+}
 
 // Returns { uid, name, email, photo } or null if the person closed the window
 export async function googleSignIn() {

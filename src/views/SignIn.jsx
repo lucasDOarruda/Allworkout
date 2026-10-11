@@ -21,8 +21,8 @@ function takePending() {
 }
 
 const ROLES = [
-  ['client', 'Client', 'Train with free and paid workouts, find a coach.'],
-  ['coach', 'Coach', 'Publish free or paid workouts and take on clients.'],
+  ['client', 'I want to work out', 'Follow workouts, track your progress and find a coach.'],
+  ['coach', 'I want to train people', 'Coach clients or your audience and publish your workouts.'],
 ]
 
 export default function SignIn({ gate = false, onShow }) {
@@ -127,12 +127,15 @@ export default function SignIn({ gate = false, onShow }) {
       <p className="muted signin-sub">All Workout is free. Use your Google account to join or sign back in.</p>
 
       <section className="card stack signin-card">
-        <span className="label">New here? I’m joining as a…</span>
-        <div className="role-pick" role="radiogroup">
+        <span className="label">What brings you here?</span>
+        <div className="role-pick" role="radiogroup" aria-label="What brings you here?">
           {ROLES.map(([v, label, desc]) => (
             <button type="button" key={v} role="radio" aria-checked={role === v} className={`role-opt ${role === v ? 'on' : ''}`} onClick={() => setRole(v)}>
-              <span className="display">{label}</span>
-              <span className="small muted">{desc}</span>
+              <span className="role-radio" aria-hidden="true" />
+              <span className="role-text">
+                <span className="role-title">{label}</span>
+                <span className="small muted">{desc}</span>
+              </span>
             </button>
           ))}
         </div>
@@ -150,9 +153,7 @@ export default function SignIn({ gate = false, onShow }) {
             {error}
           </p>
         )}
-        <p className="tiny">
-          Already joined? Continue with Google and we’ll find your account. Your role choice only applies the first time.
-        </p>
+        <p className="tiny center">Already a member? Just continue with Google. This choice only applies to new accounts.</p>
       </section>
 
       {DEV_ACCOUNTS && (
