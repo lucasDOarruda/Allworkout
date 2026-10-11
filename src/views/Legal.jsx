@@ -203,8 +203,8 @@ const PRIVACY = [
       </p>
       <p>
         <strong>Friends and community:</strong> your name and Google profile photo in the member directory (so people can find you by name, unless you turn that off),
-        your friends and friend requests, workouts you share with friends, the finished workouts you choose to share with friends (workout name, length and date), and the
-        likes and comments you post on workouts.
+        your friends and friend requests, workouts you share with friends, the finished workouts you choose to share with friends (workout name, length and date), the
+        likes and comments you post on workouts, and the results you post to workout leaderboards (your time or rounds).
       </p>
       <p>We don’t knowingly collect personal information from anyone under 18.</p>
     </>,
@@ -244,7 +244,7 @@ const PRIVACY = [
         <li>to meet our legal obligations.</li>
       </ul>
       <p>
-        Other signed-in members can see your name and photo, your comments and likes on workouts, and (only if you turn it on) the workouts you finish. Friends see what
+        Other signed-in members can see your name and photo, your comments and likes on workouts, the leaderboard results you post, and (only if you turn it on) the workouts you finish. Friends see what
         you share with them. You can turn off “find me by name” and workout sharing at any time under Friends or Settings. A trainer’s public profile shows their name, photo, bio and specialties. Their date of birth, phone, ABN, certificate and insurance details are only seen by the trainer
         and our admin. We won’t use your information for any other purpose without your consent.
       </p>

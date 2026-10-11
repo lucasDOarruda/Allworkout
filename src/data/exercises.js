@@ -7,7 +7,7 @@ const yt = (name) =>
 export const FRONT_MUSCLES = ['Shoulders', 'Chest', 'Biceps', 'Forearms', 'Abs', 'Obliques', 'Quads', 'Adductors']
 export const BACK_MUSCLES = ['Traps & Neck', 'Triceps', 'Lats', 'Lower back', 'Abductors', 'Glutes', 'Hamstrings', 'Calves']
 export const MUSCLES = [...FRONT_MUSCLES, ...BACK_MUSCLES, 'Cardio']
-export const EQUIPMENT = ['Barbell', 'Dumbbell', 'Kettlebell', 'Machine', 'Bodyweight']
+export const EQUIPMENT = ['Barbell', 'Dumbbell', 'Kettlebell', 'Machine', 'Functional', 'Bodyweight']
 
 const raw = [
   // ---------- Barbell ----------
@@ -55,6 +55,15 @@ const raw = [
   ['kb-halo', 'Kettlebell Halo', 'Kettlebell', ['Shoulders', 'Traps & Neck'], ['Hold bell upside down by the horns', 'Circle close around your head', 'Ribs down, do not arch']],
   ['kb-windmill', 'Kettlebell Windmill', 'Kettlebell', ['Obliques', 'Shoulders', 'Hamstrings'], ['Bell locked out overhead', 'Push hip out, slide hand down leg', 'Eyes on the bell']],
   ['kb-deadlift', 'Kettlebell Deadlift', 'Kettlebell', ['Hamstrings', 'Glutes', 'Lower back'], ['Bell between your feet', 'Hips back, flat back', 'Stand tall and squeeze glutes']],
+  // ---------- HYROX stations and running ----------
+  ['run', 'Run', 'Bodyweight', ['Cardio', 'Quads', 'Calves'], ['Relaxed shoulders, quick light steps', 'Hold a pace you could keep talking at for easy runs', 'After a station, settle your breathing in the first 200 m']],
+  ['ski-erg', 'SkiErg', 'Machine', ['Cardio', 'Lats', 'Triceps', 'Abs'], ['Reach tall, then drive the handles down with your lats', 'Hinge at the hips as your hands pass your knees', 'Long, powerful pulls beat fast short ones']],
+  ['row-erg', 'Rowing (erg)', 'Machine', ['Cardio', 'Lats', 'Quads', 'Hamstrings'], ['Legs, then body, then arms on the drive', 'Arms, body, then legs on the way back', 'Damper around 5–6; aim for 24–30 strokes a minute']],
+  ['sled-push', 'Sled Push', 'Functional', ['Quads', 'Glutes', 'Calves', 'Shoulders'], ['Hands on the poles, arms locked or bent', 'Lean in low, back flat', 'Short, driving steps through the balls of your feet']],
+  ['sled-pull', 'Sled Pull', 'Functional', ['Lats', 'Biceps', 'Hamstrings', 'Forearms'], ['Sit back low with feet braced', 'Pull hand over hand, rope close to your body', 'Use your legs: step back and lean as you pull']],
+  ['burpee-broad-jump', 'Burpee Broad Jump', 'Bodyweight', ['Cardio', 'Quads', 'Glutes', 'Chest'], ['Chest to the floor, then jump your feet in', 'Jump forward with both feet together', 'Find a steady rhythm you can hold for the whole distance']],
+  ['sandbag-lunge', 'Sandbag Lunge', 'Functional', ['Quads', 'Glutes', 'Abs'], ['Sandbag on your shoulders behind your neck', 'Back knee touches the floor each step', 'Stand tall between lunges, don’t rush the knee touch']],
+  ['wall-ball', 'Wall Ball', 'Functional', ['Quads', 'Shoulders', 'Glutes', 'Cardio'], ['Squat below parallel with the ball at your chest', 'Drive up and throw in one motion to the target', 'Catch and drop straight into the next squat']],
   // ---------- Bodyweight ----------
   ['air-squat', 'Air Squat', 'Bodyweight', ['Quads', 'Glutes'], ['Arms forward for balance', 'Hips below knees if mobility allows', 'Full stand at the top']],
   ['jump-squat', 'Jump Squat', 'Bodyweight', ['Quads', 'Glutes', 'Cardio'], ['Quarter-to-half squat load', 'Explode up, arms swing', 'Land soft and go straight into the next rep']],

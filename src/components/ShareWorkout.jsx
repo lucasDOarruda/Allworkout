@@ -16,11 +16,12 @@ export default function ShareWorkout({ w, canShare }) {
   )
 }
 
-function ShareSheet({ w, canShare, onClose }) {
+// Also used for "Challenge friends" with a ready-made note
+export function ShareSheet({ w, canShare, onClose, title = 'Share with friends', defaultNote = '' }) {
   const { me, notify } = useStore()
   const [friends, setFriends] = useState(null)
   const [picked, setPicked] = useState([])
-  const [note, setNote] = useState('')
+  const [note, setNote] = useState(defaultNote)
   const [busy, setBusy] = useState(false)
 
   useEffect(() => {
@@ -52,10 +53,10 @@ function ShareSheet({ w, canShare, onClose }) {
 
   return (
     <div className="contact-back" onClick={onClose}>
-      <div className="contact-pop" role="dialog" aria-modal="true" aria-label="Share with friends" onClick={(e) => e.stopPropagation()}>
+      <div className="contact-pop" role="dialog" aria-modal="true" aria-label={title} onClick={(e) => e.stopPropagation()}>
         <div className="contact-pop-head">
           <div>
-            <h2>Share with friends</h2>
+            <h2>{title}</h2>
             <p className="small muted">They get their own copy of “{w.name}” to do or save.</p>
           </div>
           <button className="icon-btn" onClick={onClose} aria-label="Close">

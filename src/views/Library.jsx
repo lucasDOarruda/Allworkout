@@ -5,7 +5,7 @@ import { FORMATS } from '../data/workouts'
 import { go, useStore } from '../store'
 import { workoutEquipment } from '../lib/utils'
 
-const SOURCES = ['Mine', 'Gym', 'Kettlebell', 'Bodyweight', 'Community', 'Shared']
+const SOURCES = ['Mine', 'HYROX', 'Gym', 'Kettlebell', 'Bodyweight', 'Community', 'Shared']
 
 export default function Library({ sub }) {
   const tab = sub === 'coaches' ? 'coaches' : 'workouts'

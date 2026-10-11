@@ -282,6 +282,58 @@ export async function deleteWorkoutComment(workoutId, id) {
   await m.deleteDoc(m.doc(db, 'workoutComments', workoutId, 'items', id))
 }
 
+// ---------- Leaderboards ----------
+
+export const fmtScore = (score, unit) => {
+  if (unit === 'rounds') return `${score} round${score === 1 ? '' : 's'}`
+  const s = Math.round(score)
+  const h = Math.floor(s / 3600)
+  const mm = String(Math.floor((s % 3600) / 60)).padStart(h ? 2 : 1, '0')
+  const ss = String(s % 60).padStart(2, '0')
+  return h ? `${h}:${mm}:${ss}` : `${mm}:${ss}`
+}
+
+// "1:12:30", "72:30" or "45" (minutes) → seconds
+export function parseTime(text) {
+  const parts = String(text).trim().split(':').map((x) => Number(x))
+  if (!parts.length || parts.some((x) => !Number.isFinite(x) || x < 0)) return null
+  if (parts.length === 1) return parts[0] * 60
+  if (parts.length === 2) return parts[0] * 60 + parts[1]
+  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2]
+  return null
+}
+
+// Best result per member, best first (fastest time or most rounds)
+export async function loadLeaderboard(workoutId, unit) {
+  const dir = unit === 'time' ? 'asc' : 'desc'
+  if (isMock()) {
+    const rows = Object.entries(mock().results[workoutId] || {}).map(([uid, r]) => ({ uid, ...r, at: new Date(r.at) }))
+    return rows.sort((a, b) => (dir === 'asc' ? a.score - b.score : b.score - a.score))
+  }
+  const m = await firestore()
+  const snap = await m.getDocs(m.query(m.collection(db, 'results', workoutId, 'entries'), m.orderBy('score', dir), m.limit(100)))
+  return snap.docs.map((d) => ({ uid: d.id, ...d.data(), at: toDate(d.data().at) }))
+}
+
+// Saves the result only if it beats your previous best. Returns true when it's a new best.
+export async function postResult(workoutId, me, score, unit, previous) {
+  const better = !previous || (unit === 'time' ? score < previous.score : score > previous.score)
+  if (!better) return false
+  const data = {
+    name: String(me.name || 'Member').slice(0, 60),
+    photo: typeof me.photo === 'string' && /^https:\/\//.test(me.photo) && me.photo.length < 500 ? me.photo : null,
+    score,
+    unit,
+  }
+  if (isMock()) {
+    mock((d) => (d.results[workoutId] = { ...(d.results[workoutId] || {}), [me.googleUid]: { ...data, at: new Date().toISOString() } }))
+    return true
+  }
+  const m = await firestore()
+  await m.setDoc(m.doc(db, 'results', workoutId, 'entries', me.googleUid), { ...data, at: m.serverTimestamp() })
+  return true
+}
+
 // ---------- Dev-only mock (stripped from production builds) ----------
 const MOCK_KEY = 'aw:social-mock'
 function mock(change) {
@@ -307,6 +359,12 @@ function mock(change) {
   }
   d.likes ||= {}
   d.comments ||= {}
+  d.results ||= {
+    'off-hyrox-half': {
+      'g-1': { name: 'Jordan Lee', photo: null, score: 2950, unit: 'time', at: new Date(Date.now() - 2 * 86400000).toISOString() },
+      'g-2': { name: 'Sam Patel', photo: null, score: 3410, unit: 'time', at: new Date(Date.now() - 5 * 86400000).toISOString() },
+    },
+  }
   if (change) {
     change(d)
     localStorage.setItem(MOCK_KEY, JSON.stringify(d))

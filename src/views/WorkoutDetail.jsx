@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from 'react'
 import ShareWorkout from '../components/ShareWorkout'
+import Leaderboard from '../components/Leaderboard'
 import { Avatar, Empty, FormatPill, SignInPrompt } from '../components/ui'
 import { MoveImage } from '../components/BodyMap'
 import { FORMATS } from '../data/workouts'
 import { workoutPhoto } from '../lib/photos'
 import { canAccess, go, useStore } from '../store'
-import { partMinutes, partSummary, safeUrl, timeAgo, workoutEquipment, workoutMinutes } from '../lib/utils'
+import { partMinutes, partSummary, safeUrl, scoreType, timeAgo, workoutEquipment, workoutMinutes } from '../lib/utils'
 
-const partHeadline = (p) => (p.format === 'timed' ? `${partMinutes(p)} min warmup` : `${FORMATS[p.format]} · ${partSummary(p)}`)
+const partHeadline = (p) =>
+  p.format === 'timed' ? `${partMinutes(p)} min ${/warm/i.test(p.name) ? 'warmup' : 'time cap · work through in order'}` : `${FORMATS[p.format]} · ${partSummary(p)}`
 
 export const moveLine = (p, mv) => (p.format === 'sets' ? `${mv.sets} × ${mv.reps} ${mv.name}` : `${mv.reps} ${mv.name}`)
 
@@ -46,6 +48,7 @@ export default function WorkoutDetail({ id }) {
   }
 
   const author = w.authorId && !w.sharedBy ? db.users[w.authorId] : null
+  const lbUnit = scoreType(w)
   const isOwner = me && w.authorId === me.id
   const access = canAccess(w, me)
   const localLiked = !!me && w.likes.includes(me.id)
@@ -214,6 +217,7 @@ export default function WorkoutDetail({ id }) {
         </div>
       )}
 
+      {me?.googleUid && lbUnit && <Leaderboard w={w} unit={lbUnit} />}
       {me?.googleUid && <ShareWorkout w={w} canShare={!w.premium || isOwner} />}
 
       {isOwner && w.premium && <BuyersPanel w={w} />}

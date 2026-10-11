@@ -376,3 +376,12 @@ export function safeUrl(url) {
     return undefined
   }
 }
+
+// How a workout is ranked on its leaderboard: rounds for an AMRAP, finish time for a timed
+// race, otherwise it has no leaderboard. Official workouts only (everyone has the same one).
+export function scoreType(w) {
+  if (!w?.official) return null
+  if (w.parts.some((p) => p.format === 'amrap')) return 'rounds'
+  if (w.parts.some((p) => p.format === 'timed' && !/warm/i.test(p.name))) return 'time'
+  return null
+}

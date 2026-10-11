@@ -7,6 +7,7 @@ const POOLS = {
   Kettlebell: ['dumbbells', 'ropes', 'timer'],
   Bodyweight: ['home', 'class'],
   Community: ['class', 'coach', 'barbell', 'home'],
+  HYROX: ['hyrox-sled', 'hyrox-run', 'hyrox-row', 'hyrox-floor', 'hyrox-gym'],
 }
 
 const hash = (s) => [...s].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7)
@@ -25,6 +26,13 @@ const OFFICIAL = {
   'off-bw-starter': 'coach',
   'off-bw-calisthenics': 'barbell',
   'off-bw-amrap': 'ropes',
+  'off-hyrox-40': 'hyrox-run',
+  'off-hyrox-sim': 'hyrox-sled',
+  'off-hyrox-half': 'hyrox-floor',
+  'off-hyrox-engine': 'hyrox-row',
+  'off-hyrox-strength': 'hyrox-gym',
+  'off-hyrox-stations': 'hyrox-floor',
+  'off-hyrox-compromised': 'hyrox-run',
 }
 
 export function workoutPhoto(w) {
@@ -34,5 +42,11 @@ export function workoutPhoto(w) {
   return photoUrl(pool[hash(w.id) % pool.length])
 }
 
-const PROGRAM_PHOTOS = { 'prog-full-body-burner': 'ropes', 'prog-strength-start': 'deadlift', 'prog-no-equipment': 'home' }
+const PROGRAM_PHOTOS = {
+  'prog-full-body-burner': 'ropes',
+  'prog-strength-start': 'deadlift',
+  'prog-no-equipment': 'home',
+  'prog-hyrox-8wk': 'hyrox-sled',
+  'prog-strength-to-hyrox': 'hyrox-gym',
+}
 export const programPhoto = (p) => photoUrl(PROGRAM_PHOTOS[p.id] || 'class')
