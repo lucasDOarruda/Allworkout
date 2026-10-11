@@ -6162,3 +6162,135 @@ code {
   text-align: left;
   width: 100%;
 }
+
+/* ---------- Body check ---------- */
+.body-page .card + .card,
+.body-page section + section {
+  margin-top: 12px;
+}
+.body-page > .btn {
+  margin: 12px 0;
+}
+.bc-consent-list {
+  color: var(--text-2);
+}
+.bc-capture {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bc-stage {
+  aspect-ratio: 3 / 4;
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+.bc-stage .fc-video,
+.bc-stage .fc-canvas {
+  object-fit: cover;
+}
+.bc-guide {
+  position: absolute;
+  inset: 6% 25%;
+  border: 2px dashed rgb(255 255 255 / 35%);
+  border-radius: 40% 40% 12% 12%;
+  pointer-events: none;
+}
+.bc-tip {
+  margin: 0;
+}
+.bc-preview {
+  width: 100%;
+  max-height: 60vh;
+  object-fit: contain;
+  border-radius: var(--radius);
+  background: #000;
+}
+.bc-measures {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+.bc-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bc-list li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.bc-thumbs {
+  display: flex;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.bc-thumbs img,
+.bc-nophoto {
+  width: 52px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: var(--surface-2);
+}
+.bc-nophoto {
+  display: grid;
+  place-items: center;
+  font-size: 0.6rem;
+  text-align: center;
+  color: var(--text-3);
+  padding: 2px;
+}
+.bc-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.bc-pair figure {
+  margin: 0;
+}
+.bc-pair img,
+.bc-stack img {
+  width: 100%;
+  border-radius: var(--radius-s);
+  background: #000;
+  display: block;
+}
+.bc-pair figcaption {
+  font-size: 0.8rem;
+  color: var(--text-2);
+  text-align: center;
+  margin-top: 4px;
+}
+.bc-stack {
+  position: relative;
+}
+.bc-stack img + img {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  object-fit: cover;
+}
+.bc-divider {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  margin-left: -1.5px;
+  background: var(--lime);
+  pointer-events: none;
+}
+.bc-table td,
+.bc-table th {
+  font-size: 0.86rem;
+}
+.bc-scan {
+  margin-top: 12px;
+}
+.bc-delete-all {
+  margin-top: 8px;
+  color: var(--danger);
+}

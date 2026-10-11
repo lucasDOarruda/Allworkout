@@ -4,15 +4,13 @@ import { CONNECTIONS, SKELETON_POINTS } from './poseMath.js'
 import { computeMetrics } from './metrics.js'
 import { CAMERA_SETUP, FORM_EXERCISES, formExerciseById } from './exercises.js'
 import { createRepEngine } from './repEngine.js'
+import { loadPoseLandmarker } from './landmarker.js'
 
 // Camera form check. Everything runs in the browser: the pose model finds 33 body points per
 // frame, our rules judge each rep, and no video ever leaves the device.
 //
 // <FormCoach exerciseId="deadlift" voice debug={false} onRep={(rep) => …} onClose={(summary) => …} />
 
-const BASE = new URL(import.meta.env.BASE_URL, location.href).href
-const WASM = `${BASE}mediapipe/wasm`
-const MODEL = `${BASE}models/pose_landmarker_lite.task`
 const ACK_KEY = 'aw:formcoach-ack'
 const COLORS = { idle: '#cfd2c4', good: '#4ade80', bad: '#f43f5e' }
 const RESULT_MS = 700
@@ -80,7 +78,7 @@ export default function FormCoach({ exerciseId, voice: voiceDefault = true, debu
     try {
       if (!window.isSecureContext || !navigator.mediaDevices?.getUserMedia) throw Object.assign(new Error(), { name: 'Insecure' })
       const camera = navigator.mediaDevices.getUserMedia({ audio: false, video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } } })
-      const model = loadModel()
+      const model = loadPoseLandmarker('VIDEO')
       stream.current = await camera
       video.current.srcObject = stream.current
       await video.current.play()
@@ -100,18 +98,6 @@ export default function FormCoach({ exerciseId, voice: voiceDefault = true, debu
               ? 'The camera only works on a secure (https) page.'
               : 'The form check couldn’t start on this device. Try another browser, or update this one.',
       )
-    }
-  }
-
-  async function loadModel() {
-    const { FilesetResolver, PoseLandmarker } = await import('@mediapipe/tasks-vision')
-    const files = await FilesetResolver.forVisionTasks(WASM)
-    const make = (delegate) =>
-      PoseLandmarker.createFromOptions(files, { baseOptions: { modelAssetPath: MODEL, delegate }, runningMode: 'VIDEO', numPoses: 1 })
-    try {
-      return await make('GPU')
-    } catch {
-      return await make('CPU') // no WebGL: slower but works
     }
   }
 

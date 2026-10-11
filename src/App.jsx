@@ -21,6 +21,7 @@ import Legal from './views/Legal'
 import TrainerApply from './views/TrainerApply'
 import Friends from './views/Friends'
 import FormCheckPage from './views/FormCheckPage'
+import BodyCheck from './views/BodyCheck'
 import { PublicFooter, PublicNav } from './components/PublicChrome'
 import { canSee, rememberDestination, routeNeeds } from './lib/access'
 import { Empty } from './components/ui'
@@ -134,6 +135,7 @@ export default function App() {
   else if (head === 'apply') view = <TrainerApply />
   else if (head === 'friends') view = <Friends />
   else if (head === 'formcheck') view = <FormCheckPage exerciseId={a} />
+  else if (head === 'body') view = <BodyCheck />
   else if (head === 'w' && b === 'p' && d === 'play') view = <Player id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'p') view = <PartDetail id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'log') view = <LogSession id={a} />
@@ -167,6 +169,7 @@ export default function App() {
     clients: 'you',
     admin: 'you',
     friends: 'you',
+    body: 'you',
     signin: 'you',
     create: 'you',
   }

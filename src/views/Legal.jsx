@@ -237,6 +237,14 @@ const PRIVACY = [
     </p>,
   ],
   [
+    'Body check',
+    <p>
+      If you use Body check (progress photos and body measurements), your photos and measurements are stored only on your device, in your browser. They aren’t uploaded,
+      and nobody else can see them, including trainers and our team. The camera guide checks your position on the device and doesn’t record video. You must be 18 or
+      older to use it. You can delete a check-in, or all your body check data, at any time; clearing your browser data also deletes it.
+    </p>,
+  ],
+  [
     'How we collect it',
     <ul>
       <li>From you, when you sign in with Google, fill in your profile or apply as a trainer.</li>

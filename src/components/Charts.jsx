@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 // Single-series column chart: one hue, thin bars with 4px rounded tops,
 // recessive axis, hover/focus tooltip. The newest bar is emphasised.
-export function ColumnChart({ data, format = (v) => v, height = 150, label }) {
+export function ColumnChart({ data, format = (v) => v, height = 150, label, nowLabel = 'Now' }) {
   const [hover, setHover] = useState(null)
   const max = Math.max(1, ...data.map((d) => d.value))
   return (
@@ -32,7 +32,7 @@ export function ColumnChart({ data, format = (v) => v, height = 150, label }) {
       </div>
       <div className="weekbars-axis">
         {data.map((d, i) => (
-          <span key={d.key}>{i === data.length - 1 ? 'Now' : i % (data.length > 14 ? 7 : 3) === 0 ? d.short : ''}</span>
+          <span key={d.key}>{i === data.length - 1 ? nowLabel || d.short : i % (data.length > 14 ? 7 : 3) === 0 ? d.short : ''}</span>
         ))}
       </div>
     </div>

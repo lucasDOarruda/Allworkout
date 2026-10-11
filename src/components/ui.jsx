@@ -9,9 +9,13 @@ import { FormCheckButton } from './FormCheck'
 import { workoutPhoto } from '../lib/photos'
 import Icon from './Icon'
 
+// Google profile photos refuse requests that send our page as the referrer, so send none,
+// and fall back to initials if a photo still won't load
 export function Avatar({ user, size = 36 }) {
+  const [broken, setBroken] = useState(false)
   if (!user) return null
-  if (user.photo) return <img className="avatar" src={user.photo} alt="" style={{ width: size, height: size }} />
+  if (user.photo && !broken)
+    return <img className="avatar" src={user.photo} alt="" referrerPolicy="no-referrer" onError={() => setBroken(true)} style={{ width: size, height: size }} />
   return (
     <span className="avatar" style={{ width: size, height: size, fontSize: size * 0.4, background: user.color }} aria-hidden="true">
       {initials(user.name)}

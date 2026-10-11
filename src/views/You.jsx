@@ -92,6 +92,10 @@ export default function You({ sub }) {
         </button>
       )}
       {me.googleUid && <FriendsCard />}
+      <button className="card nav-card" onClick={() => go('body')}>
+        <span>Body check · progress photos and measurements</span>
+        <span className="chev-right">›</span>
+      </button>
       {me.role === 'client' && me.googleUid && (
         <button className="card nav-card" onClick={() => go('apply')}>
           <span>
