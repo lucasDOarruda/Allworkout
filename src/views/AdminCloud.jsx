@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Avatar, Chips, RoleBadge } from '../components/ui'
 import Icon from '../components/Icon'
-import { ColumnChart } from '../components/Charts'
+import { BarList, ColumnChart } from '../components/Charts'
 import { useStore } from '../store'
 import { fmtDate, timeAgo } from '../lib/utils'
+import { GOALS, TOOL_LABELS, goalLabel } from '../lib/goals'
 
 // Cloud data for the admin: members (CRM) and traffic, loaded from Firestore.
 export function useCloudAdmin() {
@@ -65,8 +66,8 @@ export function Crm({ cloud }) {
     const needle = q.trim().toLowerCase()
     return (cloud.members || [])
       .map((m) => ({ ...m, status: memberStatus(m) }))
-      .filter((m) => !status || m.status[0] === status || (status === 'coach' && m.role === 'coach'))
-      .filter((m) => !needle || `${m.name} ${m.email} ${(m.crm.tags || []).join(' ')}`.toLowerCase().includes(needle))
+      .filter((m) => !status || m.status[0] === status || (status === 'coach' && m.role === 'coach') || m.goal === status)
+      .filter((m) => !needle || `${m.name} ${m.email} ${m.location} ${goalLabel(m.goal)} ${(m.crm.tags || []).join(' ')}`.toLowerCase().includes(needle))
       .sort((a, b) => (b.lastSeenAt?.getTime() || 0) - (a.lastSeenAt?.getTime() || 0))
   }, [cloud.members, q, status])
 
@@ -74,9 +75,9 @@ export function Crm({ cloud }) {
   if (cloud.error) return <CloudSetup error={cloud.error} onRetry={cloud.reload} />
 
   const exportCsv = () => {
-    const head = ['name', 'email', 'role', 'status', 'joined', 'last_seen', 'sign_ins', 'device', 'tags', 'follow_up']
+    const head = ['name', 'email', 'role', 'status', 'goal', 'location', 'joined', 'last_seen', 'sign_ins', 'device', 'tags', 'follow_up', 'calc_goal', 'weight_kg', 'height_cm', 'bmi', 'kcal_target']
     const lines = rows.map((m) =>
-      [m.name, m.email, m.role, m.status[1], m.createdAt?.toISOString().slice(0, 10) || '', m.lastSeenAt?.toISOString() || '', m.signInCount, m.lastDevice, (m.crm.tags || []).join(' '), m.crm.followUp || '']
+      [m.name, m.email, m.role, m.status[1], goalLabel(m.goal), m.location, m.createdAt?.toISOString().slice(0, 10) || '', m.lastSeenAt?.toISOString() || '', m.signInCount, m.lastDevice, (m.crm.tags || []).join(' '), m.crm.followUp || '', m.health?.goal || '', m.health?.weight || '', m.health?.height || '', m.health?.bmi || '', m.health?.target || '']
         .map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`)
         .join(','),
     )
@@ -113,7 +114,7 @@ export function Crm({ cloud }) {
         </div>
       </div>
       <div className="adm-toolbar">
-        <input className="search" type="search" placeholder="Search name, email or tag" value={q} onChange={(e) => setQ(e.target.value)} />
+        <input className="search" type="search" placeholder="Search name, email, place, goal or tag" value={q} onChange={(e) => setQ(e.target.value)} />
         <button className="btn btn-ghost small" onClick={cloud.reload}>
           Refresh
         </button>
@@ -129,6 +130,7 @@ export function Crm({ cloud }) {
           ['quiet', `Quiet (${counts.quiet})`],
           ['inactive', `Inactive (${counts.inactive})`],
           ['coach', 'Coaches'],
+          ...GOALS.filter(([g]) => (cloud.members || []).some((m) => m.goal === g)).map(([g, l]) => [g, l]),
         ]}
         value={status}
         onChange={setStatus}
@@ -139,9 +141,10 @@ export function Crm({ cloud }) {
             <tr>
               <th>Member</th>
               <th>Status</th>
+              <th>Goal</th>
+              <th className="adm-hide-sm">Location</th>
               <th>Last seen</th>
               <th className="num">Sign-ins</th>
-              <th className="adm-hide-sm">Device</th>
               <th className="adm-hide-sm">Joined</th>
             </tr>
           </thead>
@@ -163,9 +166,10 @@ export function Crm({ cloud }) {
                   <span className={`crm-status ${m.status[0]}`}>{m.status[1]}</span>
                   {m.crm.followUp && <span className="tiny block">Follow up {fmtDate(m.crm.followUp)}</span>}
                 </td>
+                <td className="small">{goalLabel(m.goal) || '–'}</td>
+                <td className="small adm-hide-sm">{m.location || '–'}</td>
                 <td className="small">{m.lastSeenAt ? timeAgo(m.lastSeenAt.toISOString()) : '–'}</td>
                 <td className="num">{m.signInCount}</td>
-                <td className="small adm-hide-sm">{m.lastDevice || '–'}</td>
                 <td className="small adm-hide-sm">{m.createdAt ? fmtDate(m.createdAt.toISOString()) : '–'}</td>
               </tr>
             ))}
@@ -264,6 +268,14 @@ function CrmDrawer({ member: m, onClose, onSaved }) {
             <dd>{m.signInCount}</dd>
           </div>
           <div>
+            <dt>Goal</dt>
+            <dd>{goalLabel(m.goal) || '–'}</dd>
+          </div>
+          <div>
+            <dt>Signs in from</dt>
+            <dd>{m.location || '–'}</dd>
+          </div>
+          <div>
             <dt>Last device</dt>
             <dd>{m.lastDevice || '–'}</dd>
           </div>
@@ -276,6 +288,34 @@ function CrmDrawer({ member: m, onClose, onSaved }) {
             <dd>{m.screen || '–'}</dd>
           </div>
         </dl>
+        <h3 className="adm-sub">Health calculator</h3>
+        {m.health ? (
+          <>
+            <dl className="crm-facts">
+              {[
+                ['Calculator goal', { lose: 'Lose fat', maintain: 'Maintain', gain: 'Gain muscle' }[m.health.goal] || '–'],
+                ['Sex, age', [m.health.sex, m.health.age].filter(Boolean).join(', ') || '–'],
+                ['Height', m.health.height ? `${m.health.height} cm` : '–'],
+                ['Weight', m.health.weight ? `${m.health.weight} kg` : '–'],
+                ['BMI', m.health.bmi || '–'],
+                ['Waist-to-height', m.health.whtr || '–'],
+                ['Body fat (est.)', m.health.bodyFat ? `${m.health.bodyFat}%` : '–'],
+                ['Maintenance', m.health.tdee ? `${m.health.tdee} kcal` : '–'],
+                ['Daily target', m.health.target ? `${m.health.target} kcal` : '–'],
+                ['Protein', m.health.protein ? `${m.health.protein} g` : '–'],
+              ].map(([k, v]) => (
+                <div key={k}>
+                  <dt>{k}</dt>
+                  <dd>{v}</dd>
+                </div>
+              ))}
+            </dl>
+            <p className="tiny">Saved with the member’s consent{m.health.updatedAt ? ` · updated ${timeAgo(m.health.updatedAt.toISOString())}` : ''}.</p>
+          </>
+        ) : (
+          <p className="muted small">Not shared. Members choose whether to save their calculator results to their account.</p>
+        )}
+
         <label className="field">
           <span>Role</span>
           <select value={m.role} onChange={(e) => changeRole(e.target.value)}>
@@ -356,7 +396,7 @@ function CrmDrawer({ member: m, onClose, onSaved }) {
               <li key={i}>
                 <span className="grow">
                   {s.at ? `${fmtDate(s.at.toISOString())} · ${s.at.toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' })}` : 'Just now'}
-                  <span className="tiny block">{s.device}</span>
+                  <span className="tiny block">{[s.device, s.location].filter(Boolean).join(' · ')}</span>
                 </span>
               </li>
             ))}
@@ -464,6 +504,7 @@ export function Traffic({ cloud }) {
           )}
         </section>
       </div>
+      <Insights cloud={cloud} />
       <p className="tiny">
         Counts come from this site’s own tracking. For full traffic (sources, countries, devices, live visitors including people who
         aren’t signed in), open{' '}
@@ -472,6 +513,64 @@ export function Traffic({ cloud }) {
         </a>
         .
       </p>
+    </>
+  )
+}
+
+// Where people are, what they want and which calculators they use
+const top = (obj, n = 8, labelOf = (k) => k) =>
+  Object.entries(obj)
+    .filter(([, v]) => v > 0)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, n)
+    .map(([k, v]) => ({ key: k, label: labelOf(k), value: v }))
+const countBy = (list, f) => list.reduce((acc, x) => (f(x) ? { ...acc, [f(x)]: (acc[f(x)] || 0) + 1 } : acc), {})
+const placeName = (k) => k.split('_').reverse().join(', ')
+
+function Insights({ cloud }) {
+  const members = cloud.members || []
+  const tools = cloud.tools || {}
+  const toolRows = top(Object.fromEntries(Object.entries(tools).filter(([k]) => !k.startsWith('goal_'))), 8, (k) => TOOL_LABELS[k] || k)
+  const calcGoals = top(Object.fromEntries(Object.entries(tools).filter(([k]) => k.startsWith('goal_'))), 3, (k) => TOOL_LABELS[k] || k)
+  const people = (v) => `${v} ${v === 1 ? 'member' : 'members'}`
+  return (
+    <>
+      <div className="adm-grid2">
+        <section className="adm-panel">
+          <div className="adm-panel-head">
+            <h2>Member goals</h2>
+          </div>
+          <BarList rows={top(countBy(members, (m) => m.goal), 8, goalLabel)} format={people} empty="No goals picked yet." />
+        </section>
+        <section className="adm-panel">
+          <div className="adm-panel-head">
+            <h2>Where members sign in from</h2>
+          </div>
+          <BarList rows={top(countBy(members, (m) => m.location))} format={people} empty="No locations yet. They’re recorded at each sign-in on the live site." />
+        </section>
+      </div>
+      <div className="adm-grid2">
+        <section className="adm-panel">
+          <div className="adm-panel-head">
+            <h2>Visitor locations</h2>
+            <span className="tiny">30 days</span>
+          </div>
+          <BarList rows={top(cloud.places || {}, 10, placeName)} format={(v) => `${v} visitor${v === 1 ? '' : 's'}`} empty="No visits with a location yet." />
+        </section>
+        <section className="adm-panel">
+          <div className="adm-panel-head">
+            <h2>Health calculator use</h2>
+            <span className="tiny">30 days</span>
+          </div>
+          <BarList rows={toolRows} format={(v) => `${v} visitor${v === 1 ? '' : 's'}`} empty="Nobody has used the calculators yet." />
+          {calcGoals.length > 0 && (
+            <>
+              <h3 className="adm-sub">Goals picked in the calculator</h3>
+              <BarList rows={calcGoals} format={(v) => `${v} visitor${v === 1 ? '' : 's'}`} />
+            </>
+          )}
+        </section>
+      </div>
     </>
   )
 }

@@ -7,12 +7,16 @@ import { go, useStore } from '../store'
 import { FEES, coachPct, money, runningPct, salesTotals, splitSale } from '../lib/fees'
 import { computeStats, fmtDate, fmtDuration, fmtKg, timeAgo, weekKey, weekStart } from '../lib/utils'
 import { Crm, Traffic, memberStatus, useCloudAdmin } from './AdminCloud'
+import { Trainers, useTrainerApps } from './AdminTrainers'
+import { Messages, useMessages } from './AdminMessages'
 
 // Members (CRM) and Traffic come from the cloud. "Device members" only lists accounts stored
 // in this browser, so it's shown in local development only.
 const SECTIONS = [
   ['overview', 'Overview', 'target'],
   ['crm', 'Members', 'users'],
+  ['trainers', 'Trainer approvals', 'medal'],
+  ['messages', 'Messages', 'chat'],
   ['traffic', 'Traffic', 'chart'],
   ...(import.meta.env.DEV ? [['members', 'Device members', 'note']] : []),
   ['coaching', 'Coaching', 'clipboard'],
@@ -41,6 +45,10 @@ export default function Admin({ section }) {
   const { db, me, theme, setTheme, actions } = useStore()
   const tab = SECTIONS.some(([k]) => k === section) ? section : 'overview'
   const cloud = useCloudAdmin()
+  const trainerApps = useTrainerApps()
+  const waiting = (trainerApps.apps || []).filter((a) => a.status === 'pending').length
+  const messages = useMessages()
+  const unanswered = (messages.messages || []).filter((m) => !m.done).length
   const pendingCount = db.coaching.filter((c) => c.status === 'pending').length
 
   return (
@@ -59,6 +67,8 @@ export default function Admin({ section }) {
               <Icon name={icon} size={18} />
               {label}
               {k === 'coaching' && pendingCount > 0 && <span className="adm-count">{pendingCount}</span>}
+              {k === 'trainers' && waiting > 0 && <span className="adm-count">{waiting}</span>}
+              {k === 'messages' && unanswered > 0 && <span className="adm-count">{unanswered}</span>}
             </a>
           ))}
         </nav>
@@ -99,6 +109,8 @@ export default function Admin({ section }) {
         {tab === 'overview' && <Overview cloud={cloud} />}
         {tab === 'crm' && <Crm cloud={cloud} />}
         {tab === 'traffic' && <Traffic cloud={cloud} />}
+        {tab === 'trainers' && <Trainers apps={trainerApps} />}
+        {tab === 'messages' && <Messages data={messages} />}
         {tab === 'members' && <Members />}
         {['coaching', 'content', 'revenue', 'activity'].includes(tab) && (
           <p className="notice">Workouts, sessions and coaching are still stored per browser, so this shows the data in this browser.</p>

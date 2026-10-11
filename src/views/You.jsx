@@ -90,6 +90,20 @@ export default function You({ sub }) {
           <span className="chev-right">›</span>
         </button>
       )}
+      {me.role === 'client' && me.googleUid && (
+        <button className="card nav-card" onClick={() => go('apply')}>
+          <span>
+            {me.trainerStatus === 'pending'
+              ? 'Trainer application · waiting for review'
+              : me.trainerStatus === 'rejected'
+                ? 'Trainer application · needs changes'
+                : me.trainerStatus === 'apply'
+                  ? 'Finish your trainer application'
+                  : 'Are you a personal trainer? Apply to coach'}
+          </span>
+          <span className="chev-right">›</span>
+        </button>
+      )}
       {me.role === 'admin' && (
         <button className="card nav-card" onClick={() => go('admin')}>
           <span>Admin dashboard</span>

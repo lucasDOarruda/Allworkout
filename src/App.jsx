@@ -17,6 +17,8 @@ import Admin from './views/Admin'
 import SignIn from './views/SignIn'
 import Landing from './views/Landing'
 import HealthTools from './views/HealthTools'
+import Legal from './views/Legal'
+import TrainerApply from './views/TrainerApply'
 import { PublicFooter, PublicNav } from './components/PublicChrome'
 import { canSee, rememberDestination, routeNeeds } from './lib/access'
 import { Empty } from './components/ui'
@@ -36,7 +38,7 @@ const TabIcon = ({ d }) => (
 
 export default function App() {
   const route = useRoute()
-  const { me, db, actions } = useStore()
+  const { me, db, actions, notify } = useStore()
   const [sheet, setSheet] = useState(false)
 
   // Signed-in members send a heartbeat so admins can see who's online
@@ -50,13 +52,36 @@ export default function App() {
     return () => stop()
   }, [me?.googleUid]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Keep this browser in step with the admin's decisions: only approved trainers are coaches
+  useEffect(() => {
+    if (!me?.googleUid || me.role === 'admin') return
+    let cancelled = false
+    import('./lib/cloud')
+      .then((c) => c.myTrainerAccess(me.googleUid))
+      .then((r) => {
+        if (cancelled || !r) return
+        const status = r.application?.status || (me.trainerStatus === 'apply' ? 'apply' : null)
+        const role = r.role === 'coach' ? 'coach' : 'client'
+        const patch = {}
+        if (role !== me.role && r.role !== 'admin') patch.role = role
+        if (status !== (me.trainerStatus || null)) patch.trainerStatus = status
+        if (!Object.keys(patch).length) return
+        actions.updateProfile(patch)
+        if (patch.role === 'coach') notify('You’re approved as a trainer. Coach tools are on.')
+        else if (patch.role === 'client' && me.role === 'coach') notify('Trainer tools are off until an admin approves your application.')
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [me?.googleUid]) // eslint-disable-line react-hooks/exhaustive-deps
+
   // On the live site only real (Google) accounts may use the app
   useEffect(() => {
     if (import.meta.env.PROD && me && !me.googleUid) actions.signOut()
   }, [me, actions])
   const [head, a, b, c, d] = route
   const playing = head === 'w' && b === 'p' && d === 'play'
-  const landing = head === 'welcome' || head === 'tools'
+  const landing = head === 'welcome' || head === 'tools' || head === 'terms' || head === 'privacy'
   const need = routeNeeds(route)
   const allowed = canSee(need, me)
 
@@ -72,7 +97,9 @@ export default function App() {
         <PublicFooter />
       </div>
     )
+  else if (head === 'terms' || head === 'privacy') view = <Legal page={head} />
   else if (landing) view = <Landing />
+  else if (head === 'apply') view = <TrainerApply />
   else if (head === 'w' && b === 'p' && d === 'play') view = <Player id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'p') view = <PartDetail id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'log') view = <LogSession id={a} />
@@ -124,7 +151,7 @@ export default function App() {
   return (
     <div className={`app ${playing ? 'is-playing' : ''} ${landing ? 'is-landing' : ''}`}>
       <main>{view}</main>
-      {!playing && !landing && allowed && head !== 'admin' && head !== 'signin' && !!me && (
+      {!playing && !landing && allowed && head !== 'admin' && head !== 'signin' && head !== 'apply' && !!me && (
         <nav className="tabbar" aria-label="Main">
           <Tab k="home" label="Home" />
           <Tab k="explore" label="Explore" />
@@ -257,7 +284,7 @@ function StartSheet({ onClose }) {
 
 // Shown instead of a page the current account isn't allowed to see
 function Locked({ need, me, onSwitch }) {
-  const what = need === 'admin' ? 'admins' : need === 'coach' ? 'coaches' : 'members'
+  const what = need === 'admin' ? 'admins' : need === 'coach' ? 'approved trainers' : 'members'
   return (
     <div className="page narrow">
       <Empty icon="lock" title={`This page is for ${what} only`}>
@@ -266,6 +293,11 @@ function Locked({ need, me, onSwitch }) {
           {!me && (
             <button className="btn btn-primary" onClick={() => go('signin')}>
               Log in
+            </button>
+          )}
+          {me && need === 'coach' && (
+            <button className="btn btn-primary" onClick={() => go('apply')}>
+              {me.trainerStatus === 'pending' ? 'See my trainer application' : 'Apply as a trainer'}
             </button>
           )}
           {me && need === 'admin' && (

@@ -32,7 +32,7 @@ export function ColumnChart({ data, format = (v) => v, height = 150, label }) {
       </div>
       <div className="weekbars-axis">
         {data.map((d, i) => (
-          <span key={d.key}>{i === data.length - 1 ? 'Now' : i % 3 === 0 ? d.short : ''}</span>
+          <span key={d.key}>{i === data.length - 1 ? 'Now' : i % (data.length > 14 ? 7 : 3) === 0 ? d.short : ''}</span>
         ))}
       </div>
     </div>

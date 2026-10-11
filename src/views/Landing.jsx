@@ -2,11 +2,12 @@ import { go, useStore } from '../store'
 import Icon from '../components/Icon'
 import { PublicFooter, PublicNav } from '../components/PublicChrome'
 import { photoUrl } from '../lib/photos'
+import ContactForm from '../components/ContactForm'
 
 const FEATURES = [
   ['ropes', 'Timers that coach you', 'EMOM, AMRAP, Tabata and circuits, with beeps and what’s next on screen.'],
   ['class', 'Train with your crew', 'Share sessions, give kudos and tag partners so it counts for both of you.'],
-  ['coach', 'Coaches on hand', 'Follow a coach, get workouts assigned and see your plan for the week.'],
+  ['coach', 'Licensed trainers only', 'Every trainer is a qualified, insured PT we’ve checked and approved. Follow one, get workouts assigned and see your plan.'],
   ['gym', 'Progress you can see', 'Volume, personal records and streaks from every set you log.'],
 ]
 
@@ -70,6 +71,18 @@ export default function Landing() {
             Open health tools →
           </a>
         </div>
+      </section>
+
+      <section className="l-section l-contact" id="contact">
+        <div>
+          <p className="l-eyebrow">Contact</p>
+          <h2>Talk to us.</h2>
+          <p className="l-lede">Questions, partnerships, or you’re a personal trainer who wants to coach on All Workout? Send us a message.</p>
+          <p className="small muted">
+            Yadata Pty Ltd · <a href="mailto:contact@yadata.com.au">contact@yadata.com.au</a>
+          </p>
+        </div>
+        <ContactForm />
       </section>
 
       <PublicFooter />

@@ -8,6 +8,20 @@ const DEV_ACCOUNTS = import.meta.env.DEV
 import { go, useStore } from '../store'
 import { PENDING_KEY } from './SessionForm'
 import { isAdminUid, takeDestination } from '../lib/access'
+import { TERMS_VERSION } from '../lib/trainer'
+import { GOALS } from '../lib/goals'
+
+// Google blocks sign-in inside apps' built-in browsers (Gmail, Instagram, Facebook...)
+const IN_APP = typeof navigator !== 'undefined' && /FBAN|FBAV|Instagram|Line\/|LinkedInApp|GSA\/|; wv\)|Snapchat|TikTok/i.test(navigator.userAgent)
+
+const TERMS_KEY = 'aw:terms-accepted'
+const termsAcceptedHere = () => {
+  try {
+    return localStorage.getItem(TERMS_KEY) === TERMS_VERSION
+  } catch {
+    return false
+  }
+}
 
 // A session finished in Solo mode waits here until someone signs in
 function takePending() {
@@ -22,7 +36,7 @@ function takePending() {
 
 const ROLES = [
   ['client', 'I want to work out', 'Follow workouts, track your progress and find a coach.'],
-  ['coach', 'I want to train people', 'Coach clients or your audience and publish your workouts.'],
+  ['coach', 'I’m a personal trainer', 'Licensed PTs only. Apply with your qualification, ABN and insurance. We approve you before you can publish, sell or coach.'],
 ]
 
 // adminMode: the /admin sign-in. Only admin Google accounts get in; nobody else gets an account made.
@@ -30,6 +44,8 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
   const { db, me, actions, notify } = useStore()
   const [name, setName] = useState('')
   const [role, setRole] = useState('client')
+  const [goal, setGoal] = useState(null)
+  const [agreed, setAgreed] = useState(termsAcceptedHere)
   const [photo, setPhoto] = useState(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -85,24 +101,37 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
       return
     }
     // Save the profile, contact details and sign-in to the cloud so admins can see who joined
-    const cloudRole = admin ? 'admin' : existing ? existing.role : role
-    import('../lib/cloud').then((c) => c.recordSignIn(g, cloudRole))
+    // Everyone joins as a client. Trainers become coaches only when an admin approves them.
+    const cloudRole = admin ? 'admin' : 'client'
+    const newGoal = !existing?.goal && role === 'client' ? goal : null
+    try {
+      localStorage.setItem(TERMS_KEY, TERMS_VERSION)
+    } catch {
+      /* private mode */
+    }
+    import('../lib/cloud').then((c) => c.recordSignIn(g, cloudRole, adminMode ? null : TERMS_VERSION, newGoal))
     if (import.meta.env.PROD) actions.removeSampleAccounts()
     if (existing) {
       actions.signIn(existing.id)
-      actions.updateProfile({ googleUid: g.uid, email: g.email, ...(existing.photo ? {} : { photo: g.photo }), ...(admin ? { role: 'admin' } : {}) })
+      actions.updateProfile({ googleUid: g.uid, email: g.email, ...(existing.photo ? {} : { photo: g.photo }), ...(admin ? { role: 'admin' } : {}), ...(newGoal ? { goal: newGoal } : {}) })
       return finish(`Welcome back, ${existing.name.split(' ')[0]}`, admin || existing.role === 'admin' ? 'admin' : 'home')
     }
     if (admin) {
       actions.createAccount({ name: g.name, role: 'admin', photo: g.photo, email: g.email, googleUid: g.uid })
       return finish(`Welcome, ${g.name.split(' ')[0]}. You’re signed in as admin.`, 'admin')
     }
-    actions.createAccount({ name: g.name, role, photo: g.photo, email: g.email, googleUid: g.uid })
-    finish(role === 'coach' ? 'Welcome, coach! Create your first workout.' : 'Welcome! Pick a workout or find a coach.', role === 'coach' ? 'you/settings' : 'home')
+    actions.createAccount({ name: g.name, role: 'client', photo: g.photo, email: g.email, googleUid: g.uid })
+    if (role === 'coach') {
+      actions.updateProfile({ trainerStatus: 'apply' })
+      return finish('Welcome! Send your trainer application to get coach tools.', 'apply')
+    }
+    if (goal) actions.updateProfile({ goal })
+    finish('Welcome! Pick a workout or find a coach.', 'home')
   }
 
   const google = async () => {
     setError('')
+    if (!adminMode && !agreed) return setError('Tick the box to agree to the Terms of Service and Privacy Policy.')
     setBusy(true)
     try {
       const m = fb.current || (await import('../lib/firebase'))
@@ -154,7 +183,39 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
             </button>
           ))}
         </div>
+        {role === 'client' && (
+          <>
+            <span className="label">Your main goal</span>
+            <div className="goal-pick" role="radiogroup" aria-label="Your main goal">
+              {GOALS.map(([k, l]) => (
+                <button type="button" key={k} role="radio" aria-checked={goal === k} className={`chip ${goal === k ? 'on' : ''}`} onClick={() => setGoal(goal === k ? null : k)}>
+                  {l}
+                </button>
+              ))}
+            </div>
+          </>
+        )}
+        <label className="check-row terms-check">
+          <input type="checkbox" checked={agreed} onChange={(e) => setAgreed(e.target.checked)} />
+          <span>
+            I’m 18 or older and agree to the{' '}
+            <a href="#/terms" target="_blank" rel="noreferrer">
+              Terms of Service
+            </a>{' '}
+            and{' '}
+            <a href="#/privacy" target="_blank" rel="noreferrer">
+              Privacy Policy
+            </a>
+            . All Workout gives general fitness information, not medical advice.
+          </span>
+        </label>
         </>
+        )}
+        {IN_APP && (
+          <p className="inapp-note" role="note">
+            Google sign-in doesn’t work inside this app’s browser. Tap the menu (⋯ or ⋮) and choose <strong>Open in Safari</strong> or <strong>Open in Chrome</strong>, then sign
+            in.
+          </p>
         )}
         <button className="btn-google" onClick={google} disabled={busy}>
           <svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true">
@@ -170,9 +231,10 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
             {error}
           </p>
         )}
-        {!adminMode && <p className="tiny center">Already a member? Just continue with Google. This choice only applies to new accounts.</p>}
+        {!adminMode && <p className="tiny center">Already a member? Just continue with Google. These choices only apply to new accounts.</p>}
         <p className="tiny center privacy-note">
-          We keep your name, email, photo and sign-in activity to run your account. Only you and the All Workout admin can see your email.
+          We keep your name, email, photo, goal, sign-in activity and approximate location (city) to run your account. Only you and the All Workout admin can see them.{' '}
+          <a href="#/privacy">Privacy Policy</a>
         </p>
       </section>
 

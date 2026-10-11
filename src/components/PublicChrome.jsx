@@ -64,6 +64,12 @@ export function PublicFooter() {
         </a>{' '}
         · Photos: Unsplash
       </p>
+      <p className="l-legal">
+        <a href="#/welcome" onClick={() => setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }), 80)}>
+          Contact
+        </a>{' '}
+        · <a href="#/terms">Terms of Service</a> · <a href="#/privacy">Privacy Policy</a> · Yadata Pty Ltd · ABN 42 327 513 086
+      </p>
     </footer>
   )
 }

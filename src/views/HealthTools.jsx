@@ -1,5 +1,7 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react'
+import { createContext, useContext, useEffect, useMemo, useRef, useState } from 'react'
 import FoodBuilder from './FoodBuilder'
+import { useStore } from '../store'
+import { HealthConsent } from './Settings'
 
 // Free public health calculators. Education only: every number links to its source.
 
@@ -238,6 +240,47 @@ export default function HealthTools({ onClose }) {
   const e = useMemo(() => energy(t), [t])
   const a = num(t.age)
   const blocked = t.pregnant || (a > 0 && a < 18)
+  const { me } = useStore()
+
+  // Counts which calculators get used and which goals people pick (no personal details)
+  useEffect(() => {
+    if (tab !== 'evidence') import('../lib/cloud').then((c) => c.trackTool(tab))
+  }, [tab])
+  const firstGoal = useRef(t.goal)
+  useEffect(() => {
+    if (t.goal !== firstGoal.current) import('../lib/cloud').then((c) => c.trackTool(`goal_${t.goal}`))
+  }, [t.goal])
+
+  // Members who opted in keep their latest numbers in their account (saved after a pause)
+  useEffect(() => {
+    if (!me?.googleUid || !me.healthConsent || blocked) return
+    const timer = setTimeout(() => {
+      const b = body(t)
+      const one = (n) => (Number.isFinite(n) ? Math.round(n * 10) / 10 : null)
+      import('../lib/cloud').then((c) =>
+        c.saveHealth(me.googleUid, {
+          sex: t.sex,
+          age: num(t.age),
+          height: num(t.height),
+          weight: num(t.weight),
+          activity: num(t.activity),
+          goal: t.goal,
+          waist: num(t.waist),
+          hips: num(t.hips),
+          neck: num(t.neck),
+          bmi: one(b.bmi),
+          bmiCategory: b.bmiCat,
+          whtr: Math.round(b.whtr * 100) / 100,
+          bodyFat: b.bf === null ? null : one(b.bf),
+          bmr: Math.round(e.bmr),
+          tdee: Math.round(e.tdee),
+          target: Math.round(e.target),
+          protein: Math.round(e.protein),
+        }),
+      )
+    }, 4000)
+    return () => clearTimeout(timer)
+  }, [t, e, me?.googleUid, me?.healthConsent, blocked])
 
   // Only the overlay version locks page scrolling; the page version scrolls normally
   useEffect(() => {
@@ -325,6 +368,11 @@ export default function HealthTools({ onClose }) {
         )}
         {tab === 'evidence' && <Evidence flash={flash} />}
 
+        {me?.googleUid && tab !== 'evidence' && !blocked && (
+          <div className="ht-consent">
+            <HealthConsent />
+          </div>
+        )}
         <footer className="ht-foot">
           <p>
             <strong>Education, not medical advice.</strong> These are estimates for healthy adults. Talk to your GP or an accredited
@@ -338,7 +386,11 @@ export default function HealthTools({ onClose }) {
             </a>
             .
           </p>
-          <p className="tiny">Your details are saved only in this browser.</p>
+          <p className="tiny">
+            {me?.googleUid && me.healthConsent
+              ? 'Your details are saved in this browser and, as you chose, to your All Workout account.'
+              : 'Your details are saved only in this browser. We count which calculators are used, but not what you enter.'}
+          </p>
         </footer>
       </div>
     </div>
