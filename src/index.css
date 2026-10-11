@@ -5348,6 +5348,23 @@ code {
   margin-top: 4px;
 }
 
+.signout-btn {
+  align-self: flex-start;
+  flex-shrink: 0;
+}
+/* Phones: pin the button top-right so the name and bio keep the full width */
+@media (max-width: 560px) {
+  .profile {
+    position: relative;
+    padding-top: 52px;
+  }
+  .signout-btn {
+    position: absolute;
+    top: 12px;
+    right: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;

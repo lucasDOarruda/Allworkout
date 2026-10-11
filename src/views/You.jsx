@@ -12,7 +12,7 @@ const TABS = [
 ]
 
 export default function You({ sub }) {
-  const { db, me } = useStore()
+  const { db, me, actions, notify } = useStore()
   const tab = TABS.some(([k]) => k === sub) ? sub : 'progress'
 
   if (!me) {
@@ -48,6 +48,19 @@ export default function You({ sub }) {
             {me.bio && <span className="muted small">{me.bio}</span>}
           </p>
         </div>
+        <button
+          className="btn btn-ghost small signout-btn"
+          onClick={() => {
+            actions.signOut()
+            notify('Signed out')
+            go('welcome')
+          }}
+        >
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+            <path d="M15 4h4v16h-4M10 8l-4 4 4 4M6 12h10" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+          Sign out
+        </button>
       </header>
       <div className="profile-stats">
         <div>
