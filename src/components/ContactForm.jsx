@@ -1,4 +1,5 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import Icon from './Icon'
 
 const TOPICS = [
   ['general', 'General question'],
@@ -83,5 +84,60 @@ export default function ContactForm() {
         We use your details only to reply. <a href="#/privacy">Privacy Policy</a>
       </p>
     </form>
+  )
+}
+
+// Open the contact popup from anywhere (buttons, footer link)
+const OPEN_EVENT = 'aw-open-contact'
+export const openContact = () => window.dispatchEvent(new Event(OPEN_EVENT))
+
+// Mounted once in the public footer; shows the form in a popup when asked
+export function ContactPopup() {
+  const [open, setOpen] = useState(false)
+  const box = useRef(null)
+  const back = useRef(null)
+
+  useEffect(() => {
+    const show = () => {
+      back.current = document.activeElement
+      setOpen(true)
+    }
+    window.addEventListener(OPEN_EVENT, show)
+    return () => window.removeEventListener(OPEN_EVENT, show)
+  }, [])
+
+  useEffect(() => {
+    if (!open) return
+    const onKey = (e) => e.key === 'Escape' && setOpen(false)
+    window.addEventListener('keydown', onKey)
+    document.body.style.overflow = 'hidden'
+    box.current?.querySelector('input')?.focus()
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.body.style.overflow = ''
+      back.current?.focus?.()
+    }
+  }, [open])
+
+  if (!open) return null
+  return (
+    <div className="contact-back" onClick={() => setOpen(false)}>
+      <div ref={box} className="contact-pop" role="dialog" aria-modal="true" aria-labelledby="contact-title" onClick={(e) => e.stopPropagation()}>
+        <div className="contact-pop-head">
+          <div>
+            <p className="l-eyebrow">Contact</p>
+            <h2 id="contact-title">Talk to us.</h2>
+            <p className="small muted">
+              Questions, partnerships, or you’re a personal trainer who wants to coach on All Workout? Yadata Pty Ltd ·{' '}
+              <a href="mailto:contact@yadata.com.au">contact@yadata.com.au</a>
+            </p>
+          </div>
+          <button className="icon-btn" onClick={() => setOpen(false)} aria-label="Close">
+            <Icon name="plus" className="rot45" />
+          </button>
+        </div>
+        <ContactForm />
+      </div>
+    </div>
   )
 }

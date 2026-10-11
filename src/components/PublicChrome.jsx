@@ -1,4 +1,5 @@
 import { go, useStore } from '../store'
+import { ContactPopup, openContact } from './ContactForm'
 
 // Shared top bar and footer for the public pages (landing, health tools, sign in)
 export function PublicNav({ active }) {
@@ -65,11 +66,12 @@ export function PublicFooter() {
         · Photos: Unsplash
       </p>
       <p className="l-legal">
-        <a href="#/welcome" onClick={() => setTimeout(() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }), 80)}>
-          Contact
-        </a>{' '}
+        <button className="link-plain l-legal-btn" onClick={openContact}>
+          Contact us
+        </button>{' '}
         · <a href="#/terms">Terms of Service</a> · <a href="#/privacy">Privacy Policy</a> · Yadata Pty Ltd · ABN 42 327 513 086
       </p>
+      <ContactPopup />
     </footer>
   )
 }

@@ -2,7 +2,7 @@ import { go, useStore } from '../store'
 import Icon from '../components/Icon'
 import { PublicFooter, PublicNav } from '../components/PublicChrome'
 import { photoUrl } from '../lib/photos'
-import ContactForm from '../components/ContactForm'
+import { openContact } from '../components/ContactForm'
 
 const FEATURES = [
   ['ropes', 'Timers that coach you', 'EMOM, AMRAP, Tabata and circuits, with beeps and what’s next on screen.'],
@@ -73,16 +73,17 @@ export default function Landing() {
         </div>
       </section>
 
-      <section className="l-section l-contact" id="contact">
-        <div>
-          <p className="l-eyebrow">Contact</p>
-          <h2>Talk to us.</h2>
-          <p className="l-lede">Questions, partnerships, or you’re a personal trainer who wants to coach on All Workout? Send us a message.</p>
-          <p className="small muted">
-            Yadata Pty Ltd · <a href="mailto:contact@yadata.com.au">contact@yadata.com.au</a>
-          </p>
+      <section className="l-section">
+        <div className="l-tools slim l-contact-cta">
+          <div>
+            <p className="l-eyebrow">Contact</p>
+            <h2>Questions? Talk to us.</h2>
+            <p className="l-lede">Partnerships, support, or you’re a personal trainer who wants to coach on All Workout.</p>
+          </div>
+          <button className="btn btn-outline-white big" onClick={openContact}>
+            Contact us
+          </button>
         </div>
-        <ContactForm />
       </section>
 
       <PublicFooter />
