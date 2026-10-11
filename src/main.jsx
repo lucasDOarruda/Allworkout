@@ -4,6 +4,10 @@ import './index.css'
 import App from './App.jsx'
 import { StoreProvider } from './store'
 
+// Friendly paths like /admin (served by vercel.json rewrites) become hash routes
+const path = location.pathname.replace(/\/+$/, '')
+if (/\/admin$/.test(path) && !location.hash) history.replaceState(null, '', `${path.replace(/\/admin$/, '/')}#/admin`)
+
 // Firebase loads after the app has started so it doesn't slow the first screen
 import('./lib/firebase').then(({ trackScreen }) => {
   trackScreen(location.hash)

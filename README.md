@@ -26,7 +26,8 @@ The app currently stores everything in the browser (localStorage) and opens with
 - **Start** (centre button): quick timer, today's plan, coach assignments.
 - **Plan**: multi-week programs and assigned workouts.
 - **You**: progress (volume chart, PRs, badges), activities, settings.
-- **Roles**: client, coach (publish workouts, manage clients) and admin (`#/admin`, open without login for now).
+- **Roles**: client, coach (publish workouts, manage clients) and admin. The admin dashboard is at `/admin` and needs Google sign-in with the admin account (UID in `src/lib/access.js`).
+- **Live site**: sign-in is Google only. Demo and device-only accounts appear in local development only.
 
 Demo accounts are on the sign-in screen.
 

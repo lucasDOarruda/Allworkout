@@ -51,7 +51,8 @@ export default function App() {
 
   let view
   if (!allowed && need === 'member') view = <SignIn gate onShow={rememberDestination} />
-  else if (!allowed) view = <Locked need={need} signedIn={!!me} />
+  else if (!allowed && need === 'admin' && !me) view = <SignIn adminMode />
+  else if (!allowed) view = <Locked need={need} me={me} onSwitch={() => actions.signOut()} />
   else if (head === 'tools')
     view = (
       <div className="landing">
@@ -244,16 +245,21 @@ function StartSheet({ onClose }) {
 }
 
 // Shown instead of a page the current account isn't allowed to see
-function Locked({ need, signedIn }) {
+function Locked({ need, me, onSwitch }) {
   const what = need === 'admin' ? 'admins' : need === 'coach' ? 'coaches' : 'members'
   return (
     <div className="page narrow">
       <Empty icon="lock" title={`This page is for ${what} only`}>
-        {signedIn ? 'Your account doesn’t have access to it.' : 'Sign in with an account that has access.'}
+        {me ? `You’re signed in as ${me.name}${me.email ? ` (${me.email})` : ''}, which doesn’t have access.` : 'Sign in with an account that has access.'}
         <div className="row gap-s locked-actions">
-          {!signedIn && (
+          {!me && (
             <button className="btn btn-primary" onClick={() => go('signin')}>
               Log in
+            </button>
+          )}
+          {me && need === 'admin' && (
+            <button className="btn btn-primary" onClick={onSwitch}>
+              Switch account
             </button>
           )}
           <button className="btn btn-ghost" onClick={() => go('home')}>

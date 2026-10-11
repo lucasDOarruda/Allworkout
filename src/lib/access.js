@@ -39,7 +39,9 @@ export function takeDestination() {
 export function canSee(need, me) {
   if (!need) return true
   if (!me) return false
-  if (need === 'admin') return me.role === 'admin'
+  // On the live site the admin dashboard is tied to the admin Google UID itself, so a role
+  // planted in this browser's storage (e.g. via an imported backup) can't open it
+  if (need === 'admin') return me.role === 'admin' && (import.meta.env.DEV || isAdminUid(me.googleUid))
   if (need === 'coach') return me.role === 'coach' || me.role === 'admin'
   return true
 }

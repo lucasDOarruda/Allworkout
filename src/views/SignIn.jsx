@@ -25,7 +25,8 @@ const ROLES = [
   ['coach', 'I want to train people', 'Coach clients or your audience and publish your workouts.'],
 ]
 
-export default function SignIn({ gate = false, onShow }) {
+// adminMode: the /admin sign-in. Only admin Google accounts get in; nobody else gets an account made.
+export default function SignIn({ gate = false, onShow, adminMode = false }) {
   const { db, me, actions, notify } = useStore()
   const [name, setName] = useState('')
   const [role, setRole] = useState('client')
@@ -77,6 +78,11 @@ export default function SignIn({ gate = false, onShow }) {
     const users = Object.values(db.users)
     const existing = users.find((u) => u.googleUid === g.uid) || users.find((u) => u.email && u.email.toLowerCase() === g.email.toLowerCase())
     const admin = isAdminUid(g.uid)
+    if (adminMode && !admin && existing?.role !== 'admin') {
+      fb.current?.googleSignOut?.()
+      setError(`${g.email} isn’t an admin account. Sign in with your admin Google account.`)
+      return
+    }
     if (existing) {
       actions.signIn(existing.id)
       actions.updateProfile({ googleUid: g.uid, email: g.email, ...(existing.photo ? {} : { photo: g.photo }), ...(admin ? { role: 'admin' } : {}) })
@@ -123,10 +129,14 @@ export default function SignIn({ gate = false, onShow }) {
     <div className="landing signin-page">
       <PublicNav active="signin" />
       <div className="page narrow signin-wrap">
-      <h1 className="signin-title">{gate ? 'Sign in to continue' : 'Sign in'}</h1>
-      <p className="muted signin-sub">All Workout is free. Use your Google account to join or sign back in.</p>
+      <h1 className="signin-title">{adminMode ? 'Admin sign in' : gate ? 'Sign in to continue' : 'Sign in'}</h1>
+      <p className="muted signin-sub">
+        {adminMode ? 'Use your admin Google account to open the dashboard.' : 'All Workout is free. Use your Google account to join or sign back in.'}
+      </p>
 
       <section className="card stack signin-card">
+        {!adminMode && (
+        <>
         <span className="label">What brings you here?</span>
         <div className="role-pick" role="radiogroup" aria-label="What brings you here?">
           {ROLES.map(([v, label, desc]) => (
@@ -139,6 +149,8 @@ export default function SignIn({ gate = false, onShow }) {
             </button>
           ))}
         </div>
+        </>
+        )}
         <button className="btn-google" onClick={google} disabled={busy}>
           <svg viewBox="0 0 48 48" width="20" height="20" aria-hidden="true">
             <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z" />
@@ -153,10 +165,10 @@ export default function SignIn({ gate = false, onShow }) {
             {error}
           </p>
         )}
-        <p className="tiny center">Already a member? Just continue with Google. This choice only applies to new accounts.</p>
+        {!adminMode && <p className="tiny center">Already a member? Just continue with Google. This choice only applies to new accounts.</p>}
       </section>
 
-      {DEV_ACCOUNTS && (
+      {DEV_ACCOUNTS && !adminMode && (
       <>
       <p className="notice">Development only: these options don’t appear on the live site.</p>
       <button className="link-btn small signin-toggle" onClick={() => setShowLocal(!showLocal)} aria-expanded={showLocal}>
