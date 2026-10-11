@@ -80,8 +80,8 @@ export default function Landing() {
             <h2>Questions? Talk to us.</h2>
             <p className="l-lede">Partnerships, support, or you’re a personal trainer who wants to train members on All Workout.</p>
           </div>
-          <button className="btn btn-outline-white big" onClick={openContact}>
-            Contact us
+          <button className="btn btn-lime big" onClick={openContact}>
+            Contact us →
           </button>
         </div>
       </section>

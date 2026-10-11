@@ -5901,3 +5901,12 @@ code {
 .xm-editor input[type='url'] {
   min-width: 0;
 }
+.l-navlink-btn {
+  background: none;
+  border: 0;
+  font-family: inherit;
+  cursor: pointer;
+}
+.l-legal {
+  font-size: 0.86rem;
+}

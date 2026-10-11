@@ -13,6 +13,9 @@ export function PublicNav({ active }) {
         <a className={`l-navlink ${active === 'tools' ? 'on' : ''}`} href="#/tools">
           Health tools
         </a>
+        <button className="l-navlink l-navlink-btn" onClick={openContact}>
+          Contact
+        </button>
         {me ? (
           <button className="btn btn-primary" onClick={() => go('home')}>
             Open app
