@@ -16,6 +16,8 @@ import Clients from './views/Clients'
 import Admin from './views/Admin'
 import SignIn from './views/SignIn'
 import Landing from './views/Landing'
+import HealthTools from './views/HealthTools'
+import { PublicFooter, PublicNav } from './components/PublicChrome'
 import { canSee, rememberDestination, routeNeeds } from './lib/access'
 import { Empty } from './components/ui'
 
@@ -34,8 +36,13 @@ const TabIcon = ({ d }) => (
 
 export default function App() {
   const route = useRoute()
-  const { me, db } = useStore()
+  const { me, db, actions } = useStore()
   const [sheet, setSheet] = useState(false)
+
+  // On the live site only real (Google) accounts may use the app
+  useEffect(() => {
+    if (import.meta.env.PROD && me && !me.googleUid) actions.signOut()
+  }, [me, actions])
   const [head, a, b, c, d] = route
   const playing = head === 'w' && b === 'p' && d === 'play'
   const landing = head === 'welcome' || head === 'tools'
@@ -45,7 +52,15 @@ export default function App() {
   let view
   if (!allowed && need === 'member') view = <SignIn gate onShow={rememberDestination} />
   else if (!allowed) view = <Locked need={need} signedIn={!!me} />
-  else if (landing) view = <Landing key={head} tools={head === 'tools'} />
+  else if (head === 'tools')
+    view = (
+      <div className="landing">
+        <PublicNav active="tools" />
+        <HealthTools />
+        <PublicFooter />
+      </div>
+    )
+  else if (landing) view = <Landing />
   else if (head === 'w' && b === 'p' && d === 'play') view = <Player id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'p') view = <PartDetail id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'log') view = <LogSession id={a} />
@@ -97,7 +112,7 @@ export default function App() {
   return (
     <div className={`app ${playing ? 'is-playing' : ''} ${landing ? 'is-landing' : ''}`}>
       <main>{view}</main>
-      {!playing && !landing && allowed && head !== 'admin' && head !== 'signin' && (
+      {!playing && !landing && allowed && head !== 'admin' && head !== 'signin' && !!me && (
         <nav className="tabbar" aria-label="Main">
           <Tab k="home" label="Home" />
           <Tab k="explore" label="Explore" />

@@ -239,8 +239,10 @@ export default function HealthTools({ onClose }) {
   const a = num(t.age)
   const blocked = t.pregnant || (a > 0 && a < 18)
 
+  // Only the overlay version locks page scrolling; the page version scrolls normally
   useEffect(() => {
-    const onKey = (ev) => ev.key === 'Escape' && onClose?.()
+    if (!onClose) return
+    const onKey = (ev) => ev.key === 'Escape' && onClose()
     window.addEventListener('keydown', onKey)
     document.body.style.overflow = 'hidden'
     return () => {
@@ -259,19 +261,21 @@ export default function HealthTools({ onClose }) {
 
   return (
     <CiteCtx.Provider value={cite}>
-    <div className="ht-overlay" role="dialog" aria-modal="true" aria-label="Health tools">
+    <div className={onClose ? 'ht-overlay' : 'ht-page'} {...(onClose ? { role: 'dialog', 'aria-modal': true, 'aria-label': 'Health tools' } : {})}>
       <div className={`ht ${tab === 'food' ? 'wide' : ''}`}>
+        {onClose && (
         <header className="ht-top">
-          <span className="l-brand">
-            <span className="l-mark">AW</span> All Workout
-          </span>
-          <span className="ht-eyebrow">Free community tools</span>
-          {onClose && (
-            <button className="icon-btn ht-close" onClick={onClose} aria-label="Close health tools">
-              ✕
-            </button>
-          )}
-        </header>
+            <span className="l-brand">
+              <span className="l-mark">AW</span> All Workout
+            </span>
+            <span className="ht-eyebrow">Free community tools</span>
+            {onClose && (
+              <button className="icon-btn ht-close" onClick={onClose} aria-label="Close health tools">
+                ✕
+              </button>
+            )}
+          </header>
+        )}
 
         <h1 className="ht-title">
           Know your numbers.
@@ -334,12 +338,7 @@ export default function HealthTools({ onClose }) {
             </a>
             .
           </p>
-          <p className="tiny">
-            Your details are saved only in this browser. All Workout · Built by{' '}
-            <a href="https://yadata.com.au" target="_blank" rel="noreferrer">
-              yadata.com.au
-            </a>
-          </p>
+          <p className="tiny">Your details are saved only in this browser.</p>
         </footer>
       </div>
     </div>

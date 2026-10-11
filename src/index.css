@@ -5201,6 +5201,115 @@ code {
   color: #f4f6ea;
 }
 
+/* ---------- Slim public pages ---------- */
+.l-navlink {
+  font-weight: 700;
+  font-size: 0.88rem;
+  color: #0d0e0a;
+  text-decoration: none;
+  padding: 8px 10px;
+  border-radius: 99px;
+}
+.l-navlink.on,
+.l-navlink:hover {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+}
+:root[data-theme='dark'] .l-navlink {
+  color: #f4f6ea;
+}
+.l-hero-wrap .l-hero {
+  padding-top: 36px;
+  padding-bottom: 48px;
+  gap: 32px;
+}
+.l-duo {
+  position: relative;
+  justify-self: end;
+  width: 100%;
+  max-width: 460px;
+  aspect-ratio: 1 / 1;
+}
+.l-duo img {
+  position: absolute;
+  object-fit: cover;
+  box-shadow: 0 18px 40px rgb(13 14 10 / 18%);
+}
+.l-duo .d1 {
+  top: 0;
+  right: 0;
+  width: 86%;
+  height: 72%;
+}
+.l-duo .d2 {
+  left: 0;
+  bottom: 0;
+  width: 48%;
+  height: 40%;
+  border: 6px solid #e6f57a;
+}
+@media (max-width: 860px) {
+  .l-duo {
+    justify-self: center;
+    max-width: 380px;
+  }
+}
+.l-section h2 {
+  margin-bottom: 20px;
+}
+.l-section {
+  padding-top: 48px;
+}
+.l-tools.slim {
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  padding: 28px 32px;
+}
+.l-tools.slim h2 {
+  margin-bottom: 6px;
+}
+.l-tools.slim .l-lede {
+  margin: 0;
+}
+@media (max-width: 700px) {
+  .l-tools.slim {
+    grid-template-columns: 1fr;
+    padding: 22px;
+  }
+}
+.l-footer.slim {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  margin-top: 40px;
+  border-top: 1px solid var(--border);
+}
+.l-footer.slim .l-store {
+  min-width: 150px;
+}
+.l-footer.slim .l-credit {
+  margin: 0;
+}
+.ht-page {
+  background: var(--bg);
+}
+.signin-wrap {
+  padding-top: 28px;
+}
+.signin-title {
+  font-family: 'Inter Tight', Inter, sans-serif;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.025em;
+  font-size: clamp(1.8rem, 6vw, 2.4rem);
+  line-height: 1;
+}
+.signin-sub {
+  margin: 8px 0 16px;
+}
+
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;

@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { Avatar, ImagePicker, PageHead, RoleBadge } from '../components/ui'
+import { Avatar, ImagePicker, RoleBadge } from '../components/ui'
+import { PublicNav } from '../components/PublicChrome'
+
+// Device-only and demo accounts exist for local development only.
+// On the live site the only way in is a real (Google) account.
+const DEV_ACCOUNTS = import.meta.env.DEV
 import { go, useStore } from '../store'
 import { PENDING_KEY } from './SessionForm'
 import { isAdminUid, takeDestination } from '../lib/access'
@@ -115,9 +120,11 @@ export default function SignIn({ gate = false, onShow }) {
   }
 
   return (
-    <div className="page narrow">
-      <PageHead title="Log in" back={() => go('welcome')} />
-      {gate && <p className="notice">Sign in to use All Workout. It’s free.</p>}
+    <div className="landing signin-page">
+      <PublicNav active="signin" />
+      <div className="page narrow signin-wrap">
+      <h1 className="signin-title">{gate ? 'Sign in to continue' : 'Sign in'}</h1>
+      <p className="muted signin-sub">All Workout is free. Use your Google account to join or sign back in.</p>
 
       <section className="card stack signin-card">
         <span className="label">New here? I’m joining as a…</span>
@@ -148,6 +155,9 @@ export default function SignIn({ gate = false, onShow }) {
         </p>
       </section>
 
+      {DEV_ACCOUNTS && (
+      <>
+      <p className="notice">Development only: these options don’t appear on the live site.</p>
       <button className="link-btn small signin-toggle" onClick={() => setShowLocal(!showLocal)} aria-expanded={showLocal}>
         {showLocal ? 'Hide' : 'Or create an account on this device without Google'}
       </button>
@@ -181,6 +191,9 @@ export default function SignIn({ gate = false, onShow }) {
         ))}
       </div>
 
+      </>
+      )}
+
       {me && (
         <button
           className="btn btn-ghost full"
@@ -189,9 +202,10 @@ export default function SignIn({ gate = false, onShow }) {
             go('welcome')
           }}
         >
-          Sign out (use Solo mode)
+          Sign out
         </button>
       )}
+      </div>
     </div>
   )
 }
