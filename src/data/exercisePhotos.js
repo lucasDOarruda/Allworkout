@@ -1,5 +1,6 @@
 // Exercise images from wger (https://wger.de), an open-source fitness project. Each image keeps
-// its own Creative Commons licence and author; resized copies are shared under the same licence.
+// its own Creative Commons licence and author (listed on the Image credits page, #/credits);
+// resized copies are shared under the same licence.
 // Files live in public/img/exercises. Exercises without one show the muscle diagram instead.
 export const EXERCISE_PHOTOS = {
   "abductor-machine": {

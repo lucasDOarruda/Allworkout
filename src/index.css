@@ -6303,10 +6303,132 @@ code {
 .media .ex-photo.media-img {
   padding: 6px;
 }
-.photo-credit {
-  margin: -6px 0 6px;
-  color: var(--text-3);
+.credits-list {
+  padding-left: 18px;
+  line-height: 1.7;
+  font-size: 0.92rem;
 }
-.photo-credit a {
+.xp-row.on {
+  border-color: var(--lime);
+}
+.xp-check {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  font-weight: 800;
+  flex-shrink: 0;
+}
+.xp-check.on {
+  background: var(--lime);
+  border-color: var(--lime);
+  color: #0d0e0a;
+}
+
+/* ---------- Quick workout builder ---------- */
+.qb .card + .card {
+  margin-top: 12px;
+}
+.qb-styles {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+}
+.qb-style {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  text-align: left;
+  padding: 12px;
+  border-radius: var(--radius-s);
+  border: 1.5px solid var(--border);
+  background: var(--surface-2);
   color: inherit;
+  cursor: pointer;
+}
+.qb-style span {
+  font-size: 0.8rem;
+  color: var(--text-2);
+}
+.qb-style.on {
+  border-color: var(--lime);
+  box-shadow: inset 0 0 0 1px var(--lime);
+}
+.qb-settings {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.qb-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.qb-step {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.qb-step-row {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 99px;
+  overflow: hidden;
+}
+.qb-step-row button {
+  width: 34px;
+  height: 36px;
+  border: 0;
+  background: var(--surface-2);
+  color: inherit;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.qb-step-row button:disabled {
+  opacity: 0.35;
+}
+.qb-step-v {
+  min-width: 40px;
+  text-align: center;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.qb-moves {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.qb-move {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 10px;
+  border-radius: var(--radius-s);
+  background: var(--surface-2);
+}
+.qb-move .row.between {
+  align-items: center;
+  margin-bottom: 6px;
+}
+.qb-move-tools {
+  display: inline-flex;
+  gap: 2px;
+}
+.qb-summary {
+  text-align: center;
+  font-size: 0.86rem;
+  color: var(--text-2);
+  margin-bottom: 6px;
+}
+
+.qb-move .row.gap-s.wrap {
+  flex-wrap: nowrap;
+  gap: 8px;
 }

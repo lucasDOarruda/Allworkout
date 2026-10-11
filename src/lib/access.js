@@ -6,7 +6,7 @@ export const ADMIN_UIDS = ['pNeXKFvYLhd9rem7Vil5xwZnXzF3']
 export const isAdminUid = (uid) => !!uid && ADMIN_UIDS.includes(uid)
 
 // Pages anyone can open without an account
-const PUBLIC = ['welcome', 'tools', 'signin', 'terms', 'privacy']
+const PUBLIC = ['welcome', 'tools', 'signin', 'terms', 'privacy', 'credits']
 
 // What each route needs: 'admin', 'coach' (approved trainer or admin) or 'member' (any signed-in user)
 export function routeNeeds([head]) {

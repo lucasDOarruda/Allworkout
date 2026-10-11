@@ -135,7 +135,7 @@ const TERMS = [
       <a href="https://wger.de" target="_blank" rel="noreferrer">
         wger.de
       </a>{' '}
-      under Creative Commons licences (CC BY-SA); each image shows its author and licence, and our resized copies are shared under the same licence.
+      under Creative Commons licences (CC BY-SA); authors and licences are listed on the <a href="#/credits">Image credits</a> page, and our resized copies are shared under the same licence.
     </p>,
   ],
   [

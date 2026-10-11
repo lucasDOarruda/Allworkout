@@ -1,5 +1,5 @@
 import { exerciseById } from '../data/exercises'
-import { exercisePhoto, EXERCISE_PHOTOS } from '../data/exercisePhotos'
+import { exercisePhoto } from '../data/exercisePhotos'
 
 // Stylised anatomy figure (front + back) drawn in SVG.
 // viewBox is 400 × 780; the figure is centred on x = 200 and mirrored.
@@ -266,24 +266,5 @@ export function MusclesWorked({ exerciseId }) {
         ))}
       </div>
     </section>
-  )
-}
-
-// Credit line for a library exercise image (Creative Commons: author, licence, source)
-export function PhotoCredit({ exerciseId }) {
-  const p = exerciseId && EXERCISE_PHOTOS[exerciseId]
-  if (!p) return null
-  return (
-    <p className="tiny photo-credit">
-      Image{p.author ? ' by ' : ''}
-      {p.author ? (p.authorUrl ? <a href={p.authorUrl} target="_blank" rel="noreferrer">{p.author}</a> : p.author) : ''} via{' '}
-      <a href={p.source} target="_blank" rel="noreferrer">
-        wger.de
-      </a>
-      ,{' '}
-      <a href={p.licenseUrl} target="_blank" rel="noreferrer">
-        {p.license}
-      </a>
-    </p>
   )
 }

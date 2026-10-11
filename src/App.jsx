@@ -9,6 +9,7 @@ import WorkoutDetail from './views/WorkoutDetail'
 import PartDetail from './views/PartDetail'
 import Player, { FinishWorkout, LogSession } from './views/Player'
 import Editor from './views/Editor'
+import QuickBuilder from './views/QuickBuilder'
 import Plan, { ProgramPage } from './views/Plan'
 import You from './views/You'
 import CoachProfile from './views/CoachProfile'
@@ -18,6 +19,7 @@ import SignIn from './views/SignIn'
 import Landing from './views/Landing'
 import HealthTools from './views/HealthTools'
 import Legal from './views/Legal'
+import Credits from './views/Credits'
 import TrainerApply from './views/TrainerApply'
 import Friends from './views/Friends'
 import FormCheckPage from './views/FormCheckPage'
@@ -114,7 +116,7 @@ export default function App() {
   }, [me, actions])
   const [head, a, b, c, d] = route
   const playing = (head === 'w' && b === 'p' && d === 'play') || head === 'formcheck'
-  const landing = head === 'welcome' || head === 'tools' || head === 'terms' || head === 'privacy'
+  const landing = head === 'welcome' || head === 'tools' || head === 'terms' || head === 'privacy' || head === 'credits'
   const need = routeNeeds(route)
   const allowed = canSee(need, me)
 
@@ -131,6 +133,7 @@ export default function App() {
       </div>
     )
   else if (head === 'terms' || head === 'privacy') view = <Legal page={head} />
+  else if (head === 'credits') view = <Credits />
   else if (landing) view = <Landing />
   else if (head === 'apply') view = <TrainerApply />
   else if (head === 'friends') view = <Friends />
@@ -143,7 +146,7 @@ export default function App() {
   else if (head === 'w' && b === 'edit') view = <Editor key={`edit-${a}`} id={a} />
   else if (head === 'w') view = <WorkoutDetail id={a} />
   else if (head === 'a') view = <ActivityPage id={a} />
-  else if (head === 'create') view = <Editor key="new" />
+  else if (head === 'create') view = a === 'advanced' ? <Editor key="new" /> : <QuickBuilder />
   else if (head === 'exercises') view = <Exercises sub={a} arg={b} />
   else if (head === 'explore' || head === 'library') view = <Explore sub={a} />
   else if (head === 'plan') view = <Plan />

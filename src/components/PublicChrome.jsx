@@ -72,7 +72,7 @@ export function PublicFooter() {
         <button className="link-plain l-legal-btn" onClick={openContact}>
           Contact us
         </button>{' '}
-        · <a href="#/terms">Terms of Service</a> · <a href="#/privacy">Privacy Policy</a> · Yadata Pty Ltd · ABN 42 327 513 086
+        · <a href="#/terms">Terms of Service</a> · <a href="#/privacy">Privacy Policy</a> · <a href="#/credits">Image credits</a> · Yadata Pty Ltd · ABN 42 327 513 086
       </p>
       <ContactPopup />
     </footer>
