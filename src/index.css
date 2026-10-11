@@ -6432,3 +6432,74 @@ code {
   flex-wrap: nowrap;
   gap: 8px;
 }
+
+/* Saved panel */
+.qb-done {
+  text-align: center;
+  align-items: stretch;
+}
+.qb-done h2 {
+  margin: 4px 0 0;
+}
+.qb-done-icon {
+  align-self: center;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--lime);
+  color: #0d0e0a;
+}
+
+/* ---------- Notifications ---------- */
+.bell-btn {
+  position: relative;
+}
+.bell-count {
+  position: absolute;
+  top: 2px;
+  right: 0;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 99px;
+  background: var(--danger);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 800;
+  display: grid;
+  place-items: center;
+}
+.inbox-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 12px;
+}
+.inbox-list li {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  padding: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.inbox-list li:last-child {
+  border-bottom: 0;
+}
+.inbox-list li.unread {
+  background: var(--surface-2);
+}
+.inbox-list p {
+  margin: 0 0 4px;
+}
+.inbox-list .row {
+  margin-top: 6px;
+}
+.inbox-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--lime);
+  flex-shrink: 0;
+  margin-top: 6px;
+}

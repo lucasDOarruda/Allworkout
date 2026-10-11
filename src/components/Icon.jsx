@@ -26,6 +26,7 @@ const PATHS = {
   layers: 'M12 3 3 8l9 5 9-5zM3 13l9 5 9-5',
   spark: 'M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M18 6l-2.5 2.5M8.5 15.5 6 18',
   camera: 'M4 8h3l2-3h6l2 3h3v11H4zM12 10a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z',
+  bell: 'M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0',
 }
 
 export default function Icon({ name, size = 22, className = '', strokeWidth = 2 }) {

@@ -334,6 +334,82 @@ export async function postResult(workoutId, me, score, unit, previous) {
   return true
 }
 
+// ---------- Notifications inbox ----------
+
+const workoutName = (json) => {
+  try {
+    return JSON.parse(json).name || 'a workout'
+  } catch {
+    return 'a workout'
+  }
+}
+
+// Live list of things to tell a member about, newest first:
+//   share    a friend shared a workout with you
+//   request  someone sent you a friend request
+//   saved    a friend saved a workout you shared with them
+// Calls onChange(items) whenever something changes. Returns a function that stops watching.
+export function watchInbox(myUid, onChange) {
+  let shares = []
+  let links = []
+  let sent = []
+  let stopped = false
+  const names = {}
+
+  const emit = async () => {
+    const need = [...new Set([...links.map((l) => l.users.find((u) => u !== myUid)), ...sent.map((x) => x.to)])].filter((u) => u && !names[u])
+    if (need.length) Object.assign(names, Object.fromEntries(Object.entries(await membersById(need)).map(([u, mm]) => [u, mm.name])))
+    if (stopped) return
+    const items = [
+      ...shares.map((x) => ({ id: `share:${x.id}`, type: 'share', at: toDate(x.createdAt), from: x.fromName, fromUid: x.from, workoutName: workoutName(x.workout), note: x.note, share: x })),
+      ...links
+        .filter((l) => l.status === 'pending' && l.requester !== myUid)
+        .map((l) => ({ id: `request:${l.id}`, type: 'request', at: toDate(l.createdAt), linkId: l.id, fromUid: l.requester, from: names[l.requester] || 'A member' })),
+      ...sent.filter((x) => x.savedAt).map((x) => ({ id: `saved:${x.id}`, type: 'saved', at: toDate(x.savedAt), from: names[x.to] || 'A friend', workoutName: workoutName(x.workout) })),
+    ].sort((a, b) => (b.at?.getTime() || 0) - (a.at?.getTime() || 0))
+    onChange(items)
+  }
+
+  if (isMock()) {
+    const tick = () => {
+      const d = mock()
+      shares = Object.entries(d.shares).filter(([, x]) => x.to === myUid).map(([id, x]) => ({ id, ...x }))
+      sent = Object.entries(d.shares).filter(([, x]) => x.from === myUid).map(([id, x]) => ({ id, ...x }))
+      links = Object.entries(d.friendships).filter(([, f]) => f.users.includes(myUid)).map(([id, f]) => ({ id, ...f }))
+      emit()
+    }
+    tick()
+    const timer = setInterval(tick, 2000)
+    return () => {
+      stopped = true
+      clearInterval(timer)
+    }
+  }
+
+  const unsubs = []
+  firestore().then((m) => {
+    if (stopped) return
+    const on = (q, set) =>
+      unsubs.push(
+        m.onSnapshot(
+          q,
+          (snap) => {
+            set(snap.docs.map((x) => ({ id: x.id, ...x.data() })))
+            emit()
+          },
+          () => {},
+        ),
+      )
+    on(m.query(m.collection(db, 'shares'), m.where('to', '==', myUid), m.limit(50)), (v) => (shares = v))
+    on(m.query(m.collection(db, 'shares'), m.where('from', '==', myUid), m.limit(50)), (v) => (sent = v))
+    on(m.query(m.collection(db, 'friendships'), m.where('users', 'array-contains', myUid)), (v) => (links = v))
+  })
+  return () => {
+    stopped = true
+    unsubs.forEach((u) => u())
+  }
+}
+
 // ---------- Dev-only mock (stripped from production builds) ----------
 const MOCK_KEY = 'aw:social-mock'
 function mock(change) {

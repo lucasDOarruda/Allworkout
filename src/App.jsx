@@ -24,6 +24,8 @@ import TrainerApply from './views/TrainerApply'
 import Friends from './views/Friends'
 import FormCheckPage from './views/FormCheckPage'
 import BodyCheck from './views/BodyCheck'
+import Inbox from './views/Inbox'
+import { inboxText, startInbox, stopInbox, unreadCount, useInbox } from './lib/inbox'
 import { PublicFooter, PublicNav } from './components/PublicChrome'
 import { canSee, rememberDestination, routeNeeds } from './lib/access'
 import { Empty } from './components/ui'
@@ -79,6 +81,14 @@ export default function App() {
       cancelled = true
     }
   }, [me?.googleUid]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Notifications: watch for shares and friend requests, and pop up anything new
+  useEffect(() => {
+    if (!me?.googleUid) return stopInbox()
+    startInbox(me.googleUid, (item) => notify(inboxText(item)))
+  }, [me?.googleUid]) // eslint-disable-line react-hooks/exhaustive-deps
+  const inbox = useInbox()
+  const unread = unreadCount(inbox)
 
   // Friends directory entry (name, photo, privacy choices), refreshed when they change
   useEffect(() => {
@@ -139,6 +149,7 @@ export default function App() {
   else if (head === 'friends') view = <Friends />
   else if (head === 'formcheck') view = <FormCheckPage exerciseId={a} />
   else if (head === 'body') view = <BodyCheck />
+  else if (head === 'inbox') view = <Inbox />
   else if (head === 'w' && b === 'p' && d === 'play') view = <Player id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'p') view = <PartDetail id={a} idx={Number(c)} />
   else if (head === 'w' && b === 'log') view = <LogSession id={a} />
@@ -173,6 +184,7 @@ export default function App() {
     admin: 'you',
     friends: 'you',
     body: 'you',
+    inbox: 'home',
     signin: 'you',
     create: 'you',
   }
@@ -184,6 +196,7 @@ export default function App() {
       <span className="tab-icon">
         <TabIcon d={ICON[k]} />
         {k === 'you' && pending > 0 && <span className="tab-dot" aria-label={`${pending} member requests`} />}
+        {k === 'home' && unread > 0 && <span className="tab-dot" aria-label={`${unread} new notifications`} />}
       </span>
       {label}
     </a>

@@ -3,6 +3,7 @@ import { PageHead } from '../components/ui'
 import ExercisePicker from '../components/ExercisePicker'
 import { MoveImage } from '../components/BodyMap'
 import Icon from '../components/Icon'
+import { ShareSheet } from '../components/ShareWorkout'
 import { exerciseById } from '../data/exercises'
 import { go, isCoach, useStore } from '../store'
 import { partMinutes, uid } from '../lib/utils'
@@ -66,7 +67,9 @@ function Presets({ label, options, value, onChange, fmt = (v) => v }) {
 const secs = (s) => (s % 60 || s < 60 ? `${s}s` : `${s / 60} min`)
 
 export default function QuickBuilder() {
-  const { me, actions, notify } = useStore()
+  const { me, workouts, actions, notify } = useStore()
+  const [savedId, setSavedId] = useState(null)
+  const [sharing, setSharing] = useState(false)
   const coach = isCoach(me)
   const [style, setStyle] = useState('sets')
   const [moves, setMoves] = useState([])
@@ -146,9 +149,54 @@ export default function QuickBuilder() {
       payLink: '',
       private: !coach || !publish,
     })
-    notify(start ? 'Saved. Let’s go!' : 'Workout saved')
-    go(start ? `w/${id}/p/0` : `w/${id}`)
+    if (start) {
+      notify('Saved. Let’s go!')
+      return go(`w/${id}/p/0`)
+    }
+    setSavedId(id)
+    window.scrollTo(0, 0)
   }
+
+  // After saving: share it, start it or look at it
+  const saved = savedId && workouts.find((w) => w.id === savedId)
+  if (saved)
+    return (
+      <div className="page narrow qb">
+        <section className="card stack qb-done">
+          <span className="qb-done-icon">
+            <Icon name="check" size={30} strokeWidth={2.6} />
+          </span>
+          <h2>Saved!</h2>
+          <p className="muted">
+            “{saved.name}” is in Explore → Mine. {me?.googleUid ? 'Want to train it with friends?' : ''}
+          </p>
+          {me?.googleUid && (
+            <button className="btn btn-lime big" onClick={() => setSharing(true)}>
+              <Icon name="users" size={18} /> Share with friends
+            </button>
+          )}
+          <button className="btn btn-secondary big" onClick={() => go(`w/${saved.id}/p/0`)}>
+            Start now
+          </button>
+          <div className="row gap-s">
+            <button className="btn btn-ghost grow" onClick={() => go(`w/${saved.id}`)}>
+              View workout
+            </button>
+            <button
+              className="btn btn-ghost grow"
+              onClick={() => {
+                setSavedId(null)
+                setMoves([])
+                setName('')
+              }}
+            >
+              Build another
+            </button>
+          </div>
+        </section>
+        {sharing && <ShareSheet w={saved} canShare title="Share with friends" onClose={() => setSharing(false)} />}
+      </div>
+    )
 
   return (
     <div className="page narrow qb has-sticky">

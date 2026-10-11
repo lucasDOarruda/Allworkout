@@ -4,6 +4,7 @@ import { MoveImage } from '../components/BodyMap'
 import Icon from '../components/Icon'
 import { FORMATS } from '../data/workouts'
 import { go, isCoach, useStore } from '../store'
+import { unreadCount, useInbox } from '../lib/inbox'
 import { fmtDuration, fmtKg, muscleSplit, sessionVolume, sessionsFor, timeAgo, weekKey, weekStart, weekSummary, workoutMinutes } from '../lib/utils'
 
 export const ICON_PATHS = {
@@ -72,6 +73,7 @@ export default function Home() {
           <button className="icon-btn" onClick={() => go('explore')} aria-label="Search">
             <Svg d={ICON_PATHS.search} />
           </button>
+          {me?.googleUid && <BellButton />}
           {me?.googleUid && (
             <button className="icon-btn" onClick={() => go('friends')} aria-label="Friends">
               <Icon name="users" size={20} />
@@ -461,5 +463,17 @@ export function ActivityPage({ id }) {
         Open the workout
       </button>
     </div>
+  )
+}
+
+// Notifications bell with the number of unread items
+function BellButton() {
+  const inbox = useInbox()
+  const n = unreadCount(inbox)
+  return (
+    <button className="icon-btn bell-btn" onClick={() => go('inbox')} aria-label={n ? `Notifications, ${n} new` : 'Notifications'}>
+      <Icon name="bell" size={20} />
+      {n > 0 && <span className="bell-count">{n > 9 ? '9+' : n}</span>}
+    </button>
   )
 }
