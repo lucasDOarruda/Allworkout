@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { EQUIPMENT, EXERCISES, MUSCLES } from '../data/exercises'
-import { MuscleThumb } from './BodyMap'
+import { MoveImage } from './BodyMap'
 import { Chips } from './ui'
 import Icon from './Icon'
 
@@ -46,7 +46,7 @@ export default function ExercisePicker({ onPick, onCustom, onClose }) {
           {list.map((x) => (
             <li key={x.id}>
               <button type="button" className="xp-row" onClick={() => onPick(x)}>
-                <MuscleThumb exerciseId={x.id} size={56} />
+                <MoveImage move={{ exerciseId: x.id }} size={56} />
                 <span className="grow">
                   <span className="strong block">{x.name}</span>
                   <span className="tiny">

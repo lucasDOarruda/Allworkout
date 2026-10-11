@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ImagePicker, PageHead, SignInPrompt } from '../components/ui'
 import ExercisePicker from '../components/ExercisePicker'
-import { MuscleThumb } from '../components/BodyMap'
+import { MoveImage } from '../components/BodyMap'
 import { exerciseById } from '../data/exercises'
 import { FOCUSES, FORMATS, LEVELS } from '../data/workouts'
 import { go, isCoach, useStore } from '../store'
@@ -264,7 +264,7 @@ export default function Editor({ id }) {
                 <ImagePicker value={m.image} onChange={(v) => setMove(pi, mi, { image: v })} label="Image" />
                 <div className="stack grow">
                   <button type="button" className="xp-current" onClick={() => setPicking({ pi, mi })}>
-                    {m.exerciseId ? <MuscleThumb exerciseId={m.exerciseId} size={44} /> : <span className="xp-plus">＋</span>}
+                    {m.exerciseId ? <MoveImage move={{ exerciseId: m.exerciseId }} size={44} /> : <span className="xp-plus">＋</span>}
                     <span className="grow">
                       <span className="strong block">{m.exerciseId ? exerciseById[m.exerciseId]?.name : m.exerciseId === null ? 'My own exercise' : 'Choose an exercise'}</span>
                       <span className="tiny">

@@ -6294,3 +6294,19 @@ code {
   margin-top: 8px;
   color: var(--danger);
 }
+
+/* Library exercise images (light illustrations and photos) */
+.ex-photo {
+  object-fit: contain;
+  background: #fff;
+}
+.media .ex-photo.media-img {
+  padding: 6px;
+}
+.photo-credit {
+  margin: -6px 0 6px;
+  color: var(--text-3);
+}
+.photo-credit a {
+  color: inherit;
+}

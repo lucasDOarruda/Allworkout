@@ -1,4 +1,5 @@
 import { exerciseById } from '../data/exercises'
+import { exercisePhoto, EXERCISE_PHOTOS } from '../data/exercisePhotos'
 
 // Stylised anatomy figure (front + back) drawn in SVG.
 // viewBox is 400 × 780; the figure is centred on x = 200 and mirrored.
@@ -223,8 +224,11 @@ export function MuscleThumb({ muscle, exerciseId, size = 64, className = '' }) {
 }
 
 // Image for a move: uploaded picture if the coach added one, otherwise the muscle crop
+// A move's own photo, else the exercise image from the library, else the muscle diagram
 export function MoveImage({ move, size = 64, className = '' }) {
   if (move?.image) return <img src={move.image} alt="" className={`thumb ${className}`} style={{ width: size, height: size }} />
+  const photo = exercisePhoto(move?.exerciseId)
+  if (photo) return <img src={photo} alt="" loading="lazy" className={`thumb ex-photo ${className}`} style={{ width: size, height: size }} />
   return <MuscleThumb exerciseId={move?.exerciseId} size={size} className={className} />
 }
 
@@ -262,5 +266,24 @@ export function MusclesWorked({ exerciseId }) {
         ))}
       </div>
     </section>
+  )
+}
+
+// Credit line for a library exercise image (Creative Commons: author, licence, source)
+export function PhotoCredit({ exerciseId }) {
+  const p = exerciseId && EXERCISE_PHOTOS[exerciseId]
+  if (!p) return null
+  return (
+    <p className="tiny photo-credit">
+      Image{p.author ? ' by ' : ''}
+      {p.author ? (p.authorUrl ? <a href={p.authorUrl} target="_blank" rel="noreferrer">{p.author}</a> : p.author) : ''} via{' '}
+      <a href={p.source} target="_blank" rel="noreferrer">
+        wger.de
+      </a>
+      ,{' '}
+      <a href={p.licenseUrl} target="_blank" rel="noreferrer">
+        {p.license}
+      </a>
+    </p>
   )
 }

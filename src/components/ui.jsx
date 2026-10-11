@@ -3,7 +3,7 @@ import { exerciseById } from '../data/exercises'
 import { FORMATS } from '../data/workouts'
 import { go, useStore } from '../store'
 import { fileToDataUrl, initials, safeUrl, workoutEquipment, workoutFormats, workoutMinutes, youtubeEmbed } from '../lib/utils'
-import { MoveImage, MusclesWorked } from './BodyMap'
+import { MoveImage, MusclesWorked, PhotoCredit } from './BodyMap'
 import { ExerciseMediaEditor, MediaView, useExerciseMedia } from './ExerciseMedia'
 import { FormCheckButton } from './FormCheck'
 import { workoutPhoto } from '../lib/photos'
@@ -148,6 +148,7 @@ export function MoveSheet({ move, onClose }) {
   return (
     <Modal title={move.name} onClose={onClose}>
       {(move.image || ex || youtubeEmbed(move.video)) && <MoveMedia move={{ ...move, video: move.video || ex?.video }} large />}
+      {!move.image && ex && <PhotoCredit exerciseId={ex.id} />}
       {ex && <MusclesWorked exerciseId={ex.id} />}
       {ex && <FormCheckButton exerciseId={ex.id} />}
       {ex && <ExerciseMediaEditor exerciseId={ex.id} name={ex.name} />}

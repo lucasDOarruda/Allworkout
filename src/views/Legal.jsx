@@ -131,7 +131,11 @@ const TERMS = [
     'Intellectual property',
     <p>
       The All Workout name, design, code and official workouts belong to Yadata Pty Ltd or its licensors and are protected under the Copyright Act 1968 (Cth). You may not copy,
-      distribute or reuse them without our written consent. Photos are used under the Unsplash licence.
+      distribute or reuse them without our written consent. Photos are used under the Unsplash licence. Exercise images come from{' '}
+      <a href="https://wger.de" target="_blank" rel="noreferrer">
+        wger.de
+      </a>{' '}
+      under Creative Commons licences (CC BY-SA); each image shows its author and licence, and our resized copies are shared under the same licence.
     </p>,
   ],
   [

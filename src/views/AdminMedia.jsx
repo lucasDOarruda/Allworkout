@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Chips, MoveSheet } from '../components/ui'
-import { MuscleThumb } from '../components/BodyMap'
+import { MoveImage } from '../components/BodyMap'
 import { EQUIPMENT, EXERCISES } from '../data/exercises'
 
 // Which exercises have a photo, GIF or video. Tap one to add or change it.
@@ -41,7 +41,7 @@ export function ExerciseMediaAdmin() {
           {rows.map((x) => (
             <li key={x.id}>
               <button className="adm-row-btn" onClick={() => setOpen(x)}>
-                <MuscleThumb exerciseId={x.id} size={40} />
+                <MoveImage move={{ exerciseId: x.id }} size={40} />
                 <span className="grow">
                   <span className="strong block">{x.name}</span>
                   <span className="tiny">
