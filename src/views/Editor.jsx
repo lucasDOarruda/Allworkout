@@ -359,7 +359,8 @@ export default function Editor({ id }) {
         <ExercisePicker
           onClose={() => setPicking(null)}
           onPick={(ex) => {
-            pickExercise(picking.pi, picking.mi, ex.id)
+            if (ex.custom) setMove(picking.pi, picking.mi, { exerciseId: null, name: ex.name, image: ex.photo || null, video: '' })
+            else pickExercise(picking.pi, picking.mi, ex.id)
             setPicking(null)
           }}
           onCustom={() => {

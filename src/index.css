@@ -6503,3 +6503,15 @@ code {
   flex-shrink: 0;
   margin-top: 6px;
 }
+.xp-create {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-style: dashed;
+}
+.xp-yours {
+  font-size: 0.65rem;
+  vertical-align: middle;
+  margin-left: 4px;
+}

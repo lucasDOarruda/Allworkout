@@ -15,5 +15,6 @@ export function buildSeed() {
     coaching: [],
     assignments: [],
     progress: {},
+    customExercises: [],
   }
 }

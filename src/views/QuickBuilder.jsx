@@ -20,10 +20,11 @@ const STYLES = [
 
 const move = (ex, defaults) => ({
   key: uid('m'),
-  exerciseId: ex.id,
+  // A member's own exercise has no library id; its photo travels with the move
+  exerciseId: ex.custom ? null : ex.id,
   name: ex.name,
-  video: ex.video,
-  image: null,
+  video: ex.custom ? '' : ex.video,
+  image: ex.custom ? ex.photo || null : null,
   note: '',
   sets: defaults.sets,
   reps: defaults.reps,
@@ -109,7 +110,7 @@ export default function QuickBuilder() {
         exerciseId: m.exerciseId,
         name: m.name,
         video: m.video,
-        image: null,
+        image: m.image || null,
         note: '',
         sets: style === 'sets' ? m.sets : 1,
         reps: style === 'circuit' ? `${work}s` : String(m.reps),

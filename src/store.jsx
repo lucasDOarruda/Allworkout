@@ -275,6 +275,26 @@ export function StoreProvider({ children }) {
         })
         return id
       },
+      // Members' own exercises (name, photo, equipment, main muscle), shown in the exercise picker
+      addCustomExercise: (ex) => {
+        const id = uid('cx')
+        mutate((d) => {
+          d.customExercises = [
+            ...(d.customExercises || []),
+            {
+              id,
+              owner: d.currentUserId,
+              name: String(ex.name).trim().slice(0, 50),
+              equipment: ex.equipment || 'Bodyweight',
+              muscle: ex.muscle || 'Cardio',
+              photo: ex.photo || null,
+              createdAt: new Date().toISOString(),
+            },
+          ]
+        })
+        return id
+      },
+      deleteCustomExercise: (id) => mutate((d) => void (d.customExercises = (d.customExercises || []).filter((x) => x.id !== id))),
       deleteWorkout: (id) =>
         mutate((d) => {
           d.workouts = d.workouts.filter((w) => w.id !== id)
