@@ -39,7 +39,7 @@ export default function Landing() {
             </div>
           </div>
           <div className="l-duo" aria-hidden="true">
-            <img className="d1" src={photoUrl('deadlift')} alt="" />
+            <img className="d1" src={photoUrl('hyrox-sled')} alt="" />
             <img className="d2" src={photoUrl('class')} alt="" />
           </div>
         </div>
