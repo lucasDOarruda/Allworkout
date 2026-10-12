@@ -8,8 +8,11 @@ import { beep, buildTimeline, fmtClock, fmtKg, isMuted, partMinutes, primaryForm
 import SessionForm, { targetReps } from './SessionForm'
 import { DEFAULT_HOWTO } from './PartDetail'
 import { FormCheckButton, formCheckOn, formSummary, takeFormResult } from '../components/FormCheck'
+import { PERSISTED, clearSession, loadSession, partSignature, saveSession } from '../lib/activeSession'
 
 const COUNTDOWN = 10_000
+// Back after more than this: restore the part paused rather than counting all that time
+const MAX_CATCH_UP = 3 * 60 * 60 * 1000
 
 // ---------- State machine ----------
 
@@ -63,11 +66,22 @@ function nextSet(s, withRest) {
 function reducer(s, a) {
   switch (a.type) {
     case 'tick': {
+      // dt is wall-clock time since the last tick. After the phone was locked or Safari was in
+      // the background it can be minutes, so spend it across as many segments as it covers.
       if (s.paused || s.phase === 'done') return s
-      const elapsed = s.phase === 'run' ? s.elapsed + a.dt : s.elapsed
-      if (s.remaining == null) return { ...s, elapsed }
-      const remaining = s.remaining - a.dt
-      return remaining <= 0 ? advance({ ...s, elapsed, remaining: 0 }) : { ...s, elapsed, remaining }
+      let st = s
+      let dt = Math.max(0, a.dt)
+      for (let guard = 0; dt > 0 && st.phase !== 'done' && guard < 5000; guard++) {
+        if (st.remaining == null) {
+          if (st.phase === 'run') st = { ...st, elapsed: st.elapsed + dt }
+          break
+        }
+        const use = Math.min(dt, st.remaining)
+        st = { ...st, elapsed: st.phase === 'run' ? st.elapsed + use : st.elapsed, remaining: st.remaining - use }
+        dt -= use
+        if (st.remaining <= 0) st = advance({ ...st, remaining: 0 })
+      }
+      return st
     }
     case 'pause':
       return { ...s, paused: !s.paused }
@@ -93,6 +107,8 @@ function reducer(s, a) {
       return { ...s, rounds: Math.max(0, s.rounds + a.d) }
     case 'finish':
       return { ...s, phase: 'done', remaining: null, resting: false }
+    case 'setPaused':
+      return { ...s, paused: a.paused }
     default:
       return s
   }
@@ -106,35 +122,144 @@ export default function Player({ id, idx }) {
   const p = w?.parts[idx]
   if (!w || !p) return <Empty icon="info" title="Workout not found" />
   if (!canAccess(w, me)) return <Empty icon="lock" title="This workout is locked" />
-  return <PlayerInner key={`${id}-${idx}`} w={w} p={p} idx={idx} />
+  return <PlayerGate key={`${id}-${idx}`} w={w} p={p} idx={idx} />
+}
+
+// One workout in progress at a time: if a different part is unfinished, ask before replacing it
+function PlayerGate({ w, p, idx }) {
+  const { me, workouts } = useStore()
+  const [decided, setDecided] = useState(false)
+  const active = loadSession()
+  const owner = me?.id || 'solo'
+  const other = active && active.owner === owner && !(active.workoutId === w.id && active.idx === idx) && active.state.phase !== 'done'
+  if (other && !decided) {
+    const ow = workouts.find((x) => x.id === active.workoutId)
+    const op = ow?.parts[active.idx]
+    if (ow && op)
+      return (
+        <div className="page narrow">
+          <Empty icon="timer" title="You have a workout in progress">
+            {ow.name} · {op.name} ({fmtClock(active.state.elapsed)} done). Resume it, or discard it and start {p.name} instead.
+            <div className="row gap-s locked-actions">
+              <button className="btn btn-primary" onClick={() => go(`w/${ow.id}/p/${active.idx}/play`)}>
+                Resume {op.name}
+              </button>
+              <button
+                className="btn btn-ghost"
+                onClick={() => {
+                  clearSession()
+                  setDecided(true)
+                }}
+              >
+                Discard and start this
+              </button>
+            </div>
+          </Empty>
+        </div>
+      )
+  }
+  return <PlayerInner w={w} p={p} idx={idx} />
+}
+
+// Restore this part's saved progress, if any, and work out how long the member was away
+function initFromSaved({ p, saved }) {
+  const fresh = init(p)
+  if (!saved) return fresh
+  const state = { ...fresh }
+  for (const k of PERSISTED) if (k in saved.state) state[k] = saved.state[k]
+  return state
 }
 
 function PlayerInner({ w, p, idx }) {
-  const { db, me, actions, progressFor } = useStore()
-  const [s, dispatch] = useReducer(reducer, p, init)
+  const { db, me, actions, progressFor, notify } = useStore()
+  const owner = me?.id || 'solo'
+  const sig = partSignature(p)
+  // A saved session for exactly this part (same member, same workout shape) is restored
+  const [saved] = useState(() => {
+    const a = loadSession()
+    return a && a.owner === owner && a.workoutId === w.id && a.idx === idx && a.sig === sig && a.state.phase !== 'done' ? a : null
+  })
+  const [s, dispatch] = useReducer(reducer, { p, saved }, initFromSaved)
   const [sheet, setSheet] = useState(null)
   const [help, setHelp] = useState(false)
   const [muted, setMutedState] = useState(isMuted())
-  const last = useRef(performance.now())
+  // Wall-clock time of the last tick. Restored sessions start from when they were last saved,
+  // so time spent locked or in another app is counted.
+  const last = useRef(saved ? saved.savedAt : Date.now())
   const finished = useRef(false)
+  const latest = useRef(s)
+  latest.current = s
 
-  // Clock
+  // Back after a very long time: keep the progress but pause, rather than count hours
+  useEffect(() => {
+    if (!saved) return
+    const away = Date.now() - saved.savedAt
+    if (away > MAX_CATCH_UP && !saved.state.paused) {
+      last.current = Date.now()
+      dispatch({ type: 'setPaused', paused: true })
+      notify('Welcome back. Your workout is paused where you left it.')
+    } else notify(saved.state.paused ? 'Workout restored. Tap play to continue.' : 'Workout restored')
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Clock: based on Date.now(), so it stays right after iOS freezes the page
   useEffect(() => {
     unlockAudio()
-    last.current = performance.now()
-    const t = setInterval(() => {
-      const now = performance.now()
+    const tick = () => {
+      const now = Date.now()
       dispatch({ type: 'tick', dt: now - last.current })
       last.current = now
-    }, 200)
-    return () => clearInterval(t)
+    }
+    const t = setInterval(tick, 250)
+    const onShow = () => document.visibilityState === 'visible' && tick()
+    document.addEventListener('visibilitychange', onShow)
+    window.addEventListener('pageshow', onShow)
+    window.addEventListener('focus', onShow)
+    return () => {
+      clearInterval(t)
+      document.removeEventListener('visibilitychange', onShow)
+      window.removeEventListener('pageshow', onShow)
+      window.removeEventListener('focus', onShow)
+    }
   }, [])
 
-  // Keep the screen awake while training
+  // Save progress: on every meaningful change, every few seconds, and the moment the page hides
+  const persist = () => {
+    const st = latest.current
+    if (st.phase === 'done' || finished.current) return
+    // Nothing worth saving yet (still in the first countdown)
+    if (st.phase === 'countdown' && !st.log.length && !saved) return
+    saveSession({ owner, workoutId: w.id, idx, sig, workoutName: w.name, partName: p.name, state: Object.fromEntries(PERSISTED.map((k) => [k, st[k]])) })
+  }
+  const marker = `${s.phase}|${s.segIdx}|${s.resting}|${s.moveIdx}`
+  useEffect(persist, [marker, s.setIdx, s.log.length, s.rounds, s.paused]) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    const t = setInterval(persist, 3000)
+    const onHide = () => document.visibilityState === 'hidden' && persist()
+    document.addEventListener('visibilitychange', onHide)
+    window.addEventListener('pagehide', persist)
+    return () => {
+      clearInterval(t)
+      document.removeEventListener('visibilitychange', onHide)
+      window.removeEventListener('pagehide', persist)
+    }
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Keep the screen awake while training (iOS drops the lock when the page hides, so retake it)
   useEffect(() => {
     let lock
-    navigator.wakeLock?.request('screen').then((l) => (lock = l)).catch(() => {})
-    return () => lock?.release?.()
+    const take = () => {
+      if (document.visibilityState !== 'visible') return
+      navigator.wakeLock
+        ?.request('screen')
+        .then((l) => (lock = l))
+        .catch(() => {})
+    }
+    take()
+    document.addEventListener('visibilitychange', take)
+    return () => {
+      document.removeEventListener('visibilitychange', take)
+      lock?.release?.()
+    }
   }, [])
 
   // Countdown beeps for the last 3 seconds of any timed segment
@@ -145,7 +270,6 @@ function PlayerInner({ w, p, idx }) {
 
   // Long beep whenever a new segment starts
   const seg = s.phase === 'run' && s.timeline.length ? s.timeline[s.segIdx] : null
-  const marker = `${s.phase}|${s.segIdx}|${s.resting}|${s.moveIdx}`
   const first = useRef(true)
   useEffect(() => {
     if (first.current) return void (first.current = false)
@@ -159,14 +283,23 @@ function PlayerInner({ w, p, idx }) {
   useEffect(() => {
     if (s.phase !== 'done' || finished.current) return
     finished.current = true
+    clearSession() // the part is recorded below, so the in-progress copy can go
     actions.completePart(w.id, idx, { duration: Math.round(s.elapsed / 1000), sets: s.log, rounds: s.rounds })
     const done = new Set([...(progressFor(w.id)?.done || []), idx])
     go(done.size >= w.parts.length ? `w/${w.id}/finish` : `w/${w.id}`)
   }, [s.phase]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Leaving keeps the progress (paused) so it can be resumed; discarding is a separate choice
   const exit = () => {
-    if (s.elapsed > 30_000 && !confirm('Leave this part? Progress in this part won’t be saved.')) return
-    go(`w/${w.id}/p/${idx}`)
+    if (s.phase === 'countdown' && !s.log.length && !saved) {
+      clearSession()
+      return go(`w/${w.id}/p/${idx}`)
+    }
+    dispatch({ type: 'setPaused', paused: true })
+    latest.current = { ...latest.current, paused: true }
+    persist()
+    notify('Progress saved. Resume it any time.')
+    go(`w/${w.id}`)
   }
   const toggleMute = () => {
     setMuted(!muted)

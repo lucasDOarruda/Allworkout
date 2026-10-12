@@ -15,6 +15,11 @@ import('./lib/firebase').then(({ trackScreen }) => {
   window.addEventListener('hashchange', () => trackScreen(location.hash))
 })
 
+// Offline support on the live site (the app opens and keeps working without internet)
+if (import.meta.env.PROD && 'serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('/sw.js').catch(() => {}))
+}
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <StoreProvider>

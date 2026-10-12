@@ -25,6 +25,7 @@ import Friends from './views/Friends'
 import FormCheckPage from './views/FormCheckPage'
 import BodyCheck from './views/BodyCheck'
 import Inbox from './views/Inbox'
+import ActiveWorkoutBanner from './components/ActiveWorkoutBanner'
 import { inboxText, startInbox, stopInbox, unreadCount, useInbox } from './lib/inbox'
 import { PublicFooter, PublicNav } from './components/PublicChrome'
 import { canSee, rememberDestination, routeNeeds } from './lib/access'
@@ -204,6 +205,7 @@ export default function App() {
 
   return (
     <div className={`app ${playing ? 'is-playing' : ''} ${landing ? 'is-landing' : ''}`}>
+      {allowed && !landing && !playing && head !== 'admin' && head !== 'signin' && <ActiveWorkoutBanner route={route} />}
       <main>{view}</main>
       {!playing && !landing && allowed && head !== 'admin' && head !== 'signin' && head !== 'apply' && !!me && (
         <nav className="tabbar" aria-label="Main">

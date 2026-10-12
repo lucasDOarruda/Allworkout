@@ -6515,3 +6515,42 @@ code {
   vertical-align: middle;
   margin-left: 4px;
 }
+
+/* Workout in progress */
+.aw-banner {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 16px;
+  background: var(--lime);
+  color: #0d0e0a;
+}
+.aw-banner-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  background: none;
+  border: 0;
+  color: inherit;
+  padding: 0;
+  cursor: pointer;
+}
+.aw-banner-main span {
+  font-size: 0.8rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.aw-banner .btn-primary {
+  background: #0d0e0a;
+  color: var(--lime);
+  border-color: #0d0e0a;
+}
+.aw-banner .icon-btn {
+  color: #0d0e0a;
+}
