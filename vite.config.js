@@ -13,7 +13,7 @@ const CSP = [
   "img-src 'self' data: blob: https:",
   // Exercise clips: uploaded (data:) or linked .mp4/.webm files
   "media-src 'self' data: blob: https:",
-  "connect-src 'self' https://*.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://*.firebaseapp.com",
+  "connect-src 'self' https://fonts.gstatic.com https://*.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://*.firebaseapp.com",
   'frame-src https://allworkout-61d91.firebaseapp.com https://accounts.google.com https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com',
   "object-src 'none'",
   "base-uri 'self'",

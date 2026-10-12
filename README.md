@@ -51,6 +51,14 @@ Set these in Vercel → Project → Settings → Environment Variables (never wi
 
 Locally, `npm run dev` doesn't run these functions: the contact form and emails only work on the live site.
 
+## Health tools
+
+- Calculations live in `src/lib/healthCalc.js` (no React) and are tested: `npm run test:health`. Macros are whole grams that reconcile with the calorie target (protein 4, carbs 4, fat 9 kcal/g).
+- Sources are in `src/data/healthEvidence.js`, each with organisation, date, evidence strength and the date its link was checked. Add new ones at the end so citation numbers stay stable.
+- The guided walkthrough, results extras and shareable snapshot are in `src/views/health/Guided.jsx`. Answers and the current step are saved in local storage.
+- No calorie targets in pregnancy, breastfeeding or under 18, and nothing changes by menstrual cycle phase.
+- All tests: `npm test`.
+
 ## Camera form check
 
 `src/formcoach/` checks squat, deadlift, lunge, swing and wall ball form live in the browser. A pose model (MediaPipe Pose Landmarker lite, `@mediapipe/tasks-vision` pinned to 1.0.1) finds 33 body points per frame; plain JavaScript rules turn the skeleton green or red. No video leaves the device.

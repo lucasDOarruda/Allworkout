@@ -8,11 +8,14 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "test:formcoach": "node --test tests/formcoach.test.js"
+    "test:formcoach": "node --test tests/formcoach.test.js",
+    "test:health": "node --test tests/healthCalc.test.js",
+    "test": "node --test tests/formcoach.test.js tests/healthCalc.test.js"
   },
   "dependencies": {
     "@mediapipe/tasks-vision": "1.0.1",
     "firebase": "^13.0.0",
+    "html-to-image": "1.11.13",
     "jose": "^6.2.12",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
