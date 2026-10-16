@@ -3,9 +3,18 @@
 import { initializeApp } from 'firebase/app'
 import { getAnalytics, isSupported, logEvent } from 'firebase/analytics'
 
+// When the site runs as a home-screen app (iOS "Add to Home Screen"), a Google pop-up opens in a
+// separate browser sheet that can't report back, so sign-in uses a full-page redirect instead.
+// Safari only allows that redirect when the sign-in pages are on the app's own domain, so on our
+// Vercel domain they're served through a proxy (vercel.json: /__/auth/* → firebaseapp.com).
+export const STANDALONE =
+  typeof window !== 'undefined' && (window.navigator.standalone === true || window.matchMedia?.('(display-mode: standalone)').matches === true)
+const PROXIED_HOSTS = ['allworkout-lovat.vercel.app']
+const authOnOwnDomain = STANDALONE && typeof location !== 'undefined' && PROXIED_HOSTS.includes(location.hostname)
+
 const firebaseConfig = {
   apiKey: 'AIzaSyB7jn7z486HcmWOFCxMFxwk9YcltQsBazg',
-  authDomain: 'allworkout-61d91.firebaseapp.com',
+  authDomain: authOnOwnDomain ? location.host : 'allworkout-61d91.firebaseapp.com',
   projectId: 'allworkout-61d91',
   storageBucket: 'allworkout-61d91.firebasestorage.app',
   messagingSenderId: '466984590678',
@@ -66,18 +75,40 @@ export function preloadAuth() {
   return warmUp
 }
 
-// Returns { uid, name, email, photo } or null if the person closed the window
+const toProfile = (user) => ({ uid: user.uid, name: user.displayName || user.email.split('@')[0], email: user.email, photo: user.photoURL || null })
+
+// Home-screen apps use a full-page redirect; everything else uses the pop-up
+export const usesRedirect = STANDALONE
+
+// Returns { uid, name, email, photo } or null if the person closed the window.
+// In redirect mode the page navigates to Google and this never returns; the result is picked up
+// by finishRedirectSignIn() when the app loads again.
 export async function googleSignIn() {
-  const { getAuth, GoogleAuthProvider, signInWithPopup } = authMod || (await preloadAuth())
+  const { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect } = authMod || (await preloadAuth())
   const auth = getAuth(app)
   const provider = new GoogleAuthProvider()
   provider.setCustomParameters({ prompt: 'select_account' })
   try {
+    if (usesRedirect) {
+      await signInWithRedirect(auth, provider)
+      return null
+    }
     const { user } = await signInWithPopup(auth, provider)
-    return { uid: user.uid, name: user.displayName || user.email.split('@')[0], email: user.email, photo: user.photoURL || null }
+    return toProfile(user)
   } catch (err) {
     if (err?.code === 'auth/popup-closed-by-user' || err?.code === 'auth/cancelled-popup-request') return null
     throw new Error(AUTH_ERRORS[err?.code] || 'Google sign-in didn’t work. Please try again.')
+  }
+}
+
+// After a redirect sign-in: the Google profile, or null if there wasn't one
+export async function finishRedirectSignIn() {
+  const { getAuth, getRedirectResult } = authMod || (await preloadAuth())
+  try {
+    const res = await getRedirectResult(getAuth(app))
+    return res?.user ? toProfile(res.user) : null
+  } catch (err) {
+    throw new Error(AUTH_ERRORS[err?.code] || 'Google sign-in didn’t finish. Please try again.')
   }
 }
 

@@ -15,6 +15,7 @@ import { GOALS } from '../lib/goals'
 const IN_APP = typeof navigator !== 'undefined' && /FBAN|FBAV|Instagram|Line\/|LinkedInApp|GSA\/|; wv\)|Snapchat|TikTok/i.test(navigator.userAgent)
 
 const TERMS_KEY = 'aw:terms-accepted'
+const PENDING_GOOGLE = 'aw:pending-google'
 const termsAcceptedHere = () => {
   try {
     return localStorage.getItem(TERMS_KEY) === TERMS_VERSION
@@ -90,7 +91,8 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
   }
 
   // Match a Google account to a member on this device, or create one
-  const applyGoogleProfile = (g) => {
+  // ctx: the choices made before signing in (kept across a redirect sign-in)
+  const applyGoogleProfile = (g, ctx = { role, goal }) => {
     // Live site: only Google members count, so sample and device-only profiles are dropped
     const users = Object.values(db.users).filter((u) => !import.meta.env.PROD || u.googleUid)
     const existing = users.find((u) => u.googleUid === g.uid) || users.find((u) => u.email && u.email.toLowerCase() === g.email.toLowerCase())
@@ -103,7 +105,7 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
     // Save the profile, contact details and sign-in to the cloud so admins can see who joined
     // Everyone joins as a client. Trainers become coaches only when an admin approves them.
     const cloudRole = admin ? 'admin' : 'client'
-    const newGoal = !existing?.goal && role === 'client' ? goal : null
+    const newGoal = !existing?.goal && ctx.role === 'client' ? ctx.goal : null
     try {
       localStorage.setItem(TERMS_KEY, TERMS_VERSION)
     } catch {
@@ -121,11 +123,11 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
       return finish(`Welcome, ${g.name.split(' ')[0]}. You’re signed in as admin.`, 'admin')
     }
     actions.createAccount({ name: g.name, role: 'client', photo: g.photo, email: g.email, googleUid: g.uid })
-    if (role === 'coach') {
+    if (ctx.role === 'coach') {
       actions.updateProfile({ trainerStatus: 'apply' })
       return finish('Welcome! Send your trainer application to get trainer tools.', 'apply')
     }
-    if (goal) actions.updateProfile({ goal })
+    if (ctx.goal) actions.updateProfile({ goal: ctx.goal })
     finish('Welcome! Pick a workout or find a trainer.', 'home')
   }
 
@@ -135,6 +137,14 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
     setBusy(true)
     try {
       const m = fb.current || (await import('../lib/firebase'))
+      // Home-screen app: remember the choices, because the page leaves for Google and comes back
+      if (m.usesRedirect) {
+        try {
+          sessionStorage.setItem(PENDING_GOOGLE, JSON.stringify({ role, goal, adminMode, at: Date.now() }))
+        } catch {
+          /* private mode */
+        }
+      }
       const g = await m.googleSignIn()
       if (g) applyGoogleProfile(g)
     } catch (err) {
@@ -143,6 +153,29 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
       setBusy(false)
     }
   }
+
+  // Back from a redirect sign-in (home-screen app): finish it with the choices saved before leaving
+  useEffect(() => {
+    let pending = null
+    try {
+      pending = JSON.parse(sessionStorage.getItem(PENDING_GOOGLE) || 'null')
+    } catch {
+      pending = null
+    }
+    if (!pending || Date.now() - pending.at > 15 * 60 * 1000) return
+    setBusy(true)
+    import('../lib/firebase')
+      .then((m) => m.finishRedirectSignIn())
+      .then((g) => {
+        sessionStorage.removeItem(PENDING_GOOGLE)
+        if (g) applyGoogleProfile(g, { role: pending.role || 'client', goal: pending.goal || null })
+      })
+      .catch((err) => {
+        sessionStorage.removeItem(PENDING_GOOGLE)
+        setError(err.message)
+      })
+      .finally(() => setBusy(false))
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   // Lets automated tests exercise the account matching without a real Google pop-up
   useEffect(() => {

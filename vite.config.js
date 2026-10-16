@@ -14,7 +14,8 @@ const CSP = [
   // Exercise clips: uploaded (data:) or linked .mp4/.webm files
   "media-src 'self' data: blob: https:",
   "connect-src 'self' https://fonts.gstatic.com https://*.googleapis.com https://*.google-analytics.com https://*.analytics.google.com https://www.googletagmanager.com https://*.firebaseapp.com",
-  'frame-src https://allworkout-61d91.firebaseapp.com https://accounts.google.com https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com',
+  // 'self': home-screen sign-in loads Firebase's helper frame from our own domain (/__/auth/iframe)
+  "frame-src 'self' https://allworkout-61d91.firebaseapp.com https://accounts.google.com https://www.youtube.com https://www.youtube-nocookie.com https://player.vimeo.com",
   "object-src 'none'",
   "base-uri 'self'",
   "form-action 'self'",
