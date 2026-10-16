@@ -9,7 +9,7 @@ import { LINKS_CHECKED, SOURCES, STRENGTH_LABEL } from '../data/healthEvidence'
 export { energy, fmt, num, r } from '../lib/healthCalc'
 export { SOURCES } from '../data/healthEvidence'
 import { HealthConsent } from './Settings'
-import Logo from '../components/Logo'
+import Logo, { Wordmark } from '../components/Logo'
 
 // Free public health calculators. Education only: every number links to its source.
 
@@ -168,7 +168,8 @@ export default function HealthTools({ onClose }) {
         {onClose && (
         <header className="ht-top">
             <span className="l-brand">
-              <Logo size={34} /> Kinetic Performances
+              <Logo size={36} />
+              <Wordmark />
             </span>
             <span className="ht-eyebrow">Free community tools</span>
             {onClose && (

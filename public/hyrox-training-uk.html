@@ -28,6 +28,8 @@
 a{color:var(--lime)}header,main,footer{max-width:960px;margin:0 auto;padding:0 16px}
 .nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0}
 .brand{display:flex;align-items:center;gap:10px;color:var(--text);text-decoration:none;font-weight:800}
+.wm{display:inline-flex;flex-direction:column;line-height:1;gap:3px}.wm1{font:900 1.32rem "Inter Tight",Inter,sans-serif;text-transform:uppercase;letter-spacing:-.01em}
+.wm2{font:700 .6rem Inter,sans-serif;letter-spacing:.26em;text-transform:uppercase;color:#e2ef72}
 .btn{display:inline-block;padding:12px 20px;border-radius:99px;font-weight:700;text-decoration:none}
 .btn.lime{background:var(--lime);color:#0d0e0a}.btn.ghost{border:1.5px solid var(--line);color:var(--text)}
 .hero{display:grid;gap:24px;align-items:center;padding:24px 0 8px}@media(min-width:800px){.hero{grid-template-columns:1.1fr .9fr}}
@@ -48,7 +50,7 @@ details{background:var(--surface);border:1px solid var(--line);border-radius:12p
 <body>
 <header>
   <nav class="nav">
-    <a class="brand" href="/"><img src="/brand/kp-mark-dark-bg.svg" width="38" height="38" alt="" /> Kinetic Performances</a>
+    <a class="brand" href="/" aria-label="Kinetic Performances home"><img src="/brand/kp-mark-dark-bg.svg" width="40" height="40" alt="" /><span class="wm"><span class="wm1">Kinetic</span><span class="wm2">Performances</span></span></a>
     <a class="btn lime" href="/#/signin">Join free</a>
   </nav>
 </header>

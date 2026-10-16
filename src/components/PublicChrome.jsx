@@ -1,6 +1,6 @@
 import { go, useStore } from '../store'
 import { ContactPopup, openContact } from './ContactForm'
-import Logo from './Logo'
+import Logo, { Wordmark } from './Logo'
 
 // Shared top bar and footer for the public pages (landing, health tools, sign in)
 export function PublicNav({ active }) {
@@ -8,7 +8,8 @@ export function PublicNav({ active }) {
   return (
     <nav className="l-nav">
       <a className="l-brand" href="#/welcome">
-        <Logo size={38} /> Kinetic Performances
+        <Logo size={40} />
+        <Wordmark />
       </a>
       <div className="row gap-s">
         <a className={`l-navlink ${active === 'tools' ? 'on' : ''}`} href="#/tools">

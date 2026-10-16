@@ -22,3 +22,17 @@ export default function Logo({ size = 36, variant, title }) {
     </svg>
   )
 }
+
+// The name as a two-line wordmark: KINETIC (heavy) over PERFORMANCES (spaced, lime)
+export function Wordmark({ className = '' }) {
+  return (
+    <span className={`kp-wordmark ${className}`} aria-label="Kinetic Performances">
+      <span className="kp-wm-1" aria-hidden="true">
+        Kinetic
+      </span>
+      <span className="kp-wm-2" aria-hidden="true">
+        Performances
+      </span>
+    </span>
+  )
+}
