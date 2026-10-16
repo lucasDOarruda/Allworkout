@@ -165,7 +165,7 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
       <div className="page narrow signin-wrap">
       <h1 className="signin-title">{adminMode ? 'Admin sign in' : gate ? 'Sign in to continue' : 'Sign in'}</h1>
       <p className="muted signin-sub">
-        {adminMode ? 'Use your admin Google account to open the dashboard.' : 'All Workout is free. Use your Google account to join or sign back in.'}
+        {adminMode ? 'Use your admin Google account to open the dashboard.' : 'Kinetic Performances is free. Use your Google account to join or sign back in.'}
       </p>
 
       <section className="card stack signin-card">
@@ -206,7 +206,7 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
             <a href="#/privacy" target="_blank" rel="noreferrer">
               Privacy Policy
             </a>
-            . All Workout gives general fitness information, not medical advice.
+            . Kinetic Performances gives general fitness information, not medical advice.
           </span>
         </label>
         </>
@@ -233,7 +233,7 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
         )}
         {!adminMode && <p className="tiny center">Already a member? Just continue with Google. These choices only apply to new accounts.</p>}
         <p className="tiny center privacy-note">
-          We keep your name, email, photo, goal, sign-in activity and approximate location (city) to run your account. Only you and the All Workout admin can see them.{' '}
+          We keep your name, email, photo, goal, sign-in activity and approximate location (city) to run your account. Only you and the Kinetic Performances admin can see them.{' '}
           <a href="#/privacy">Privacy Policy</a>
         </p>
       </section>

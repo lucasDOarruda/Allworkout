@@ -9,6 +9,7 @@ import { LINKS_CHECKED, SOURCES, STRENGTH_LABEL } from '../data/healthEvidence'
 export { energy, fmt, num, r } from '../lib/healthCalc'
 export { SOURCES } from '../data/healthEvidence'
 import { HealthConsent } from './Settings'
+import Logo from '../components/Logo'
 
 // Free public health calculators. Education only: every number links to its source.
 
@@ -167,7 +168,7 @@ export default function HealthTools({ onClose }) {
         {onClose && (
         <header className="ht-top">
             <span className="l-brand">
-              <span className="l-mark">AW</span> All Workout
+              <Logo size={34} /> Kinetic Performances
             </span>
             <span className="ht-eyebrow">Free community tools</span>
             {onClose && (
@@ -262,7 +263,7 @@ export default function HealthTools({ onClose }) {
           </p>
           <p className="tiny">
             {me?.googleUid && me.healthConsent
-              ? 'Your details are saved in this browser and, as you chose, to your All Workout account.'
+              ? 'Your details are saved in this browser and, as you chose, to your Kinetic Performances account.'
               : 'Your details are saved only in this browser. We count which calculators are used, but not what you enter.'}
           </p>
         </footer>

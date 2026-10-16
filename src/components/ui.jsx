@@ -211,7 +211,7 @@ export function WorkoutCard({ w, compact = false }) {
               <Avatar user={author} size={18} /> {author.name}
             </>
           ) : (
-            <>All Workout · {w.category}</>
+            <>Kinetic Performances · {w.category}</>
           )}
           <span className="grow" />♥ {w.likes.length}
         </p>

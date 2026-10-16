@@ -78,7 +78,7 @@ export default function Landing() {
           <div>
             <p className="l-eyebrow">Contact</p>
             <h2>Questions? Talk to us.</h2>
-            <p className="l-lede">Partnerships, support, or you’re a personal trainer who wants to train members on All Workout.</p>
+            <p className="l-lede">Partnerships, support, or you’re a personal trainer who wants to train members on Kinetic Performances.</p>
           </div>
           <button className="btn btn-lime big" onClick={openContact}>
             Contact us →

@@ -1,17 +1,79 @@
 <!doctype html>
-<html lang="en" data-theme="dark">
+<html lang="en-AU" data-theme="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%23DCF05A'/><text x='16' y='21' font-family='Arial' font-weight='700' font-size='13' fill='%230D0E0A' text-anchor='middle'>AW</text></svg>" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Kinetic Performances · HYROX training, workouts and licensed trainers</title>
+    <meta name="description" content="Kinetic Performances: HYROX training plans and race simulations, workouts with a coaching timer, licensed personal trainers, camera form checks and free health calculators. Train with friends in Australia, the UK and beyond." />
+    <link rel="canonical" href="https://allworkout-lovat.vercel.app/" />
+
+    <!-- Icons and install (home screen) -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#0c0d09" />
-    <title>All Workout</title>
+    <meta name="apple-mobile-web-app-title" content="Kinetic" />
+    <meta name="application-name" content="Kinetic Performances" />
+
+    <!-- Sharing (Facebook, WhatsApp, LinkedIn, X) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Kinetic Performances" />
+    <meta property="og:title" content="Kinetic Performances · HYROX training and workouts" />
+    <meta property="og:description" content="HYROX race prep, workouts with a coaching timer, licensed trainers and leaderboards with friends." />
+    <meta property="og:url" content="https://allworkout-lovat.vercel.app/" />
+    <meta property="og:image" content="https://allworkout-lovat.vercel.app/brand/og-image.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Kinetic Performances logo with HYROX sled training" />
+    <meta property="og:locale" content="en_AU" />
+    <meta property="og:locale:alternate" content="en_GB" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Kinetic Performances · HYROX training and workouts" />
+    <meta name="twitter:description" content="HYROX race prep, workouts with a coaching timer, licensed trainers and leaderboards with friends." />
+    <meta name="twitter:image" content="https://allworkout-lovat.vercel.app/brand/og-image.jpg" />
+
+    <!-- Structured data for search engines -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://allworkout-lovat.vercel.app/#org",
+            "name": "Kinetic Performances",
+            "url": "https://allworkout-lovat.vercel.app/",
+            "logo": "https://allworkout-lovat.vercel.app/brand/kp-app-icon-dark-512.png",
+            "email": "contact@yadata.com.au",
+            "parentOrganization": { "@type": "Organization", "name": "Yadata Pty Ltd", "url": "https://yadata.com.au" }
+          },
+          {
+            "@type": "WebApplication",
+            "name": "Kinetic Performances",
+            "url": "https://allworkout-lovat.vercel.app/",
+            "applicationCategory": "HealthApplication",
+            "operatingSystem": "Web, iOS, Android",
+            "areaServed": ["AU", "GB"],
+            "offers": { "@type": "Offer", "price": "0", "priceCurrency": "AUD" },
+            "publisher": { "@id": "https://allworkout-lovat.vercel.app/#org" },
+            "description": "HYROX training plans and race simulations, workouts with a coaching timer, licensed personal trainers, camera form checks and free health calculators."
+          }
+        ]
+      }
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Inter+Tight:wght@800;900&display=swap" rel="stylesheet" />
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!-- Shown until the app loads (and to crawlers that don't run JavaScript) -->
+      <noscript>
+        <h1>Kinetic Performances</h1>
+        <p>HYROX training plans and race simulations, workouts with a coaching timer, licensed personal trainers and free health calculators.</p>
+        <p><a href="/hyrox-training-australia">HYROX training in Australia</a> · <a href="/hyrox-training-sydney">Sydney</a> · <a href="/hyrox-training-uk">UK</a> · <a href="/hyrox-training-london">London</a></p>
+      </noscript>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

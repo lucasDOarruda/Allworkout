@@ -103,7 +103,7 @@ function Consent({ onAgree }) {
         <h2 className="card-h">Track how your body changes</h2>
         <p className="muted">Take a guided front and side photo, add your measurements, and compare check-ins over time.</p>
         <ul className="fc-tips bc-consent-list">
-          <li>Your photos and measurements are stored only on this device. They aren’t uploaded, and nobody else can see them, including your trainer and the All Workout team.</li>
+          <li>Your photos and measurements are stored only on this device. They aren’t uploaded, and nobody else can see them, including your trainer and the Kinetic Performances team.</li>
           <li>If you clear your browser data or change phones, they’re gone, so this isn’t a backup.</li>
           <li>You can delete any check-in, or everything, at any time.</li>
           <li>Body photos are personal. Only take them somewhere private.</li>

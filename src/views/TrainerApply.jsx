@@ -189,7 +189,7 @@ function ApplyForm({ me, previous, onSent }) {
   return (
     <form className="apply-form" onSubmit={submit} noValidate>
       <p className="apply-intro">
-        Only licensed personal trainers can publish workouts, sell them and train members on All Workout. Tell us about your qualification, business and cover. An admin checks every
+        Only licensed personal trainers can publish workouts, sell them and train members on Kinetic Performances. Tell us about your qualification, business and cover. An admin checks every
         application before approving it. Only you and the admin can see these details.
       </p>
       {previous?.status === 'rejected' && previous.reviewNote && <p className="notice">Admin note: {previous.reviewNote}</p>}

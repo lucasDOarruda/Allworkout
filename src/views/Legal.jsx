@@ -13,8 +13,8 @@ const TERMS = [
     'About us',
     <>
       <p>
-        All Workout is a community fitness platform operated by {COMPANY}, an Australian technology company registered in New South Wales. In these terms, “we”, “us” and
-        “our” mean Yadata Pty Ltd, and “you” means anyone who visits All Workout or creates an account.
+        Kinetic Performances is a community fitness platform operated by {COMPANY}, an Australian technology company registered in New South Wales. In these terms, “we”, “us” and
+        “our” mean Yadata Pty Ltd, and “you” means anyone who visits Kinetic Performances or creates an account.
       </p>
       <p>
         Contact: <Mail />
@@ -25,7 +25,7 @@ const TERMS = [
     'Acceptance of these terms',
     <>
       <p>
-        By creating an account, signing in or using All Workout, you agree to these Terms of Service and our <a href="#/privacy">Privacy Policy</a>. If you don’t agree, please don’t
+        By creating an account, signing in or using Kinetic Performances, you agree to these Terms of Service and our <a href="#/privacy">Privacy Policy</a>. If you don’t agree, please don’t
         use the platform.
       </p>
       <p>
@@ -38,7 +38,7 @@ const TERMS = [
     'Health and safety',
     <>
       <p>
-        <strong>All Workout is not medical advice.</strong> Workouts, programs, timers, health calculators and content from trainers are general information only. They don’t
+        <strong>Kinetic Performances is not medical advice.</strong> Workouts, programs, timers, health calculators and content from trainers are general information only. They don’t
         replace advice from your doctor or another qualified health professional, and calculator results are estimates, not a diagnosis.
       </p>
       <ul>
@@ -60,7 +60,7 @@ const TERMS = [
     'Your account',
     <>
       <p>
-        You sign in with your Google account. Keep it secure and don’t let anyone else use your All Workout account. The details you give us must be accurate, and you’re
+        You sign in with your Google account. Keep it secure and don’t let anyone else use your Kinetic Performances account. The details you give us must be accurate, and you’re
         responsible for what happens under your account.
       </p>
     </>,
@@ -101,13 +101,13 @@ const TERMS = [
   [
     'Community rules',
     <>
-      <p>When you use All Workout, you agree not to:</p>
+      <p>When you use Kinetic Performances, you agree not to:</p>
       <ul>
         <li>harass, bully, threaten or discriminate against anyone, or post offensive, explicit or misleading content;</li>
         <li>give unsafe advice, or promote extreme dieting, performance-enhancing drugs or products that aren’t legal in Australia;</li>
         <li>claim qualifications you don’t hold or pretend to be someone else;</li>
         <li>tag people in activities without their agreement, or share other people’s personal information;</li>
-        <li>send spam, or use All Workout for any unlawful purpose; or</li>
+        <li>send spam, or use Kinetic Performances for any unlawful purpose; or</li>
         <li>try to access parts of the platform, accounts or data you aren’t allowed to, or interfere with how it works.</li>
       </ul>
     </>,
@@ -115,7 +115,7 @@ const TERMS = [
   [
     'Your content',
     <p>
-      You keep ownership of the workouts, sessions, comments and photos you add. You give us a non-exclusive licence to host, display and share them within All Workout so the
+      You keep ownership of the workouts, sessions, comments and photos you add. You give us a non-exclusive licence to host, display and share them within Kinetic Performances so the
       platform can work. We may remove content that breaks these terms.
     </p>,
   ],
@@ -130,7 +130,7 @@ const TERMS = [
   [
     'Intellectual property',
     <p>
-      The All Workout name, design, code and official workouts belong to Yadata Pty Ltd or its licensors and are protected under the Copyright Act 1968 (Cth). You may not copy,
+      The Kinetic Performances name, design, code and official workouts belong to Yadata Pty Ltd or its licensors and are protected under the Copyright Act 1968 (Cth). You may not copy,
       distribute or reuse them without our written consent. Photos are used under the Unsplash licence. Exercise images come from{' '}
       <a href="https://wger.de" target="_blank" rel="noreferrer">
         wger.de
@@ -142,7 +142,7 @@ const TERMS = [
     'Limitation of liability',
     <>
       <p>
-        To the maximum extent permitted by law, we aren’t liable for any indirect, incidental, special or consequential loss arising from your use of All Workout, including
+        To the maximum extent permitted by law, we aren’t liable for any indirect, incidental, special or consequential loss arising from your use of Kinetic Performances, including
         injury or illness from exercise you choose to do, advice or services from trainers, or loss of data, revenue or profit.
       </p>
       <p>This doesn’t apply to any liability that can’t be excluded under the Australian Consumer Law or other law.</p>
@@ -151,21 +151,21 @@ const TERMS = [
   [
     'Other services',
     <p>
-      All Workout uses Google sign-in, Firebase and Vercel, and trainers may link to their own payment pages and websites. We aren’t responsible for the content, privacy
+      Kinetic Performances uses Google sign-in, Firebase and Vercel, and trainers may link to their own payment pages and websites. We aren’t responsible for the content, privacy
       practices or terms of those services.
     </p>,
   ],
   [
     'Suspension and termination',
     <p>
-      You can stop using All Workout at any time and ask us to delete your account. We may suspend or close an account, or remove trainer access, if these terms are breached
+      You can stop using Kinetic Performances at any time and ask us to delete your account. We may suspend or close an account, or remove trainer access, if these terms are breached
       or to keep members safe.
     </p>,
   ],
   [
     'Changes to these terms',
     <p>
-      We may update these terms from time to time. The current version is always on this page. If you keep using All Workout after a change is posted, you accept the updated
+      We may update these terms from time to time. The current version is always on this page. If you keep using Kinetic Performances after a change is posted, you accept the updated
       terms.
     </p>,
   ],
@@ -183,7 +183,7 @@ const PRIVACY = [
     'Who we are',
     <>
       <p>
-        All Workout is operated by {COMPANY}, an Australian technology company in New South Wales. This policy explains how we collect, use, store and disclose your personal
+        Kinetic Performances is operated by {COMPANY}, an Australian technology company in New South Wales. This policy explains how we collect, use, store and disclose your personal
         information under the Privacy Act 1988 (Cth) and the Australian Privacy Principles (APPs).
       </p>
       <p>
@@ -252,7 +252,7 @@ const PRIVACY = [
     'How we collect it',
     <ul>
       <li>From you, when you sign in with Google, fill in your profile or apply as a trainer.</li>
-      <li>Automatically, through Firebase and Google Analytics, when you use All Workout.</li>
+      <li>Automatically, through Firebase and Google Analytics, when you use Kinetic Performances.</li>
     </ul>,
   ],
   [
@@ -293,7 +293,7 @@ const PRIVACY = [
       <ul>
         <li>Google LLC (Firebase Authentication, Cloud Firestore and Google Analytics), for sign-in, storage and analytics;</li>
         <li>Vercel Inc., for hosting the website;</li>
-        <li>service providers who help us run All Workout, under confidentiality obligations; and</li>
+        <li>service providers who help us run Kinetic Performances, under confidentiality obligations; and</li>
         <li>law enforcement or regulators, where the law requires it.</li>
       </ul>
       <p>Because Google and Vercel are based overseas, your information may be stored or processed outside Australia. We don’t sell, rent or trade your personal information.</p>
@@ -302,7 +302,7 @@ const PRIVACY = [
   [
     'Cookies and local storage',
     <p>
-      All Workout uses your browser’s local storage to keep your workouts, sessions and settings on your device, and Google Analytics uses cookies to measure visits. We don’t
+      Kinetic Performances uses your browser’s local storage to keep your workouts, sessions and settings on your device, and Google Analytics uses cookies to measure visits. We don’t
       use advertising cookies. You can clear this data in your browser settings, but you’ll lose anything stored only on that device.
     </p>,
   ],
@@ -333,7 +333,7 @@ const PRIVACY = [
   [
     'Changes to this policy',
     <p>
-      We may update this policy from time to time. The current version is always on this page. If you keep using All Workout after a change is posted, you accept the updated
+      We may update this policy from time to time. The current version is always on this page. If you keep using Kinetic Performances after a change is posted, you accept the updated
       policy.
     </p>,
   ],

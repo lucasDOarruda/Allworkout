@@ -139,7 +139,7 @@ export function HealthConsent() {
         <span>
           <span className="strong">Save my calculator results to my account</span>
           <span className="muted small block">
-            Your height, weight, body measures, goal and results from the health tools are kept with your account so the All Workout team can help with your plan. Turn it
+            Your height, weight, body measures, goal and results from the health tools are kept with your account so the Kinetic Performances team can help with your plan. Turn it
             off any time and we delete them. <a href="#/privacy">Privacy Policy</a>
           </span>
         </span>
@@ -234,7 +234,7 @@ function AppSettings() {
       actions.replaceDb(next)
       notify('Data imported')
     } catch {
-      notify('That file isn’t an All Workout backup', 'error')
+      notify('That file isn’t an Kinetic Performances backup', 'error')
     }
   }
 

@@ -6879,3 +6879,87 @@ code {
     print-color-adjust: exact;
   }
 }
+
+/* Narrow phones: keep the longer brand name, links and Sign in on one bar */
+@media (max-width: 430px) {
+  .l-nav {
+    gap: 8px;
+  }
+  .l-nav {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+  .l-brand {
+    font-size: 0.92rem;
+    line-height: 1.15;
+    gap: 8px;
+  }
+  .l-brand .l-mark {
+    flex-shrink: 0;
+  }
+  .l-nav .nav-long {
+    display: none;
+  }
+  .l-nav .nav-short {
+    display: inline;
+  }
+  .l-nav .row.gap-s {
+    gap: 2px;
+    flex-shrink: 0;
+  }
+  .l-navlink {
+    padding: 6px 6px;
+    font-size: 0.8rem;
+  }
+  .l-nav .btn {
+    padding: 8px 12px;
+    font-size: 0.85rem;
+  }
+}
+
+.nav-short {
+  display: none;
+}
+/* The smallest phones: Contact stays on the landing page and in the footer */
+@media (max-width: 350px) {
+  .l-nav .l-navlink-btn {
+    display: none;
+  }
+}
+
+/* ---------- Logo ---------- */
+.kp-logo {
+  flex-shrink: 0;
+  display: block;
+}
+.kp-logo .kp-track {
+  stroke: var(--logo-track);
+}
+.kp-logo .kp-arc {
+  stroke: var(--logo-arc);
+}
+.kp-logo .kp-ink {
+  fill: var(--logo-ink);
+}
+:root {
+  --logo-track: rgb(13 13 10 / 18%);
+  --logo-arc: #0d0d0a;
+  --logo-ink: #0d0d0a;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --logo-track: #3a3a30;
+    --logo-arc: #e2ef72;
+    --logo-ink: #f4f4ec;
+  }
+}
+:root[data-theme='dark'] {
+  --logo-track: #3a3a30;
+  --logo-arc: #e2ef72;
+  --logo-ink: #f4f4ec;
+}
+.kp-logo-dark {
+  --logo-track: #3a3a30;
+  --logo-arc: #e2ef72;
+  --logo-ink: #f4f4ec;
+}

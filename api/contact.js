@@ -30,7 +30,7 @@ export async function POST(req) {
   const saved = await addDoc('contactMessages', { name, email, topic, message, location: where }).catch(() => false)
   const sent = await sendEmail({
     to: NOTIFY_TO,
-    subject: `All Workout contact: ${TOPICS[topic]} from ${name}`,
+    subject: `Kinetic Performances contact: ${TOPICS[topic]} from ${name}`,
     html: layout(
       'New message from the website',
       rows([

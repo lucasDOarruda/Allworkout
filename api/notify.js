@@ -31,10 +31,10 @@ export async function POST(req) {
     if (user.email) {
       await sendEmail({
         to: user.email,
-        subject: 'Welcome to All Workout',
+        subject: 'Welcome to Kinetic Performances',
         html: layout(
           `Welcome, ${String(name || '').split(' ')[0] || 'there'}!`,
-          p(`Thanks for joining <strong>All Workout</strong>, the community fitness app from Yadata.`) +
+          p(`Thanks for joining <strong>Kinetic Performances</strong>, the community fitness app from Yadata.`) +
             p('Here’s how to get going:') +
             `<ul style="line-height:1.7;padding-left:20px;margin:0 0 12px">
               <li>Pick a workout in Explore and tap Start. The timer talks you through every round.</li>
@@ -44,14 +44,14 @@ export async function POST(req) {
             </ul>` +
             p('If you’re a personal trainer, send your application from the You tab and we’ll review it.') +
             p('Questions? Just reply to this email.'),
-          { href: SITE, label: 'Open All Workout' },
+          { href: SITE, label: 'Open Kinetic Performances' },
         ),
         replyTo: NOTIFY_TO,
       })
     }
     await sendEmail({
       to: NOTIFY_TO,
-      subject: `New All Workout member: ${name || user.email}`,
+      subject: `New Kinetic Performances member: ${name || user.email}`,
       html: layout(
         'New member signed up',
         rows([
@@ -99,9 +99,9 @@ export async function POST(req) {
         subject: 'We’ve received your trainer application',
         html: layout(
           `Thanks, ${first(app.fullName)}`,
-          p('We’ve received your personal trainer application for All Workout. We’ll check your qualification, ABN, first aid and insurance and let you know once it’s reviewed.') +
-            p('Until then you can use All Workout as a member.'),
-          { href: SITE, label: 'Open All Workout' },
+          p('We’ve received your personal trainer application for Kinetic Performances. We’ll check your qualification, ABN, first aid and insurance and let you know once it’s reviewed.') +
+            p('Until then you can use Kinetic Performances as a member.'),
+          { href: SITE, label: 'Open Kinetic Performances' },
         ),
         replyTo: NOTIFY_TO,
       })
@@ -116,11 +116,11 @@ export async function POST(req) {
     const approved = app.status === 'approved'
     await sendEmail({
       to,
-      subject: approved ? 'You’re approved as an All Workout trainer' : 'About your All Workout trainer application',
+      subject: approved ? 'You’re approved as an Kinetic Performances trainer' : 'About your Kinetic Performances trainer application',
       html: layout(
         approved ? `You’re approved, ${String(app.fullName || '').split(' ')[0]}!` : `Hi ${String(app.fullName || '').split(' ')[0]},`,
         approved
-          ? p('Your personal trainer application has been approved. Sign in to All Workout to publish free and paid workouts and train members.') +
+          ? p('Your personal trainer application has been approved. Sign in to Kinetic Performances to publish free and paid workouts and train members.') +
               p('Please keep your qualification, first aid and CPR, and insurance current, and let us know if anything changes.')
           : p('We couldn’t approve your personal trainer application yet.') +
               (app.reviewNote ? p(`<strong>Note from our team:</strong> ${esc(app.reviewNote)}`) : '') +

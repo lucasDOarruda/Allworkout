@@ -1,5 +1,6 @@
 import { go, useStore } from '../store'
 import { ContactPopup, openContact } from './ContactForm'
+import Logo from './Logo'
 
 // Shared top bar and footer for the public pages (landing, health tools, sign in)
 export function PublicNav({ active }) {
@@ -7,11 +8,12 @@ export function PublicNav({ active }) {
   return (
     <nav className="l-nav">
       <a className="l-brand" href="#/welcome">
-        <span className="l-mark">AW</span> All Workout
+        <Logo size={38} /> Kinetic Performances
       </a>
       <div className="row gap-s">
         <a className={`l-navlink ${active === 'tools' ? 'on' : ''}`} href="#/tools">
-          Health tools
+          <span className="nav-long">Health tools</span>
+          <span className="nav-short">Tools</span>
         </a>
         <button className="l-navlink l-navlink-btn" onClick={openContact}>
           Contact
@@ -62,11 +64,15 @@ export function PublicFooter() {
         </span>
       </div>
       <p>
-        © {new Date().getFullYear()} All Workout · Hosted for the community · Built by{' '}
+        © {new Date().getFullYear()} Kinetic Performances · Hosted for the community · Built by{' '}
         <a className="l-credit" href="https://yadata.com.au" target="_blank" rel="noreferrer">
           yadata.com.au
         </a>{' '}
         · Photos: Unsplash
+      </p>
+      <p className="l-legal">
+        HYROX training: <a href="/hyrox-training-australia">Australia</a> · <a href="/hyrox-training-sydney">Sydney</a> · <a href="/hyrox-training-uk">UK</a> ·{' '}
+        <a href="/hyrox-training-london">London</a>
       </p>
       <p className="l-legal">
         <button className="link-plain l-legal-btn" onClick={openContact}>

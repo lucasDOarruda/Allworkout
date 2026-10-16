@@ -128,7 +128,7 @@ export function ContactPopup() {
             <p className="l-eyebrow">Contact</p>
             <h2 id="contact-title">Talk to us.</h2>
             <p className="small muted">
-              Questions, partnerships, or you’re a personal trainer who wants to train members on All Workout? Yadata Pty Ltd ·{' '}
+              Questions, partnerships, or you’re a personal trainer who wants to train members on Kinetic Performances? Yadata Pty Ltd ·{' '}
               <a href="mailto:contact@yadata.com.au">contact@yadata.com.au</a>
             </p>
           </div>

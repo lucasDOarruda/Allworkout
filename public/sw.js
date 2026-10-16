@@ -2,7 +2,7 @@
 // gym basement). Pages: network first, falling back to the last cached copy. Built assets have
 // hashed names, so they're cached forever. Nothing from other sites, the API, or Firebase is
 // touched, and big model files aren't stored.
-const CACHE = 'aw-shell-v1'
+const CACHE = 'aw-shell-v2'
 
 self.addEventListener('install', () => self.skipWaiting())
 self.addEventListener('activate', (e) => {
@@ -20,7 +20,9 @@ self.addEventListener('fetch', (e) => {
   const url = new URL(req.url)
   if (url.origin !== self.location.origin || url.pathname.startsWith('/api/')) return
 
-  // The app page: try the network, keep a copy, use the copy when offline
+  // The app page: try the network, keep a copy, use the copy when offline.
+  // Other pages (the SEO landing pages) are left to the network.
+  if (req.mode === 'navigate' && url.pathname !== '/' && url.pathname !== '/index.html') return
   if (req.mode === 'navigate') {
     e.respondWith(
       fetch(req)

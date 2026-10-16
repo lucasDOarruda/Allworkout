@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import { ACTIVITY, AIMS, EQUATION_SEX, EXPERIENCE, LIFE_STAGES, aimEnergy, fmt, num, plausibility, summaryText, trainingGuidance, validate, womensHealth } from '../../lib/healthCalc'
 import { photoUrl } from '../../lib/photos'
+import Logo from '../../components/Logo'
 
 // Guided health assessment: one question at a time, with why we ask, progress, Back, Skip and Edit.
 // Answers are saved in the health tools state (local storage) on every change, so the member can
@@ -453,7 +454,7 @@ function Snapshot({ t, e, onClose }) {
     run('share', async () => {
       const blob = await makeBlob()
       const file = new File([blob], 'all-workout-results.png', { type: 'image/png' })
-      if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file], title: 'My All Workout results', text: 'My energy and macro estimates' })
+      if (navigator.canShare?.({ files: [file] })) await navigator.share({ files: [file], title: 'My Kinetic Performances results', text: 'My energy and macro estimates' })
       else {
         download(blob)
         setMsg('Sharing isn’t available here, so the image was downloaded instead.')
@@ -488,9 +489,9 @@ function Snapshot({ t, e, onClose }) {
 
         <div ref={card} className="snapshot-card">
           <div className="snap-head">
-            <span className="snap-mark">AW</span>
+            <Logo size={40} variant="dark" />
             <span>
-              <strong>All Workout</strong>
+              <strong>Kinetic Performances</strong>
               <small>Energy & macros · {today}</small>
             </span>
           </div>
@@ -538,7 +539,7 @@ function Snapshot({ t, e, onClose }) {
               Based on {t.age} y · {t.height} cm · {t.weight} kg
             </p>
           )}
-          <p className="snap-foot">Estimates from published equations, not medical advice · allworkout</p>
+          <p className="snap-foot">Estimates from published equations, not medical advice · Kinetic Performances</p>
         </div>
 
         <label className="check-row">

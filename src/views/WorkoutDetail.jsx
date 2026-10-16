@@ -131,7 +131,7 @@ export default function WorkoutDetail({ id }) {
             </span>
           </button>
         ) : (
-          <p className="muted small">All Workout · {w.category}</p>
+          <p className="muted small">Kinetic Performances · {w.category}</p>
         )}
         <div className="w-stats">
           <div>

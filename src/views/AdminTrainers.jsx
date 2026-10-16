@@ -162,7 +162,7 @@ function Review({ app: a, onClose, onDone }) {
             Check ABN on ABN Lookup
           </a>
           {a.email && (
-            <a className="btn btn-ghost small" href={mail('Your All Workout trainer application', `Hi ${a.fullName.split(' ')[0]},\n\n`)}>
+            <a className="btn btn-ghost small" href={mail('Your Kinetic Performances trainer application', `Hi ${a.fullName.split(' ')[0]},\n\n`)}>
               Email applicant
             </a>
           )}

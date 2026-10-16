@@ -10,6 +10,7 @@ import { Crm, Traffic, memberStatus, useCloudAdmin } from './AdminCloud'
 import { Trainers, useTrainerApps } from './AdminTrainers'
 import { Messages, useMessages } from './AdminMessages'
 import { ExerciseMediaAdmin } from './AdminMedia'
+import Logo from '../components/Logo'
 
 // Members (CRM) and Traffic come from the cloud. "Device members" only lists accounts stored
 // in this browser, so it's shown in local development only.
@@ -57,9 +58,9 @@ export default function Admin({ section }) {
     <div className="adm">
       <aside className="adm-side">
         <a className="adm-brand" href="#/admin">
-          <span className="l-mark">AW</span>
+          <Logo size={38} />
           <span>
-            All Workout
+            Kinetic Performances
             <span className="tiny block">Admin</span>
           </span>
         </a>

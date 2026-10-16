@@ -69,7 +69,7 @@ export function ShareSheet({ w, canShare, onClose, title = 'Share with friends',
           <p className="muted">Loading your friends…</p>
         ) : friends.length === 0 ? (
           <div className="stack gap-s">
-            <p className="muted">You don’t have any friends on All Workout yet.</p>
+            <p className="muted">You don’t have any friends on Kinetic Performances yet.</p>
             <button
               className="btn btn-primary"
               onClick={() => {

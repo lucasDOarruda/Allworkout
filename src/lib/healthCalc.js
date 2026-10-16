@@ -349,7 +349,7 @@ export function womensHealth(t) {
 // One-line summary for copying or sharing (no body details unless asked)
 export function summaryText(t, e, { includeBody = false } = {}) {
   const lines = [
-    'All Workout · Energy & macros (estimate)',
+    'Kinetic Performances · Energy & macros (estimate)',
     `Daily target: ${fmt(e.target)} kcal`,
     `Protein ${e.protein} g · Carbs ${e.carbs} g · Fat ${e.fat} g`,
     `Maintenance: ${fmt(e.range[0])}–${fmt(e.range[1])} kcal · Resting: ${fmt(e.bmr)} kcal`,

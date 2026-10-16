@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url><loc>https://allworkout-lovat.vercel.app/</loc><lastmod>2026-10-16</lastmod></url>
+  <url>
+    <loc>https://allworkout-lovat.vercel.app/hyrox-training-australia</loc><lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://allworkout-lovat.vercel.app/hyrox-training-australia" />
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://allworkout-lovat.vercel.app/hyrox-training-uk" />
+  </url>
+  <url>
+    <loc>https://allworkout-lovat.vercel.app/hyrox-training-uk</loc><lastmod>2026-10-16</lastmod>
+    <xhtml:link rel="alternate" hreflang="en-AU" href="https://allworkout-lovat.vercel.app/hyrox-training-australia" />
+    <xhtml:link rel="alternate" hreflang="en-GB" href="https://allworkout-lovat.vercel.app/hyrox-training-uk" />
+  </url>
+  <url><loc>https://allworkout-lovat.vercel.app/hyrox-training-sydney</loc><lastmod>2026-10-16</lastmod></url>
+  <url><loc>https://allworkout-lovat.vercel.app/hyrox-training-london</loc><lastmod>2026-10-16</lastmod></url>
+</urlset>

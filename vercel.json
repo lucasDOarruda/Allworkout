@@ -55,5 +55,6 @@
       "source": "/admin",
       "destination": "/index.html"
     }
-  ]
+  ],
+  "cleanUrls": true
 }

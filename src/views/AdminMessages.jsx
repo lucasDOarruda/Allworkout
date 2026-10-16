@@ -66,7 +66,7 @@ export function Messages({ data }) {
                 </span>
               </span>
               <span className="row gap-s">
-                <a className="btn btn-primary small" href={`mailto:${m.email}?subject=${encodeURIComponent('Re: your message to All Workout')}`}>
+                <a className="btn btn-primary small" href={`mailto:${m.email}?subject=${encodeURIComponent('Re: your message to Kinetic Performances')}`}>
                   Reply
                 </a>
                 <button className="btn btn-ghost small" onClick={() => mark(m, !m.done)}>

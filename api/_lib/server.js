@@ -8,7 +8,7 @@ import { createRemoteJWKSet, jwtVerify } from 'jose'
 export const PROJECT_ID = 'allworkout-61d91'
 export const ADMIN_UIDS = ['pNeXKFvYLhd9rem7Vil5xwZnXzF3']
 export const SITE = 'https://allworkout-lovat.vercel.app'
-const FROM = process.env.EMAIL_FROM || 'All Workout by Yadata <noreply@yadata.com.au>'
+const FROM = process.env.EMAIL_FROM || 'Kinetic Performances by Yadata <noreply@yadata.com.au>'
 export const NOTIFY_TO = process.env.NOTIFY_TO || 'contact@yadata.com.au'
 
 export const json = (body, status = 200) => Response.json(body, { status, headers: { 'Cache-Control': 'no-store' } })
@@ -145,13 +145,13 @@ export function layout(title, bodyHtml, cta) {
   return `<!doctype html><html><body style="margin:0;background:#f4f7e4;font-family:Arial,Helvetica,sans-serif;color:#0d0e0a">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f4f7e4;padding:24px 12px"><tr><td align="center">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:16px;overflow:hidden">
-<tr><td style="background:#0d0e0a;padding:20px 24px"><span style="display:inline-block;background:#dcf05a;color:#0d0e0a;font-weight:bold;border-radius:8px;padding:4px 8px">AW</span>
-<span style="color:#ffffff;font-weight:bold;font-size:18px;margin-left:8px">All Workout</span></td></tr>
+<tr><td style="background:#0d0e0a;padding:20px 24px"><img src="${SITE}/brand/kp-app-icon-dark-180.png" width="36" height="36" alt="KP" style="vertical-align:middle;border-radius:8px">
+<span style="color:#ffffff;font-weight:bold;font-size:18px;margin-left:8px">Kinetic Performances</span></td></tr>
 <tr><td style="padding:28px 24px 8px"><h1 style="margin:0 0 12px;font-size:22px">${esc(title)}</h1>${bodyHtml}
 ${cta ? `<p style="margin:24px 0"><a href="${esc(cta.href)}" style="background:#dcf05a;color:#0d0e0a;text-decoration:none;font-weight:bold;padding:12px 20px;border-radius:999px;display:inline-block">${esc(cta.label)}</a></p>` : ''}
 </td></tr>
 <tr><td style="padding:16px 24px 24px;color:#686c58;font-size:12px;line-height:1.5;border-top:1px solid #dfe4c6">
-All Workout is a product of Yadata Pty Ltd · ABN 42 327 513 086 · New South Wales, Australia<br>
+Kinetic Performances is a product of Yadata Pty Ltd · ABN 42 327 513 086 · New South Wales, Australia<br>
 <a href="mailto:contact@yadata.com.au" style="color:#686c58">contact@yadata.com.au</a> ·
 <a href="${SITE}/#/terms" style="color:#686c58">Terms</a> · <a href="${SITE}/#/privacy" style="color:#686c58">Privacy</a><br>
 General fitness information only, not medical advice.</td></tr>
