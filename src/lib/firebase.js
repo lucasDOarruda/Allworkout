@@ -108,9 +108,11 @@ export async function googleSignIn() {
 export async function finishRedirectSignIn() {
   const { getAuth, getRedirectResult } = authMod || (await preloadAuth())
   const auth = getAuth(app)
+  // Never leave the page waiting: if Firebase's sign-in frame can't load, give up after 20 seconds
+  const timeout = new Promise((_, reject) => setTimeout(() => reject({ code: 'aw/timeout' }), 20000))
   try {
-    const res = await getRedirectResult(auth)
-    await auth.authStateReady?.()
+    const res = await Promise.race([getRedirectResult(auth), timeout])
+    await Promise.race([auth.authStateReady?.(), timeout])
     const user = res?.user || auth.currentUser
     return user ? toProfile(user) : null
   } catch (err) {
