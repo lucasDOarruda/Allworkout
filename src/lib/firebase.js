@@ -5,12 +5,13 @@ import { getAnalytics, isSupported, logEvent } from 'firebase/analytics'
 
 // When the site runs as a home-screen app (iOS "Add to Home Screen"), a Google pop-up opens in a
 // separate browser sheet that can't report back, so sign-in uses a full-page redirect instead.
-// Safari only allows that redirect when the sign-in pages are on the app's own domain, so on our
-// Vercel domain they're served through a proxy (vercel.json: /__/auth/* → firebaseapp.com).
+// Safari only allows that redirect when the sign-in pages are on the app's own domain, so every
+// domain the site is deployed on serves them through a proxy (vercel.json: /__/auth/* → firebaseapp.com).
+// Each domain's https://<domain>/__/auth/handler must be an authorised redirect URI on the Google
+// OAuth client (Google Cloud → APIs & Services → Credentials).
 export const STANDALONE =
   typeof window !== 'undefined' && (window.navigator.standalone === true || window.matchMedia?.('(display-mode: standalone)').matches === true)
-const PROXIED_HOSTS = ['allworkout-lovat.vercel.app']
-const authOnOwnDomain = STANDALONE && typeof location !== 'undefined' && PROXIED_HOSTS.includes(location.hostname)
+const authOnOwnDomain = STANDALONE && import.meta.env.PROD && typeof location !== 'undefined' && location.protocol === 'https:'
 
 const firebaseConfig = {
   apiKey: 'AIzaSyB7jn7z486HcmWOFCxMFxwk9YcltQsBazg',
@@ -101,12 +102,17 @@ export async function googleSignIn() {
   }
 }
 
-// After a redirect sign-in: the Google profile, or null if there wasn't one
+// After a redirect sign-in: the Google profile, or null if there wasn't one.
+// Firebase may already have finished the redirect while starting up (then getRedirectResult is
+// empty but the person is signed in), so fall back to the signed-in user.
 export async function finishRedirectSignIn() {
   const { getAuth, getRedirectResult } = authMod || (await preloadAuth())
+  const auth = getAuth(app)
   try {
-    const res = await getRedirectResult(getAuth(app))
-    return res?.user ? toProfile(res.user) : null
+    const res = await getRedirectResult(auth)
+    await auth.authStateReady?.()
+    const user = res?.user || auth.currentUser
+    return user ? toProfile(user) : null
   } catch (err) {
     throw new Error(AUTH_ERRORS[err?.code] || 'Google sign-in didn’t finish. Please try again.')
   }

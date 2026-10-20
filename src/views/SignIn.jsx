@@ -140,7 +140,8 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
       // Home-screen app: remember the choices, because the page leaves for Google and comes back
       if (m.usesRedirect) {
         try {
-          sessionStorage.setItem(PENDING_GOOGLE, JSON.stringify({ role, goal, adminMode, at: Date.now() }))
+          // localStorage, not sessionStorage: the home-screen app can come back from Google in a fresh page
+          localStorage.setItem(PENDING_GOOGLE, JSON.stringify({ role, goal, adminMode, at: Date.now() }))
         } catch {
           /* private mode */
         }
@@ -158,7 +159,8 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
   useEffect(() => {
     let pending = null
     try {
-      pending = JSON.parse(sessionStorage.getItem(PENDING_GOOGLE) || 'null')
+      pending = JSON.parse(localStorage.getItem(PENDING_GOOGLE) || 'null')
+      localStorage.removeItem(PENDING_GOOGLE)
     } catch {
       pending = null
     }
@@ -167,13 +169,11 @@ export default function SignIn({ gate = false, onShow, adminMode = false }) {
     import('../lib/firebase')
       .then((m) => m.finishRedirectSignIn())
       .then((g) => {
-        sessionStorage.removeItem(PENDING_GOOGLE)
         if (g) applyGoogleProfile(g, { role: pending.role || 'client', goal: pending.goal || null })
+        // Back without an account: Google stopped the sign-in, so say so instead of quietly showing this page again
+        else setError('Google sign-in didn’t finish. Try again, or open the site in Safari and sign in there.')
       })
-      .catch((err) => {
-        sessionStorage.removeItem(PENDING_GOOGLE)
-        setError(err.message)
-      })
+      .catch((err) => setError(err.message))
       .finally(() => setBusy(false))
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
