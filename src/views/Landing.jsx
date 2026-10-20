@@ -37,6 +37,14 @@ export default function Landing() {
                 <Icon name="heart" size={18} /> Free health calculators
               </a>
             </div>
+            {!me && (
+              <p className="l-member-signin">
+                Already a member?{' '}
+                <button className="l-member-signin-btn" onClick={() => go('signin')}>
+                  Sign in
+                </button>
+              </p>
+            )}
           </div>
           <div className="l-duo" aria-hidden="true">
             <img className="d1" src={photoUrl('hyrox-event')} alt="" />

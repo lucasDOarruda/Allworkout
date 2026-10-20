@@ -5180,6 +5180,27 @@ code {
   background: rgb(255 255 255 / 60%);
 }
 
+/* Hero: sign-in link for existing members */
+.l-member-signin {
+  margin: 14px 0 0;
+  color: #0d0e0a;
+  font-weight: 600;
+}
+.l-member-signin-btn {
+  margin-left: 4px;
+  padding: 8px 18px;
+  border: 2px solid #0d0e0a;
+  border-radius: 999px;
+  background: #0d0e0a;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+.l-member-signin-btn:hover {
+  background: #2a2c22;
+}
+
 /* Landing top bar in dark mode: black, with a lime call to action */
 :root[data-theme='dark'] .l-nav {
   background: color-mix(in srgb, #0c0d09 90%, transparent);
